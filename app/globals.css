@@ -24,10 +24,21 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+ }
+
+/* @todo change cursor image */
+.custom-cursor {
+  cursor: url('/public/cursor.png'), auto;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .btn-basic {
+    @apply w-fit rounded-[32px] px-10 py-5 text-[32px] font-normal;
   }
 }
