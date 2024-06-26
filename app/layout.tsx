@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton } from "next/font/google";
 import "./globals.css";
+import AuthContext from "./context/AuthContext";
 
 const inter = Anton({ weight: "400", subsets: ["latin"] });
 
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <AuthContext>{children}</AuthContext>
+      </body>
     </html>
   );
 }

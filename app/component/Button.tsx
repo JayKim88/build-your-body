@@ -1,15 +1,27 @@
+"use client";
 import React from "react";
 import clsx from "clsx";
 
 type ButtonProps = {
   children: string;
   customStyles?: string;
+  onClick?: () => void;
+  disabled?: boolean;
 };
 
-const Button = ({ children, customStyles }: ButtonProps) => {
+export const Button = ({
+  children,
+  customStyles,
+  onClick,
+  disabled,
+}: ButtonProps) => {
   return (
-    <button className={clsx("btn-basic", customStyles)}>{children}</button>
+    <button
+      disabled={!!disabled}
+      className={clsx("btn-basic", customStyles)}
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 };
-
-export { Button };

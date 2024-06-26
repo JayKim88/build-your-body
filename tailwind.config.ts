@@ -13,6 +13,7 @@ const config: Config = {
       black: "#000000",
       gray6: "#F2F2F2",
       red: "red",
+      yellow: "#FFD600",
     },
     extend: {
       // fontFamily: {
