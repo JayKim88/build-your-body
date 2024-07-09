@@ -1,12 +1,15 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
 const Menu = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const isLoggedIn = !!session;
+
   return (
-    <div className="flex flex-row-reverse bg-black font-white h-fit w-fit rounded-r-3xl absolute top-1/2 -translate-y-1/2">
+    <div className="flex flex-row-reverse bg-black font-white h-fit w-fit rounded-r-3xl absolute top-1/2 -translate-y-1/2 z-10">
       <div className="flex justify-start items-center peer w-[30px]">
         <Image
           src="/arrow-right.svg"
