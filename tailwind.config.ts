@@ -11,8 +11,10 @@ const config: Config = {
   theme: {
     colors: {
       black: "#000000",
+      gray2: "#4F4F4F",
       gray6: "#F2F2F2",
       red: "red",
+      lightRed: "#EB5757",
       yellow: "#FFD600",
     },
     extend: {

@@ -6,6 +6,7 @@ import AuthContext from "./context/AuthContext";
 import { LoginButton } from "./component/LoginButton";
 import { YoutubeModal } from "./component/YoutubeModal";
 import { Menu } from "./component/Menu";
+import { CartButton } from "./component/CartButton";
 
 const inter = Anton({ weight: "400", subsets: ["latin"] });
 
@@ -20,15 +21,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthContext>
-          <LoginButton />
-          <Menu />
-          <YoutubeModal />
-          <main>{children}</main>
-        </AuthContext>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body className={`${inter.className} relative`}>
+          <AuthContext>
+            <CartButton />
+            <LoginButton />
+            <Menu />
+            <YoutubeModal />
+            <main>{children}</main>
+          </AuthContext>
+        </body>
+      </html>
+    </>
   );
 }

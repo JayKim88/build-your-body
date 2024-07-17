@@ -5,11 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Menu = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const isLoggedIn = !!session;
+  const isLoading = status === "loading";
 
-  return (
-    <div className="flex flex-row-reverse bg-black font-white h-fit w-fit rounded-r-3xl absolute top-1/2 -translate-y-1/2 z-10">
+  return isLoading ? (
+    <></>
+  ) : (
+    <div className="flex flex-row-reverse bg-black text-white h-fit w-fit rounded-r-3xl absolute top-1/2 -translate-y-1/2 z-10 border-white border-2 border-l-0">
       <div className="flex justify-start items-center peer w-[30px]">
         <Image
           src="/arrow-right.svg"

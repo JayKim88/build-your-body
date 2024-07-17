@@ -17,30 +17,30 @@ export const YoutubeModal = () => {
 
     return;
 
-    if (!query || !session) return;
+    // if (!query || !session) return;
 
-    try {
-      const response = await axios.get(
-        "https://www.googleapis.com/youtube/v3/search",
-        {
-          params: {
-            part: "snippet",
-            maxResults: 10,
-            q: query,
-            key: process.env.YOUTUBE_API_KEY,
-          },
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-        }
-      );
-      console.log("response", response);
-    } catch (error: any) {
-      console.error(
-        "Error fetching playlists:",
-        error.response ? error.response.data : error.message
-      );
-    }
+    // try {
+    //   const response = await axios.get(
+    //     "https://www.googleapis.com/youtube/v3/search",
+    //     {
+    //       params: {
+    //         part: "snippet",
+    //         maxResults: 10,
+    //         q: query,
+    //         key: process.env.YOUTUBE_API_KEY,
+    //       },
+    //       headers: {
+    //         Authorization: `Bearer ${session.accessToken}`,
+    //       },
+    //     }
+    //   );
+    //   console.log("response", response);
+    // } catch (error: any) {
+    //   console.error(
+    //     "Error fetching playlists:",
+    //     error.response ? error.response.data : error.message
+    //   );
+    // }
   };
 
   return isLoggedIn ? (
