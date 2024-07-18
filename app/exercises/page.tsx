@@ -1,15 +1,21 @@
-"use client";
-import { useState } from "react";
 import { Filters } from "../component/Filters";
 import { SearchInput } from "../component/SearchInput";
 import Link from "next/link";
 
-export default function Page() {
-  const [selectedFilter, setSelectedFilter] = useState<string | undefined>();
+async function getData() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/exercises`);
 
-  const handleSelectedFilter = (v: string) => {
-    setSelectedFilter(v);
-  };
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = await res.json();
+
+  return data;
+}
+
+export default async function Page() {
+  const exercisesData = (await getData()) as { exercises: string[] };
 
   return (
     <div className="h-screen w-screen relative bg-black flex-col pt-[20px] px-[80px]">
@@ -23,8 +29,10 @@ export default function Page() {
           <SearchInput />
         </div>
       </section>
-      <Filters onSelect={handleSelectedFilter} selected={selectedFilter} />
-      <section>contents</section>
+      <Filters />
+      {exercisesData.exercises.map((v) => (
+        <div key={v}>{v}</div>
+      ))}
     </div>
   );
 }

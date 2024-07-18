@@ -15,7 +15,11 @@ const config: Config = {
       gray6: "#F2F2F2",
       red: "red",
       lightRed: "#EB5757",
+      green: "#27AE60",
       yellow: "#FFD600",
+      blue: "#2F80ED",
+      purple: "#B149D2",
+      orange: "#F2994A",
     },
     extend: {
       // fontFamily: {
