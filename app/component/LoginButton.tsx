@@ -15,7 +15,11 @@ export const LoginButton = () => {
   const handleLoggingAction = () => {
     "use client";
 
-    return isLoggedIn ? logOut() : logIn("google");
+    return isLoggedIn
+      ? logOut({
+          callbackUrl: "/",
+        })
+      : logIn("google");
   };
 
   return (

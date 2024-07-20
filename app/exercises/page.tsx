@@ -1,21 +1,13 @@
-import { Filters } from "../component/Filters";
-import { SearchInput } from "../component/SearchInput";
+"use server";
+
 import Link from "next/link";
 
-async function getData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/exercises`);
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  const data = await res.json();
-
-  return data;
-}
+import { SearchInput } from "../component/SearchInput";
+import { getExercisesList } from "../api/exercises/getData";
+import { FilteredList } from "./FilteredList";
 
 export default async function Page() {
-  const exercisesData = (await getData()) as { exercises: string[] };
+  const fetchedData = await getExercisesList();
 
   return (
     <div className="h-screen w-screen relative bg-black flex-col pt-[20px] px-[80px]">
@@ -29,10 +21,7 @@ export default async function Page() {
           <SearchInput />
         </div>
       </section>
-      <Filters />
-      {exercisesData.exercises.map((v) => (
-        <div key={v}>{v}</div>
-      ))}
+      <FilteredList data={fetchedData.data} />
     </div>
   );
 }

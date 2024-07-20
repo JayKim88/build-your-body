@@ -13,8 +13,6 @@ export const YoutubeModal = () => {
   const isLoggedIn = !!session;
 
   const handleSearch = async () => {
-    console.log("searched!!!");
-
     return;
 
     // if (!query || !session) return;

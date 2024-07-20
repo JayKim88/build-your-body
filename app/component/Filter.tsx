@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+
+export type Title = "All" | "Chest" | "Back" | "Leg" | "Shoulder" | "Arm";
 
 type ChipProps = {
-  title: string;
+  title: Title;
   src?: string;
   selectedColor: string;
-  onSelect: (v: string) => void;
-  selected?: string;
+  onSelect: (v: Title) => void;
+  selected?: Title;
 };
 
 const chips: Omit<ChipProps, "onSelect" | "selected">[] = [
@@ -65,25 +66,23 @@ const Chip = ({ title, src, selectedColor, onSelect, selected }: ChipProps) => {
   );
 };
 
-export const Filters = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string | undefined>();
-
-  const handleSelectedFilter = (v: string) => {
-    setSelectedFilter(v);
-  };
-
-  return (
-    <section className="w-[1100px] flex overflow-auto gap-4 mt-8">
-      {chips.map((v) => (
-        <Chip
-          key={v.title}
-          title={v.title}
-          src={v.src}
-          selectedColor={v.selectedColor}
-          onSelect={handleSelectedFilter}
-          selected={selectedFilter}
-        />
-      ))}
-    </section>
-  );
-};
+export const Filter = ({
+  onFilter,
+  selectedType,
+}: {
+  onFilter: (v: Title) => void;
+  selectedType: Title;
+}) => (
+  <section className="w-[1100px] flex overflow-auto gap-4 mt-8">
+    {chips.map((v) => (
+      <Chip
+        key={v.title}
+        title={v.title}
+        src={v.src}
+        selectedColor={v.selectedColor}
+        onSelect={onFilter}
+        selected={selectedType}
+      />
+    ))}
+  </section>
+);
