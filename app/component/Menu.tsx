@@ -3,11 +3,16 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Menu = () => {
+  const currentPath = usePathname();
   const { data: session, status } = useSession();
   const isLoggedIn = !!session;
   const isLoading = status === "loading";
+
+  const isSelectedItem = (target: string) =>
+    currentPath === target ? "text-yellow" : "text-inherit";
 
   return isLoading ? (
     <></>
@@ -23,6 +28,7 @@ const Menu = () => {
       </div>
       <ul className="w-[0px] invisible peer-hover:visible peer-hover:w-[200px] pl-2 flex overflow-hidden flex-col justify-evenly text-2xl hover:visible hover:w-[200px] transition-all duration-500 ease-in-out [&>li]:w-[200px] [&>li]:h-[77.5px] [&>li]:flex [&>li]:items-center [&>li:hover]:text-yellow">
         <li
+          className={isSelectedItem("/exercises")}
           style={{
             verticalAlign: "center",
             display: "flex",
@@ -33,15 +39,15 @@ const Menu = () => {
         </li>
         {isLoggedIn && (
           <>
-            <li>
+            <li className={isSelectedItem("/my-programs")}>
               <Link href="/my-programs">My Programs</Link>
             </li>
-            <li>
+            <li className={isSelectedItem("/my-stats")}>
               <Link href="/my-stats">My Stats</Link>
             </li>
           </>
         )}
-        <li>
+        <li className={isSelectedItem("/communities")}>
           <Link href="/communities">Communities</Link>
         </li>
       </ul>
