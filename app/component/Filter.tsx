@@ -2,57 +2,62 @@
 
 import Image from "next/image";
 
-export type Title = "All" | "Chest" | "Back" | "Leg" | "Shoulder" | "Arm";
+export type ExerciseType =
+  | "All"
+  | "Chest"
+  | "Back"
+  | "Leg"
+  | "Shoulder"
+  | "Arm";
 
 type ChipProps = {
-  title: Title;
+  type: ExerciseType;
   src?: string;
   selectedColor: string;
-  onSelect: (v: Title) => void;
-  selected?: Title;
+  onSelect: (v: ExerciseType) => void;
+  selected?: ExerciseType;
 };
 
-const chips: Omit<ChipProps, "onSelect" | "selected">[] = [
+export const exerciseTypes: Omit<ChipProps, "onSelect" | "selected">[] = [
   {
-    title: "All",
+    type: "All",
     selectedColor: "bg-orange",
   },
   {
-    title: "Chest",
+    type: "Chest",
     src: "/filter-icon/chest.png",
     selectedColor: "bg-lightRed",
   },
   {
-    title: "Back",
+    type: "Back",
     src: "/filter-icon/back.png",
     selectedColor: "bg-yellow",
   },
   {
-    title: "Leg",
+    type: "Leg",
     src: "/filter-icon/leg.png",
     selectedColor: "bg-blue",
   },
 
   {
-    title: "Shoulder",
+    type: "Shoulder",
     src: "/filter-icon/shoulder.png",
     selectedColor: "bg-green",
   },
-
   {
-    title: "Arm",
+    type: "Arm",
     src: "/filter-icon/arm.png",
     selectedColor: "bg-purple",
   },
 ];
 
-const Chip = ({ title, src, selectedColor, onSelect, selected }: ChipProps) => {
-  const isSelected = selected === title;
+const Chip = ({ type, src, selectedColor, onSelect, selected }: ChipProps) => {
+  const isSelected = selected === type;
 
   return (
     <button
       onClick={() => {
-        onSelect(title);
+        onSelect(type);
       }}
       className={`${isSelected ? selectedColor : "bg-gray2"}
        flex items-center justify-center gap-2 rounded-[32px] py-2 px-4 text-[20px] ${
@@ -60,8 +65,8 @@ const Chip = ({ title, src, selectedColor, onSelect, selected }: ChipProps) => {
        }  
       `}
     >
-      {src && <Image src={src} width={24} height={24} alt={title} />}
-      <span>{title}</span>
+      {src && <Image src={src} width={24} height={24} alt={type} />}
+      <span>{type}</span>
     </button>
   );
 };
@@ -70,14 +75,14 @@ export const Filter = ({
   onFilter,
   selectedType,
 }: {
-  onFilter: (v: Title) => void;
-  selectedType: Title;
+  onFilter: (v: ExerciseType) => void;
+  selectedType: ExerciseType;
 }) => (
   <section className="w-[1100px] flex overflow-auto gap-4 mt-8">
-    {chips.map((v) => (
+    {exerciseTypes.map((v) => (
       <Chip
-        key={v.title}
-        title={v.title}
+        key={v.type}
+        type={v.type}
         src={v.src}
         selectedColor={v.selectedColor}
         onSelect={onFilter}

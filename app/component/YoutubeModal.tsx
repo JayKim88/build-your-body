@@ -42,7 +42,7 @@ export const YoutubeModal = () => {
   };
 
   return isLoggedIn ? (
-    <div className="w-[350px] h-[200px] absolute border-4 bottom-10 right-10 rounded-3xl border-white bg-black flex flex-col px-2 z-10">
+    <div className="w-[350px] h-[200px] fixed border-4 bottom-10 right-10 rounded-3xl border-white bg-black flex flex-col px-2 z-10">
       <div className="flex h-[50px] items-center gap-2">
         <Image src="/youtube.png" width={50} height={40} alt="youtube icon" />
         <div>

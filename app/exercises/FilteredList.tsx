@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Exercise } from "../api/types";
-import { Filter, Title } from "../component/Filter";
+import { Filter, ExerciseType } from "../component/Filter";
 import { Exercises } from "../component/Exercises";
 
 const FilteredList = ({ data }: { data: Exercise[] }) => {
-  const [selectedType, setSelectedType] = useState<Title>("All");
+  const [selectedType, setSelectedType] = useState<ExerciseType>("All");
 
-  const handleFilter = (v: Title) => setSelectedType(v);
+  const handleFilter = (v: ExerciseType) => setSelectedType(v);
 
   return (
     <div className="flex flex-col gap-y-8">

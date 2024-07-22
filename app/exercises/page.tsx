@@ -10,7 +10,7 @@ export default async function Page() {
   const fetchedData = await getExercisesList();
 
   return (
-    <div className="h-screen w-screen relative bg-black flex-col pt-[20px] px-[80px]">
+    <div className="h-fit w-screen relative bg-black flex-col pt-[20px] px-[80px]">
       <section className="flex">
         <div className="flex gap-8">
           <Link href="/">

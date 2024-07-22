@@ -1,6 +1,8 @@
+import { ExerciseType } from "../component/Filter";
+
 export type Exercise = {
   _id: string;
-  type: string;
+  type: ExerciseType;
   name: string;
   summary: string;
   guide: string;
