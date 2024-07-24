@@ -11,11 +11,13 @@ const config: Config = {
   theme: {
     colors: {
       black: "#000000",
+      gray1: "#333333",
       gray2: "#4F4F4F",
       gray6: "#F2F2F2",
       red: "red",
       lightRed: "#EB5757",
       green: "#27AE60",
+      lightGreen: "#6FCF97",
       yellow: "#FFD600",
       blue: "#2F80ED",
       purple: "#B149D2",

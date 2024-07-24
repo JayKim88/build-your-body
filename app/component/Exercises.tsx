@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { Exercise } from "../api/types";
 import { exerciseTypes, ExerciseType } from "./Filter";
+import { ExerciseDetailModal } from "./ExerciseDetailModal";
 
 type ExercisesProps = {
   data?: Exercise[];
@@ -32,20 +33,33 @@ const CartIcon = ({ src, onSelect, title }: CartIconProps) => {
   );
 };
 
-const ExerciseCard = ({ id, img, title, summary, type }: ExerciseCardProps) => {
+const ExerciseCard = (
+  props: Exercise & {
+    onClick: (v: string) => void;
+  }
+) => {
+  const { _id, type, thumbnail_img_url, name, summary, onClick, ...rest } =
+    props;
+
   const bgColor = exerciseTypes.find(
     (v) => v.type.toLowerCase() === type.toLowerCase()
   )?.selectedColor;
 
   return (
     <div
-      key={id}
+      key={_id}
       className={`${bgColor} w-[384px] h-[590px] rounded-3xl p-5 gap-y-6 flex flex-col`}
+      onClick={() => onClick(_id)}
     >
       <div className="relative w-full h-72 rounded-2xl overflow-hidden">
-        <Image src={img} alt="name" layout="fill" objectFit="cover" />
+        <Image
+          src={thumbnail_img_url}
+          alt="name"
+          layout="fill"
+          objectFit="cover"
+        />
       </div>
-      <div className="text-[32px]">{title}</div>
+      <div className="text-[32px]">{name}</div>
       <div className="text-lg min-h-[84px] text-black">{summary}</div>
       <div className="flex w-full justify-evenly">
         <CartIcon
@@ -65,6 +79,19 @@ const ExerciseCard = ({ id, img, title, summary, type }: ExerciseCardProps) => {
 
 const Exercises = ({ data, selectedType }: ExercisesProps) => {
   const [exercisesData, setExercisesData] = useState<Exercise[]>([]);
+  const [clickedExercise, setClickedExercise] = useState<Exercise>();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClickExercise = (id: string) => {
+    const data = exercisesData.find((v) => v._id === id);
+    setClickedExercise(data);
+    setIsOpen(true);
+  };
+
+  const handleClearClickedExercise = () => {
+    setIsOpen(false);
+    setTimeout(() => setClickedExercise(undefined), 1000);
+  };
 
   useEffect(() => {
     if (!data?.length) return;
@@ -80,22 +107,26 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
   }, [data, selectedType]);
 
   return (
-    <section className="flex gap-6 flex-wrap">
-      {exercisesData.length ? (
-        exercisesData.map(({ _id, thumbnail_img_url, name, summary, type }) => (
-          <ExerciseCard
-            key={_id}
-            id={_id}
-            img={thumbnail_img_url}
-            title={name}
-            summary={summary}
-            type={type}
-          />
-        ))
-      ) : (
-        <></>
-      )}
-    </section>
+    <>
+      <section className="flex gap-6 flex-wrap">
+        {exercisesData.length ? (
+          exercisesData.map((data) => (
+            <ExerciseCard
+              key={data._id}
+              {...data}
+              onClick={handleClickExercise}
+            />
+          ))
+        ) : (
+          <></>
+        )}
+      </section>
+      <ExerciseDetailModal
+        isOpen={isOpen}
+        data={clickedExercise}
+        onClose={handleClearClickedExercise}
+      />
+    </>
   );
 };
 
