@@ -1,10 +1,9 @@
 import { MongoClient } from "mongodb";
-import type { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const uri = process.env.MONGODB_URI ?? "";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
   if (req.method !== "GET") return;
 
   const client = new MongoClient(uri);

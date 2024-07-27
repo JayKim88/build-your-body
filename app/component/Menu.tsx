@@ -19,12 +19,15 @@ const Menu = () => {
   ) : (
     <div className="flex flex-row-reverse bg-black text-white h-fit w-fit rounded-r-3xl absolute top-1/2 -translate-y-1/2 z-10 border-white border-2 border-l-0">
       <div className="flex justify-start items-center peer w-[30px]">
-        <Image
-          src="/arrow-right.svg"
-          width={18}
-          height={30}
-          alt="arrow right"
-        />
+        <div className="relative w-[18px] h-[30px]">
+          <Image
+            src="/arrow-right.svg"
+            alt="arrow right"
+            fill
+            style={{ objectFit: "contain" }}
+            priority
+          />
+        </div>
       </div>
       <ul className="w-[0px] invisible peer-hover:visible peer-hover:w-[200px] pl-2 flex overflow-hidden flex-col justify-evenly text-2xl hover:visible hover:w-[200px] transition-all duration-500 ease-in-out [&>li]:w-[200px] [&>li]:h-[77.5px] [&>li]:flex [&>li]:items-center [&>li:hover]:text-yellow">
         <li

@@ -4,9 +4,13 @@ export type Exercise = {
   _id: string;
   type: ExerciseType;
   name: string;
+  description: string;
   summary: string;
-  guide: string;
+  guide: string[];
   thumbnail_img_url: string;
-  gif_url: string;
-  ref: string[];
+  video_url: string;
+  ref: {
+    title: string;
+    url: string;
+  }[];
 };

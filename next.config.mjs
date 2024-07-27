@@ -9,6 +9,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "drive.google.com",
       },
+      // {
+      //   protocol: "https",
+      //   hostname: "youtube.com",
+      // },
     ],
   },
   // @description https://github.com/vercel/next.js/issues/66526

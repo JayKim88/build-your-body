@@ -28,7 +28,7 @@ export default function RootLayout({
             <CartButton />
             <LoginButton />
             <Menu />
-            <YoutubeModal />
+            {/* <YoutubeModal /> */}
             <main className="h-fit">{children}</main>
           </AuthContext>
         </body>

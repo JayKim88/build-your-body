@@ -4,40 +4,49 @@ import Image from "next/image";
 
 import { Exercise } from "../api/types";
 import { exerciseTypes, ExerciseType } from "./Filter";
-import { ExerciseDetailModal } from "./ExerciseDetailModal";
+import { ExerciseDetailModal, OVERLAY_OPEN_DELAY } from "./ExerciseDetailModal";
+import { AddToCart } from "../icon/AddToCart";
+import { RemoveFromCart } from "../icon/RemoveFromCart";
+import { useCartStore } from "../store";
 
 type ExercisesProps = {
   data?: Exercise[];
   selectedType: ExerciseType;
 };
 
-type ExerciseCardProps = {
-  id: string;
-  img: string;
-  title: string;
-  summary: string;
-  type: ExerciseType;
-};
-
 type CartIconProps = {
   title: string;
-  src?: string;
-  onSelect: (v: string) => void;
+  onClick: () => void;
+  Icon: ({ className }: { className: string }) => JSX.Element;
+  isAleadyInCart?: boolean;
 };
 
-const CartIcon = ({ src, onSelect, title }: CartIconProps) => {
-  return (
-    <button onClick={() => {}} className="flex items-center justify-center">
-      {src && <Image src={src} width={56} height={56} alt={title} />}
-    </button>
-  );
-};
+const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => (
+  <button
+    aria-label={title}
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
+    className="flex items-center justify-center"
+  >
+    <Icon
+      className={`${
+        isAleadyInCart && "text-gray6"
+      }  text-gray1 hover:text-gray6 transition-all ease-in-out duration-300`}
+    />
+  </button>
+);
 
 const ExerciseCard = (
   props: Exercise & {
     onClick: (v: string) => void;
   }
 ) => {
+  const cartItems = useCartStore((state) => state.stored);
+  const addToCart = useCartStore((state) => state.add);
+  const removeFromCart = useCartStore((state) => state.remove);
+
   const { _id, type, thumbnail_img_url, name, summary, onClick, ...rest } =
     props;
 
@@ -45,32 +54,37 @@ const ExerciseCard = (
     (v) => v.type.toLowerCase() === type.toLowerCase()
   )?.selectedColor;
 
+  const isAleadyInCart = !!cartItems.find((v) => v === _id);
+
   return (
     <div
       key={_id}
-      className={`${bgColor} w-[384px] h-[590px] rounded-3xl p-5 gap-y-6 flex flex-col`}
+      className={`${bgColor} w-[384px] h-[590px] rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
       onClick={() => onClick(_id)}
     >
       <div className="relative w-full h-72 rounded-2xl overflow-hidden">
         <Image
           src={thumbnail_img_url}
           alt="name"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: "cover" }}
+          sizes="(max-width: 1200px) 100vw"
+          priority
         />
       </div>
       <div className="text-[32px]">{name}</div>
       <div className="text-lg min-h-[84px] text-black">{summary}</div>
       <div className="flex w-full justify-evenly">
         <CartIcon
-          title="add"
-          onSelect={() => {}}
-          src="/cart-icon/add-to-cart.svg"
+          title="add to cart"
+          onClick={() => addToCart(_id)}
+          Icon={AddToCart}
+          isAleadyInCart={isAleadyInCart}
         />
         <CartIcon
-          title="remove"
-          onSelect={() => {}}
-          src="/cart-icon/remove-from-cart.svg"
+          title="remove from cart"
+          onClick={() => removeFromCart(_id)}
+          Icon={RemoveFromCart}
         />
       </div>
     </div>
@@ -90,7 +104,7 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
 
   const handleClearClickedExercise = () => {
     setIsOpen(false);
-    setTimeout(() => setClickedExercise(undefined), 1000);
+    setTimeout(() => setClickedExercise(undefined), OVERLAY_OPEN_DELAY);
   };
 
   useEffect(() => {

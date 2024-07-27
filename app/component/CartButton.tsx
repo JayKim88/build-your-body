@@ -5,19 +5,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
 
+import { useCartStore } from "../store";
+
 export const CartButton = () => {
+  const cartItems = useCartStore((state) => state.stored);
   const { data: session } = useSession();
   const pathname = usePathname();
 
   const isExercisesPage = pathname === "/exercises";
   const isLoggedIn = !!session;
 
-  const demoItemsCount = 5;
-
   const Count = () => {
     return (
       <div className="absolute left-[16px] top-[-8px] w-6 h-6 rounded-[24px] bg-yellow flex items-center justify-center text-black pt-0.5">
-        {demoItemsCount}
+        {cartItems.length}
       </div>
     );
   };
