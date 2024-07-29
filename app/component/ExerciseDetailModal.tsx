@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Exercise } from "../api/types";
+import { useCartStore } from "../store";
+import { ModalWrapper } from "./ModalWrapper";
 
 type ExerciseDetailModalProps = {
   isOpen: boolean;
@@ -14,18 +16,21 @@ type ExerciseDetailModalProps = {
 
 type CartButtonProps = {
   title: string;
-  onClick: (v: string) => void;
+  onClick: () => void;
+  isAleadyInCart?: boolean;
 };
 
-const CartButton = ({ title }: CartButtonProps) => {
+const CartButton = ({ title, onClick, isAleadyInCart }: CartButtonProps) => {
   const isAdd = title === "Add";
 
   return (
     <button
-      // onClick={onClose}
+      onClick={onClick}
       className={`${
         isAdd ? "bg-lightGreen" : "bg-red"
-      } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl width-[110px]`}
+      } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl width-[110px]
+      ${isAleadyInCart && "bg-gray6 text-black pointer-events-none"} 
+      `}
     >
       <Image src="/cart-icon/cart.svg" width={32} height={32} alt="cart" />
       <span className="text-[20px]">{title}</span>
@@ -40,6 +45,9 @@ export const ExerciseDetailModal = ({
 }: ExerciseDetailModalProps) => {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const cartItems = useCartStore((state) => state.stored);
+  const addToCart = useCartStore((state) => state.add);
+  const removeFromCart = useCartStore((state) => state.remove);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,101 +64,81 @@ export const ExerciseDetailModal = ({
     }
   }, [isOpen]);
 
-  const handleCartButtonClick = (v: string) => {};
+  const { _id, video_url, guide, name, ref, description } = data ?? {};
 
-  const { video_url, guide, summary, name, ref, description } = data ?? {};
+  const isAleadyInCart = !!cartItems.find((v) => v === _id);
+
+  const handleCartButtonClick = (v: string) => {
+    const isAdd = v === "Add";
+
+    if (isAdd) {
+      if (isAleadyInCart) return;
+
+      _id && addToCart(_id);
+
+      return;
+    }
+
+    _id && removeFromCart(_id);
+  };
 
   return (
-    <div
-      className={`${
-        open
-          ? "flex fixed inset-0 items-center justify-end z-20 pr-4"
-          : "hidden"
-      } ${visible && "bg-black bg-opacity-50"} delay-${
-        MODAL_VISIBLE_DELAY + 300
-      }`}
-      onClick={(e) => {
-        if (e.target !== e.currentTarget) return; // ignore clicking cart icons
-        onClose();
-      }}
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      // title="Make your new program"
     >
-      <div
-        className={`transition-all duration-500 ${
-          visible ? "translate-x-0" : `translate-x-full -mr-96`
-        }
-           w-[800px] h-[1020px] rounded-3xl p-5 bg-gray1 flex flex-col`}
-      >
-        <header className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="flex items-center justify-center"
-          >
-            <div className="relative w-[48px] h-[48px]">
-              <Image
-                src="/close-button.png"
-                alt="close button"
-                fill
-                style={{ objectFit: "contain" }}
-                sizes="(max-width: 1200px) 100vw"
-              />
-            </div>
-          </button>
-        </header>
-        <main className="flex flex-col gap-y-5">
-          <iframe
-            title="Exercise video player"
-            src={video_url}
-            width="760"
-            height="430"
-          />
-          <section className="flex flex-col gap-y-6">
-            <div className="text-3xl">{name}</div>
-            <div>{description}</div>
-            <div className="flex gap-x-2 justify-start">
-              <div className="min-w-[160px] text-2xl font-medium">
-                운동 방법
-              </div>
-              <ol className="list-decimal list-inside gap-1">
-                {guide?.map((v, index) => (
-                  <li key={index} className="mb-2">
-                    {v}
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="flex gap-x-2 justify-start">
-              <div className="min-w-[160px] text-2xl font-medium">
-                참고 링크
-              </div>
-              <ul className="list-disc list-inside">
-                {ref?.map((v, index) => (
-                  <li key={index}>
-                    <Link
-                      href={v.url}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="hover:text-yellow"
-                    >
-                      {v.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        </main>
-        <footer className="flex justify-end gap-10 mt-auto">
-          <CartButton
-            title="Add"
-            onClick={() => handleCartButtonClick("Add")}
-          />
-          <CartButton
-            title="Delete"
-            onClick={() => handleCartButtonClick("Delete")}
-          />
-        </footer>
-      </div>
-    </div>
+      <main className="flex flex-col gap-y-5">
+        <iframe
+          title="Exercise video player"
+          src={video_url}
+          width="760"
+          height="430"
+        />
+        <section className="flex flex-col gap-y-6">
+          <div className="text-3xl">{name}</div>
+          <div>{description}</div>
+          <div className="flex gap-x-2 justify-start">
+            <div className="min-w-[160px] text-2xl font-medium">운동 방법</div>
+            <ol className="list-decimal list-inside gap-1">
+              {guide?.map((v, index) => (
+                <li key={index} className="mb-2">
+                  {v}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="flex gap-x-2 justify-start">
+            <div className="min-w-[160px] text-2xl font-medium">참고 링크</div>
+            <ul className="list-disc list-inside">
+              {ref?.map((v, index) => (
+                <li key={index}>
+                  <Link
+                    href={v.url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="hover:text-yellow"
+                  >
+                    {v.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </main>
+      <footer className="flex justify-end gap-10 mt-auto">
+        <CartButton
+          title="Add"
+          onClick={() => handleCartButtonClick("Add")}
+          isAleadyInCart={isAleadyInCart}
+        />
+        <CartButton
+          title="Delete"
+          onClick={() => handleCartButtonClick("Delete")}
+        />
+      </footer>
+    </ModalWrapper>
   );
 };
 

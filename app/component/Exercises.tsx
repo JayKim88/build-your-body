@@ -32,7 +32,7 @@ const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => (
   >
     <Icon
       className={`${
-        isAleadyInCart && "text-gray6"
+        isAleadyInCart && "text-gray6 cursor-default"
       }  text-gray1 hover:text-gray6 transition-all ease-in-out duration-300`}
     />
   </button>
