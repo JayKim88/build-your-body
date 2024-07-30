@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Exercise } from "../api/types";
 import { useCartStore } from "../store";
 import { ModalWrapper } from "./ModalWrapper";
+import { CartTitleButton } from "./CartTitleButton";
 
 type ExerciseDetailModalProps = {
   isOpen: boolean;
@@ -14,67 +14,42 @@ type ExerciseDetailModalProps = {
   onClose: () => void;
 };
 
-type CartButtonProps = {
-  title: string;
-  onClick: () => void;
-  isAleadyInCart?: boolean;
-};
-
-const CartButton = ({ title, onClick, isAleadyInCart }: CartButtonProps) => {
-  const isAdd = title === "Add";
-
-  return (
-    <button
-      onClick={onClick}
-      className={`${
-        isAdd ? "bg-lightGreen" : "bg-red"
-      } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl width-[110px]
-      ${isAleadyInCart && "bg-gray6 text-black pointer-events-none"} 
-      `}
-    >
-      <Image src="/cart-icon/cart.svg" width={32} height={32} alt="cart" />
-      <span className="text-[20px]">{title}</span>
-    </button>
-  );
-};
-
 export const ExerciseDetailModal = ({
   isOpen,
   data,
   onClose,
 }: ExerciseDetailModalProps) => {
-  const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
   const cartItems = useCartStore((state) => state.stored);
   const addToCart = useCartStore((state) => state.add);
   const removeFromCart = useCartStore((state) => state.remove);
 
-  useEffect(() => {
-    if (isOpen) {
-      setOpen(isOpen);
-      const timer = setTimeout(() => setVisible(true), MODAL_VISIBLE_DELAY);
-      return () => clearTimeout(timer);
-    } else {
-      const openTimer = setTimeout(() => setOpen(false), OVERLAY_OPEN_DELAY);
-      const timer = setTimeout(() => setVisible(false), MODAL_VISIBLE_DELAY);
-      return () => {
-        clearTimeout(openTimer);
-        clearTimeout(timer);
-      };
-    }
-  }, [isOpen]);
+  const {
+    _id,
+    video_url,
+    guide,
+    name,
+    ref,
+    description,
+    thumbnail_img_url,
+    type,
+  } = data ?? {};
 
-  const { _id, video_url, guide, name, ref, description } = data ?? {};
-
-  const isAleadyInCart = !!cartItems.find((v) => v === _id);
+  const isAleadyInCart = !!cartItems.find((v) => v.id === _id);
 
   const handleCartButtonClick = (v: string) => {
     const isAdd = v === "Add";
 
     if (isAdd) {
-      if (isAleadyInCart) return;
+      const enabledToAdd =
+        !isAleadyInCart && _id && name && thumbnail_img_url && type;
 
-      _id && addToCart(_id);
+      enabledToAdd &&
+        addToCart({
+          id: _id,
+          name: name,
+          img_url: thumbnail_img_url,
+          type: type,
+        });
 
       return;
     }
@@ -83,11 +58,7 @@ export const ExerciseDetailModal = ({
   };
 
   return (
-    <ModalWrapper
-      isOpen={isOpen}
-      onClose={onClose}
-      // title="Make your new program"
-    >
+    <ModalWrapper isOpen={isOpen} onClose={onClose}>
       <main className="flex flex-col gap-y-5">
         <iframe
           title="Exercise video player"
@@ -128,12 +99,12 @@ export const ExerciseDetailModal = ({
         </section>
       </main>
       <footer className="flex justify-end gap-10 mt-auto">
-        <CartButton
+        <CartTitleButton
           title="Add"
           onClick={() => handleCartButtonClick("Add")}
           isAleadyInCart={isAleadyInCart}
         />
-        <CartButton
+        <CartTitleButton
           title="Delete"
           onClick={() => handleCartButtonClick("Delete")}
         />
@@ -141,6 +112,3 @@ export const ExerciseDetailModal = ({
     </ModalWrapper>
   );
 };
-
-export const MODAL_VISIBLE_DELAY = 200;
-export const OVERLAY_OPEN_DELAY = 400;

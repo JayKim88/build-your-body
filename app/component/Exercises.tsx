@@ -4,10 +4,12 @@ import Image from "next/image";
 
 import { Exercise } from "../api/types";
 import { exerciseTypes, ExerciseType } from "./Filter";
-import { ExerciseDetailModal, OVERLAY_OPEN_DELAY } from "./ExerciseDetailModal";
+import { ExerciseDetailModal } from "./ExerciseDetailModal";
 import { AddToCart } from "../icon/AddToCart";
 import { RemoveFromCart } from "../icon/RemoveFromCart";
 import { useCartStore } from "../store";
+import { OVERLAY_OPEN_DELAY } from "./ModalWrapper";
+import { getBgColor } from "../utils";
 
 type ExercisesProps = {
   data?: Exercise[];
@@ -50,11 +52,9 @@ const ExerciseCard = (
   const { _id, type, thumbnail_img_url, name, summary, onClick, ...rest } =
     props;
 
-  const bgColor = exerciseTypes.find(
-    (v) => v.type.toLowerCase() === type.toLowerCase()
-  )?.selectedColor;
+  const bgColor = getBgColor(type);
 
-  const isAleadyInCart = !!cartItems.find((v) => v === _id);
+  const isAleadyInCart = !!cartItems.find((v) => v.id === _id);
 
   return (
     <div
@@ -77,7 +77,14 @@ const ExerciseCard = (
       <div className="flex w-full justify-evenly">
         <CartIcon
           title="add to cart"
-          onClick={() => addToCart(_id)}
+          onClick={() =>
+            addToCart({
+              id: _id,
+              name: name,
+              img_url: thumbnail_img_url,
+              type: type,
+            })
+          }
           Icon={AddToCart}
           isAleadyInCart={isAleadyInCart}
         />

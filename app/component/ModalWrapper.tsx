@@ -2,10 +2,6 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-
-import { Exercise } from "../api/types";
-import { useCartStore } from "../store";
 
 type ModalWrapperProps = {
   isOpen: boolean;
@@ -58,12 +54,12 @@ export const ModalWrapper = ({
         }
            w-[800px] h-[1020px] rounded-3xl p-5 bg-gray1 flex flex-col`}
       >
-        <header className="flex justify-end">
+        <header className={`flex ${Title ? "justify-between" : "flex-end"}`}>
+          {Title}
           <button
             onClick={onClose}
             className="flex items-center justify-center"
           >
-            {Title}
             <div className="relative w-[48px] h-[48px]">
               <Image
                 src="/close-button.png"

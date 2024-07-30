@@ -1,8 +1,17 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { ExerciseType } from "./component/Filter";
+
+export type CartProps = {
+  id: string;
+  name: string;
+  img_url: string;
+  type: ExerciseType;
+};
+
 interface CartState {
-  stored: string[];
-  add: (v: string) => void;
+  stored: CartProps[];
+  add: (v: CartProps) => void;
   remove: (v: string) => void;
 }
 
@@ -10,16 +19,16 @@ export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       stored: [],
-      add: (id) => {
+      add: (v) => {
         return set((state) => ({
-          stored: !!state.stored.find((v) => v === id)
+          stored: !!state.stored.find((s) => s.id === v.id)
             ? state.stored
-            : [...state.stored, id],
+            : [...state.stored, v],
         }));
       },
       remove: (id) =>
         set((state) => ({
-          stored: state.stored.filter((v) => v !== id),
+          stored: state.stored.filter((v) => v.id !== id),
         })),
     }),
     {
