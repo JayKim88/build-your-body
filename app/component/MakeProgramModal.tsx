@@ -7,19 +7,15 @@ import { CartProps, useCartStore } from "../store";
 import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { Cart } from "../icon/Cart";
 import { getBgColor } from "../utils";
-import { useEffect, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { CartTitleButton } from "./CartTitleButton";
+import { Button } from "./Button";
+import { ConfirmModal } from "./ConfirmModal";
 
 type MakeProgramModalProps = {
   isOpen: boolean;
   data?: Exercise;
   onClose: () => void;
-};
-
-type CartButtonProps = {
-  title: string;
-  onClick: () => void;
-  isAleadyInCart?: boolean;
 };
 
 const Title = () => {
@@ -31,6 +27,30 @@ const Title = () => {
   );
 };
 
+const handleNumberKeyDown = (
+  event: KeyboardEvent<HTMLInputElement>,
+  decimalAvailable: boolean
+) => {
+  const key = event.key;
+  const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"];
+
+  // Allow control keys
+  if (allowedKeys.includes(key)) {
+    return;
+  }
+
+  // Prevent non-numeric and decimal point keys
+  if (decimalAvailable ? !/^[0-9.]$/.test(key) : !/^[0-9]$/.test(key)) {
+    event.preventDefault();
+  }
+
+  // Prevent multiple decimal points
+  const value = (event.target as HTMLInputElement).value;
+  if (key === "." && value.includes(".")) {
+    event.preventDefault();
+  }
+};
+
 const ExerciseInput = ({
   title,
   value,
@@ -38,7 +58,7 @@ const ExerciseInput = ({
 }: {
   title: string;
   value?: number;
-  onChange: (title: string, value: number) => void;
+  onChange: (title: string, value?: number) => void;
 }) => {
   const decimalAvailable = title === "Weight";
 
@@ -46,12 +66,17 @@ const ExerciseInput = ({
     <div className="flex relative items-center w-full">
       <span className="absolute top-[-24px]">{title}</span>
       <input
-        className="border-2 border-gray2 w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-6 pr-6 pb-0.5"
+        className="border-2 border-gray2 w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4"
         value={value}
         onChange={(e) => {
           const value = e.target.value;
-          onChange(title, Number(value));
+          const isEmpty = value === "";
+          onChange(title, isEmpty ? undefined : Number(value));
         }}
+        {...(decimalAvailable && {
+          placeholder: "kg",
+        })}
+        onKeyDown={(event) => handleNumberKeyDown(event, decimalAvailable)}
         type="number"
         min={0}
         {...(!decimalAvailable && {
@@ -69,7 +94,7 @@ const ExerciseInputs = () => {
     set?: number;
   }>({});
 
-  const handleSetConditions = (title: string, value: number) => {
+  const handleSetConditions = (title: string, value?: number) => {
     setConditions((prev) => ({
       ...prev,
       [`${title.toLowerCase()}`]: value,
@@ -99,8 +124,12 @@ const ExerciseInputs = () => {
   );
 };
 
-const ExerciseSetting = (v: CartProps) => {
-  const { id, img_url, name, type } = v;
+const ExerciseSetting = (
+  v: CartProps & {
+    onDelete: (v: string) => void;
+  }
+) => {
+  const { id, img_url, name, type, onDelete } = v;
   const bgColor = getBgColor(type);
 
   return (
@@ -124,7 +153,7 @@ const ExerciseSetting = (v: CartProps) => {
         <div className="flex justify-end items-center w-full">
           <CartTitleButton
             title="Delete"
-            onClick={() => {}}
+            onClick={() => onDelete(id)}
             className={"h-[44px]"}
           />
         </div>
@@ -137,22 +166,20 @@ export const MakeProgramModal = ({
   isOpen,
   onClose,
 }: MakeProgramModalProps) => {
-  const [data, setData] = useState<CartProps[]>([]);
+  const [openConfirm, setOpenConfirm] = useState<"deleteAll" | "confirm">();
   const cartItems = useCartStore((state) => state.stored);
+  const removeFromCart = useCartStore((state) => state.remove);
+  const removeAllFromCart = useCartStore((state) => state.removeAll);
 
-  useEffect(() => {
-    if (isOpen) {
-      setData(cartItems);
-    } else {
-      setTimeout(() => {
-        setData([]);
-      }, OVERLAY_OPEN_DELAY);
-    }
-  }, [isOpen, cartItems]);
+  const handleDelete = (v: string) => {
+    removeFromCart(v);
+  };
+
+  const handleDeleteAll = () => {};
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose} Title={<Title />}>
-      <main className="flex flex-col gap-y-12 mt-12 overflow-auto">
+      <main className="flex flex-col gap-y-12 mt-2">
         <div className="flex relative items-center w-[480px] gap-6">
           <span className="text-4xl">Name:</span>
           <input className="border-2 border-gray2 w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5" />
@@ -166,12 +193,37 @@ export const MakeProgramModal = ({
           </ol>
         </div>
         <section className="flex flex-col gap-y-6">
-          {data.map((v) => (
-            <ExerciseSetting key={v.id} {...v} />
+          {cartItems.map((v) => (
+            <ExerciseSetting key={v.id} {...v} onDelete={handleDelete} />
           ))}
         </section>
       </main>
-      <footer className="flex justify-end gap-10 mt-auto"></footer>
+      <footer className="flex justify-evenly gap-10 mt-8">
+        <Button
+          title="Delete All"
+          onClick={() => setOpenConfirm("deleteAll")}
+          className={"w-[220px] h-[60px]"}
+          fontSize={32}
+          bgColor="red"
+        />
+        <Button
+          title="Confirm"
+          onClick={() => setOpenConfirm("confirm")}
+          className={"w-[220px] h-[60px]"}
+          fontSize={32}
+          bgColor="lightGreen"
+        />
+      </footer>
+      <ConfirmModal
+        isOpen={!!openConfirm}
+        onClick={(v) => {
+          if (v) {
+            setOpenConfirm(undefined);
+          } else {
+            setOpenConfirm(undefined);
+          }
+        }}
+      />
     </ModalWrapper>
   );
 };

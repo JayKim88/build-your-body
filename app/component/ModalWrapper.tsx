@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useReducer, useRef, useState } from "react";
 import Image from "next/image";
 
 type ModalWrapperProps = {
@@ -16,6 +16,7 @@ export const ModalWrapper = ({
   Title,
   children,
 }: ModalWrapperProps) => {
+  const modalWrapperRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -34,8 +35,21 @@ export const ModalWrapper = ({
     }
   }, [isOpen]);
 
+  /**
+   * @todo prevent parent scrolling
+   */
+  // modalWrapperRef.current?.addEventListener(
+  //   "wheel",
+  //   (event) => {
+  //     event.stopPropagation();
+  //     // event.preventDefault();
+  //   },
+  //   { passive: false }
+  // );
+
   return (
     <div
+      ref={modalWrapperRef}
       className={`${
         open
           ? "flex fixed inset-0 items-center justify-end z-20 pr-4"
@@ -52,9 +66,11 @@ export const ModalWrapper = ({
         className={`transition-all duration-500 ${
           visible ? "translate-x-0" : `translate-x-full -mr-96`
         }
-           w-[800px] h-[1020px] rounded-3xl p-5 bg-gray1 flex flex-col`}
+           w-[800px] max-h-[94vh] rounded-3xl p-5 bg-gray1 flex flex-col`}
       >
-        <header className={`flex ${Title ? "justify-between" : "flex-end"}`}>
+        <header
+          className={`flex pb-5 ${Title ? "justify-between" : "justify-end"}`}
+        >
           {Title}
           <button
             onClick={onClose}
@@ -71,7 +87,7 @@ export const ModalWrapper = ({
             </div>
           </button>
         </header>
-        {children}
+        <div className="overflow-x-hidden overflow-y-auto">{children}</div>
       </div>
     </div>
   );

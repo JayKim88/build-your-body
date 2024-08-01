@@ -13,6 +13,7 @@ interface CartState {
   stored: CartProps[];
   add: (v: CartProps) => void;
   remove: (v: string) => void;
+  removeAll: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -29,6 +30,10 @@ export const useCartStore = create<CartState>()(
       remove: (id) =>
         set((state) => ({
           stored: state.stored.filter((v) => v.id !== id),
+        })),
+      removeAll: () =>
+        set(() => ({
+          stored: [],
         })),
     }),
     {
