@@ -9,7 +9,7 @@ import { Exercise } from "../api/types";
 import { ExerciseType } from "../component/Filter";
 
 export default async function Page() {
-  // const fetchedData = await getExercisesList();
+  const fetchedData = await getExercisesList();
   // console.dir(fetchedData, { depth: null });
 
   return (
@@ -24,7 +24,7 @@ export default async function Page() {
           <SearchInput />
         </div>
       </section>
-      <FilteredList data={mockData} />
+      <FilteredList data={fetchedData.data} />
     </div>
   );
 }

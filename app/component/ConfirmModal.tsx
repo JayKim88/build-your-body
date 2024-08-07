@@ -22,10 +22,6 @@ export const ConfirmModal = ({ isOpen, onClick }: ConfirmModalProps) => {
           ? "flex fixed inset-0 items-center justify-center z-20 pr-4"
           : "hidden"
       } bg-black bg-opacity-50 delay-${MODAL_VISIBLE_DELAY + 500}`}
-      //   onClick={(e) => {
-      //     if (e.target !== e.currentTarget) return; // ignore clicking cart icons
-      //     onClose();
-      //   }}
     >
       <div
         className={`w-[400px] h-[400px] rounded-3xl p-5 bg-gray6 flex flex-col items-center justify-center gap-4`}

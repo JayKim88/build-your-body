@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
+import { SnackbarProvider } from "notistack";
 
 import { useCartStore } from "../store";
 import { MakeProgramModal } from "./MakeProgramModal";
@@ -33,23 +34,25 @@ export const CartButton = () => {
 
   return isLoggedIn && isExercisesPage ? (
     <>
-      <div
-        className={`absolute top-14 right-60 z-10 hover:cursor-pointer ${
-          !cartItems.length && "pointer-events-none"
-        }`}
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <Count />
-        <FontAwesomeIcon
-          icon={faCartShopping}
-          fontSize={48}
-          height={48}
-          width={48}
-        />
-      </div>
-      <MakeProgramModal isOpen={open} onClose={() => setOpen(false)} />
+      <SnackbarProvider>
+        <div
+          className={`absolute top-14 right-60 z-10 hover:cursor-pointer ${
+            !cartItems.length && "pointer-events-none"
+          }`}
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          <Count />
+          <FontAwesomeIcon
+            icon={faCartShopping}
+            fontSize={48}
+            height={48}
+            width={48}
+          />
+        </div>
+        <MakeProgramModal isOpen={open} onClose={() => setOpen(false)} />
+      </SnackbarProvider>
     </>
   ) : (
     <></>

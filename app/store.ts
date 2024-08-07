@@ -1,32 +1,37 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ExerciseType } from "./component/Filter";
+import { ExerciseSet } from "./component/MakeProgramModal";
 
 export type CartProps = {
   id: string;
   name: string;
   img_url: string;
   type: ExerciseType;
-};
+} & ExerciseSet;
 
 interface CartState {
+  programName: string;
   stored: CartProps[];
   add: (v: CartProps) => void;
   remove: (v: string) => void;
   removeAll: () => void;
+  addSettings: (v: ExerciseSet[]) => void;
+  setProgramName: (v: string) => void;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
+      programName: "",
       stored: [],
-      add: (v) => {
-        return set((state) => ({
+
+      add: (v) =>
+        set((state) => ({
           stored: !!state.stored.find((s) => s.id === v.id)
             ? state.stored
             : [...state.stored, v],
-        }));
-      },
+        })),
       remove: (id) =>
         set((state) => ({
           stored: state.stored.filter((v) => v.id !== id),
@@ -34,6 +39,30 @@ export const useCartStore = create<CartState>()(
       removeAll: () =>
         set(() => ({
           stored: [],
+        })),
+      addSettings: (settings) =>
+        set((state) => {
+          const storedWithSettings = state.stored.map((v) => {
+            const foundSettings = settings.find(
+              (setting) => setting.id === v.id
+            );
+
+            if (foundSettings) {
+              return {
+                ...v,
+                ...foundSettings,
+              };
+            }
+            return v;
+          });
+
+          return {
+            stored: storedWithSettings,
+          };
+        }),
+      setProgramName: (v: string) =>
+        set(() => ({
+          programName: v,
         })),
     }),
     {

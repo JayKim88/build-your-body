@@ -10,8 +10,6 @@ const FilteredList = ({ data }: { data: Exercise[] }) => {
 
   const handleFilter = (v: ExerciseType) => setSelectedType(v);
 
-  console.log("Now using demo data!");
-
   return (
     <div className="flex flex-col gap-y-8">
       <Filter onFilter={handleFilter} selectedType={selectedType} />

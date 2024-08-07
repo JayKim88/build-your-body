@@ -1,16 +1,13 @@
 "use server";
 
+import axios from "axios";
 import { Exercise } from "../types";
 
 async function getData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/exercises`);
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch exercises list");
-    }
-
-    const data = await res.json();
+    const data = await axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/exercises`)
+      .then((res) => res.data);
 
     return data as { data: Exercise[] };
   } catch (error) {

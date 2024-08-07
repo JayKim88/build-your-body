@@ -17,6 +17,7 @@ export const ModalWrapper = ({
   children,
 }: ModalWrapperProps) => {
   const modalWrapperRef = useRef<HTMLDivElement>(null);
+  const childrenRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -26,26 +27,19 @@ export const ModalWrapper = ({
       const timer = setTimeout(() => setVisible(true), MODAL_VISIBLE_DELAY);
       return () => clearTimeout(timer);
     } else {
-      const openTimer = setTimeout(() => setOpen(false), OVERLAY_OPEN_DELAY);
+      const openTimer = setTimeout(() => {
+        setOpen(false);
+        if (!childrenRef.current) return;
+        childrenRef.current.scrollTop = 0;
+      }, OVERLAY_OPEN_DELAY);
       const timer = setTimeout(() => setVisible(false), MODAL_VISIBLE_DELAY);
+
       return () => {
         clearTimeout(openTimer);
         clearTimeout(timer);
       };
     }
   }, [isOpen]);
-
-  /**
-   * @todo prevent parent scrolling
-   */
-  // modalWrapperRef.current?.addEventListener(
-  //   "wheel",
-  //   (event) => {
-  //     event.stopPropagation();
-  //     // event.preventDefault();
-  //   },
-  //   { passive: false }
-  // );
 
   return (
     <div
@@ -87,7 +81,12 @@ export const ModalWrapper = ({
             </div>
           </button>
         </header>
-        <div className="overflow-x-hidden overflow-y-auto">{children}</div>
+        <div
+          ref={childrenRef}
+          className="overflow-x-hidden overflow-y-auto overscroll-none"
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
