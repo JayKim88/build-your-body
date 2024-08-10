@@ -8,7 +8,9 @@ export type CartProps = {
   name: string;
   img_url: string;
   type: ExerciseType;
-} & ExerciseSet;
+} & ExerciseSet & {
+    chosen?: boolean; // react-sortablejs 에서 주입하는 인자
+  };
 
 interface CartState {
   programName: string;
@@ -25,7 +27,6 @@ export const useCartStore = create<CartState>()(
     (set) => ({
       programName: "",
       stored: [],
-
       add: (v) =>
         set((state) => ({
           stored: !!state.stored.find((s) => s.id === v.id)

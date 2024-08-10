@@ -6,8 +6,17 @@ import {
   useSession,
 } from "next-auth/react";
 
+import { useCartStore } from "../store";
+
 export const LoginButton = () => {
   const { data: session, status } = useSession();
+  const removeAllFromCart = useCartStore((state) => state.removeAll);
+  const storeProgramName = useCartStore((state) => state.setProgramName);
+
+  const cleanUp = () => {
+    removeAllFromCart();
+    storeProgramName("");
+  };
 
   const isLoggedIn = !!session;
   const isLoading = status === "loading";
@@ -15,11 +24,14 @@ export const LoginButton = () => {
   const handleLoggingAction = () => {
     "use client";
 
-    return isLoggedIn
-      ? logOut({
-          callbackUrl: "/",
-        })
-      : logIn("google");
+    if (isLoggedIn) {
+      cleanUp();
+      logOut({
+        callbackUrl: "/",
+      });
+      return;
+    }
+    logIn("google");
   };
 
   return (

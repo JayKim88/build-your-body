@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 import { Exercise } from "../api/types";
 import { useCartStore } from "../store";
 import { ModalWrapper } from "./ModalWrapper";
 import { CartTitleButton } from "./CartTitleButton";
+import { useBodySnackbar } from "../hook/useSnackbar";
 
 type ExerciseDetailModalProps = {
   isOpen: boolean;
@@ -19,9 +20,13 @@ export const ExerciseDetailModal = ({
   data,
   onClose,
 }: ExerciseDetailModalProps) => {
+  const { bodySnackbar } = useBodySnackbar();
+  const { data: session } = useSession();
   const cartItems = useCartStore((state) => state.stored);
   const addToCart = useCartStore((state) => state.add);
   const removeFromCart = useCartStore((state) => state.remove);
+
+  const isLoggedIn = !!session;
 
   const {
     _id,
@@ -40,6 +45,14 @@ export const ExerciseDetailModal = ({
     const isAdd = v === "Add";
 
     if (isAdd) {
+      if (cartItems.length > 3) {
+        bodySnackbar("운동은 4개까지 추가할 수 있어요. 무리하지 마세요😓", {
+          variant: "info",
+        });
+
+        return;
+      }
+
       const enabledToAdd =
         !isAleadyInCart && _id && name && thumbnail_img_url && type;
 
@@ -98,17 +111,19 @@ export const ExerciseDetailModal = ({
           </div>
         </section>
       </main>
-      <footer className="flex justify-end gap-10 mt-auto">
-        <CartTitleButton
-          title="Add"
-          onClick={() => handleCartButtonClick("Add")}
-          isAleadyInCart={isAleadyInCart}
-        />
-        <CartTitleButton
-          title="Delete"
-          onClick={() => handleCartButtonClick("Delete")}
-        />
-      </footer>
+      {isLoggedIn && (
+        <footer className="flex justify-end gap-10 mt-auto">
+          <CartTitleButton
+            title="Add"
+            onClick={() => handleCartButtonClick("Add")}
+            isAleadyInCart={isAleadyInCart}
+          />
+          <CartTitleButton
+            title="Delete"
+            onClick={() => handleCartButtonClick("Delete")}
+          />
+        </footer>
+      )}
     </ModalWrapper>
   );
 };

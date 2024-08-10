@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ReactSortable } from "react-sortablejs";
 
 import { Exercise } from "../api/types";
 import { CartProps, useCartStore } from "../store";
@@ -81,7 +82,7 @@ const ExerciseInput = ({
     <div className="flex relative items-center w-full">
       <span className="absolute top-[-24px]">{title}</span>
       <input
-        className="border-2 border-gray2 w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4"
+        className="border-2 border-gray2 w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4 text-end"
         value={value ?? ""}
         onChange={(e) => {
           const value = e.target.value;
@@ -238,11 +239,22 @@ export const MakeProgramModal = ({
 
     const newProgram = {
       programName,
-      exercises: exerciseSettings,
+      exercises: exerciseSettings.map(({ chosen, ...rest }) => ({
+        ...rest,
+      })),
     };
 
-    const result = await registerProgram(newProgram);
-    console.log("created program result", result);
+    const { success } = (await registerProgram(newProgram)) ?? {};
+
+    bodySnackbar(
+      success ? "프로그램이 성공적으로 등록되었어요." : "에러가 발생했어요.",
+      {
+        variant: success ? "success" : "error",
+      }
+    );
+
+    if (!success) return;
+    handleDeleteAll();
   };
 
   /**
@@ -300,15 +312,26 @@ export const MakeProgramModal = ({
             <li>Confirm!</li>
           </ol>
         </div>
-        <section className="flex flex-col gap-y-6">
-          {exerciseSettings.map((item) => (
-            <ExerciseSetting
-              key={item.id}
-              {...item}
-              onDelete={handleDelete}
-              onSettings={handleExerciseSettings}
-            />
-          ))}
+        <section>
+          <ReactSortable
+            list={exerciseSettings}
+            setList={setExerciseSettings}
+            animation={200}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: 24,
+            }}
+          >
+            {exerciseSettings.map((item) => (
+              <ExerciseSetting
+                key={item.id}
+                {...item}
+                onDelete={handleDelete}
+                onSettings={handleExerciseSettings}
+              />
+            ))}
+          </ReactSortable>
         </section>
       </main>
       <footer className="flex justify-evenly gap-10 mt-8">
@@ -323,9 +346,12 @@ export const MakeProgramModal = ({
           title="Register"
           onClick={() => {
             if (cartItems.length < 2) {
-              bodySnackbar("프로그램은 적어도 2개의 운동으로 구성됩니다.", {
-                variant: "warning",
-              });
+              bodySnackbar(
+                "프로그램은 적어도 2개의 운동으로 구성되어야 해요.",
+                {
+                  variant: "warning",
+                }
+              );
               return;
             }
 

@@ -1,15 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 import { Exercise } from "../api/types";
-import { exerciseTypes, ExerciseType } from "./Filter";
+import { ExerciseType } from "./Filter";
 import { ExerciseDetailModal } from "./ExerciseDetailModal";
 import { AddToCart } from "../icon/AddToCart";
 import { RemoveFromCart } from "../icon/RemoveFromCart";
 import { useCartStore } from "../store";
 import { OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { getBgColor } from "../utils";
+import { useBodySnackbar } from "../hook/useSnackbar";
 
 type ExercisesProps = {
   data?: Exercise[];
@@ -45,6 +47,8 @@ const ExerciseCard = (
     onClick: (v: string) => void;
   }
 ) => {
+  const { bodySnackbar } = useBodySnackbar();
+  const { data: session } = useSession();
   const cartItems = useCartStore((state) => state.stored);
   const addToCart = useCartStore((state) => state.add);
   const removeFromCart = useCartStore((state) => state.remove);
@@ -56,10 +60,29 @@ const ExerciseCard = (
 
   const isAleadyInCart = !!cartItems.find((v) => v.id === _id);
 
+  const isLoggedIn = !!session;
+
+  const handleAddToCart = () => {
+    if (cartItems.length > 3) {
+      bodySnackbar("운동은 4개까지 추가할 수 있어요. 무리하지 마세요😓", {
+        variant: "info",
+      });
+
+      return;
+    }
+
+    addToCart({
+      id: _id,
+      name: name,
+      img_url: thumbnail_img_url,
+      type: type,
+    });
+  };
+
   return (
     <div
       key={_id}
-      className={`${bgColor} w-[384px] h-[590px] rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
+      className={`${bgColor} w-[384px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
       onClick={() => onClick(_id)}
     >
       <div className="relative w-full h-72 rounded-2xl overflow-hidden">
@@ -74,26 +97,21 @@ const ExerciseCard = (
       </div>
       <div className="text-[32px]">{name}</div>
       <div className="text-lg min-h-[84px] text-black">{summary}</div>
-      <div className="flex w-full justify-evenly">
-        <CartIcon
-          title="add to cart"
-          onClick={() =>
-            addToCart({
-              id: _id,
-              name: name,
-              img_url: thumbnail_img_url,
-              type: type,
-            })
-          }
-          Icon={AddToCart}
-          isAleadyInCart={isAleadyInCart}
-        />
-        <CartIcon
-          title="remove from cart"
-          onClick={() => removeFromCart(_id)}
-          Icon={RemoveFromCart}
-        />
-      </div>
+      {isLoggedIn && (
+        <div className="flex w-full justify-evenly">
+          <CartIcon
+            title="add to cart"
+            onClick={handleAddToCart}
+            Icon={AddToCart}
+            isAleadyInCart={isAleadyInCart}
+          />
+          <CartIcon
+            title="remove from cart"
+            onClick={() => removeFromCart(_id)}
+            Icon={RemoveFromCart}
+          />
+        </div>
+      )}
     </div>
   );
 };
