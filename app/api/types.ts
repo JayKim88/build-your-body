@@ -1,4 +1,5 @@
 import { ExerciseType } from "../component/Filter";
+import { CartProps } from "../store";
 
 export type Exercise = {
   _id: string;
@@ -13,4 +14,11 @@ export type Exercise = {
     title: string;
     url: string;
   }[];
+};
+
+export type RegisteredProgram = {
+  _id: string;
+  userId: string;
+  programName: string;
+  exercises: CartProps[];
 };

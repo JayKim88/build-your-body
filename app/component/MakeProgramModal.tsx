@@ -12,7 +12,7 @@ import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { CartTitleButton } from "./CartTitleButton";
 import { Button } from "./Button";
 import { ConfirmModal } from "./ConfirmModal";
-import { registerProgram } from "../api/register-program/register";
+import { registerProgram } from "../api/programs/register";
 import { useBodySnackbar } from "../hook/useSnackbar";
 
 type MakeProgramModalProps = {
