@@ -45,8 +45,8 @@ export const ExerciseDetailModal = ({
     const isAdd = v === "Add";
 
     if (isAdd) {
-      if (cartItems.length > 3) {
-        bodySnackbar("운동은 4개까지 추가할 수 있어요. 무리하지 마세요😓", {
+      if (cartItems.length > 4) {
+        bodySnackbar("운동은 5개까지 추가할 수 있어요. 무리하지 마세요😓", {
           variant: "info",
         });
 

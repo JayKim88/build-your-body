@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
+import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 
 import { Exercise } from "../api/types";
 import { CartProps, useCartStore } from "../store";
 import { ModalWrapper } from "./ModalWrapper";
 import { Cart } from "../icon/Cart";
 import { getBgColor } from "../utils";
-import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { CartTitleButton } from "./CartTitleButton";
 import { Button } from "./Button";
 import { ConfirmModal } from "./ConfirmModal";
@@ -338,9 +338,8 @@ export const MakeProgramModal = ({
         <Button
           title="Delete All"
           onClick={() => setOpenConfirm("deleteAll")}
-          className={"w-[220px] h-[60px]"}
+          className={"w-[220px] h-[60px] bg-red"}
           fontSize={32}
-          bgColor="red"
         />
         <Button
           title="Register"
@@ -364,9 +363,8 @@ export const MakeProgramModal = ({
 
             setOpenConfirm("register");
           }}
-          className={"w-[220px] h-[60px]"}
+          className={"w-[220px] h-[60px] bg-lightGreen"}
           fontSize={32}
-          bgColor="lightGreen"
         />
       </footer>
       <ConfirmModal

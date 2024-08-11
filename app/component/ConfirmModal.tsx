@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { MODAL_VISIBLE_DELAY, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
+import { MODAL_VISIBLE_DELAY } from "./ModalWrapper";
 import { Button } from "./Button";
 
 type ConfirmModalProps = {
@@ -40,18 +40,18 @@ export const ConfirmModal = ({ isOpen, onClick }: ConfirmModalProps) => {
           <Button
             title="Nope"
             onClick={() => onClick(false)}
-            className={"w-[144px] h-[80px] hover:bg-red hover:text-gray6"}
+            className={
+              "w-[144px] h-[80px] hover:bg-red hover:text-gray6 bg-red"
+            }
             fontSize={40}
-            bgColor="red"
           />
           <Button
             title="Yeah"
             onClick={() => onClick(true)}
             className={
-              "w-[144px] h-[80px] hover:bg-lightGreen hover:text-gray6"
+              "w-[144px] h-[80px] hover:bg-lightGreen hover:text-gray6 bg-lightGreen"
             }
             fontSize={40}
-            bgColor="lightGreen"
           />
         </div>
       </div>

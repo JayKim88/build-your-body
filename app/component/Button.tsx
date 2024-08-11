@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type ButtonProps = {
   title: string;
   onClick: () => void;
@@ -7,7 +5,6 @@ type ButtonProps = {
   className?: string;
   useIcon?: boolean;
   fontSize?: number;
-  bgColor: string;
   disabled?: boolean;
 };
 
@@ -15,21 +12,26 @@ export const Button = ({
   title,
   onClick,
   className,
-  fontSize,
-  bgColor,
+  fontSize = 20,
   disabled,
 }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`bg-${bgColor} ${
+      className={`${
         !disabled && "hover:text-black hover:bg-gray6"
       } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl width-[110px] transition-all duration-300 ease-in-out
          ${className}
         `}
       disabled={disabled}
     >
-      <span className={`text-[${fontSize ?? 20}px]`}>{title}</span>
+      <span
+        style={{
+          fontSize,
+        }}
+      >
+        {title}
+      </span>
     </button>
   );
 };
