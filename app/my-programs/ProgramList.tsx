@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SnackbarProvider } from "notistack";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import { RegisteredProgram } from "../api/types";
@@ -57,6 +58,7 @@ const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
 };
 
 const ProgramItem = (data: RegisteredProgram) => {
+  const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [editProgram, setEditProgram] = useState<RegisteredProgram>();
   const [clicked, setClicked] = useState<string>();
@@ -105,11 +107,12 @@ const ProgramItem = (data: RegisteredProgram) => {
       />
       <CreateEditProgramModal
         isOpen={editOpen}
-        onClose={() => {
+        onClose={(isEdit) => {
           setEditOpen(false);
           setTimeout(() => {
             setEditProgram(undefined);
-          }, OVERLAY_OPEN_DELAY);
+            isEdit && router.refresh();
+          }, OVERLAY_OPEN_DELAY + 500);
         }}
         data={editProgram}
       />
@@ -118,6 +121,12 @@ const ProgramItem = (data: RegisteredProgram) => {
 };
 
 const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.refresh();
+  }, []);
+
   return (
     <div className="flex flex-col gap-y-8">
       <SnackbarProvider>

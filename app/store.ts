@@ -63,7 +63,7 @@ export const useCartStore = create<CartState>()(
         }),
       setProgramName: (v: string) =>
         set((state) => ({
-          programName: v || state.programName,
+          programName: v ?? state.programName,
         })),
     }),
     {

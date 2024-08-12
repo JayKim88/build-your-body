@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
 import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 
-import { Exercise, RegisteredProgram } from "../api/types";
+import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
 import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { Cart } from "../icon/Cart";
@@ -14,13 +14,15 @@ import { Button } from "./Button";
 import { ConfirmModal } from "./ConfirmModal";
 import { registerProgram } from "../api/programs/register";
 import { useBodySnackbar } from "../hook/useSnackbar";
+import { deleteProgram } from "../api/programs/delete";
+import { editProgram } from "../api/programs/edit";
 
 type ConfirmTypes = "deleteAll" | "register" | "editConfirm" | "deleteProgram";
 
 type CreateEditProgramModalProps = {
   isOpen: boolean;
   data?: RegisteredProgram;
-  onClose: () => void;
+  onClose: (isEdit?: boolean) => void;
 };
 
 type ExerciseSettings = {
@@ -246,33 +248,82 @@ export const CreateEditProgramModal = ({
     setExerciseSettings((prev) => prev.filter((v) => v.id !== id));
   };
 
-  const handleDeleteAll = () => {
+  const handleCleanUpCart = () => {
     removeAllFromCart();
-    setProgramName("");
+    storeProgramName("");
     setExerciseSettings([]);
+    setProgramName("");
   };
 
-  const handleRegister = async () => {
+  const handleCreateEdit = async () => {
     if (!exerciseSettings.length) return;
 
-    const newProgram = {
+    const programArgs = {
       programName,
       exercises: exerciseSettings.map(({ chosen, ...rest }) => ({
         ...rest,
       })),
     };
 
-    const { success } = (await registerProgram(newProgram)) ?? {};
+    const { success } = isEdit
+      ? (await editProgram({
+          ...programArgs,
+          programId: data._id,
+        })) ?? {}
+      : (await registerProgram(programArgs)) ?? {};
 
     bodySnackbar(
-      success ? "프로그램이 성공적으로 등록되었어요." : "에러가 발생했어요.",
+      success
+        ? `프로그램이 성공적으로 ${isEdit ? "수정" : "등록"}되었어요.`
+        : "에러가 발생했어요.",
       {
         variant: success ? "success" : "error",
       }
     );
 
     if (!success) return;
-    handleDeleteAll();
+
+    handleCleanUpCart();
+    onClose(true);
+  };
+
+  const handleDeleteProgram = async () => {
+    if (!data) return;
+    const programId = data._id;
+
+    const { success } = (await deleteProgram(programId)) ?? {};
+
+    bodySnackbar(
+      success ? "프로그램이 성공적으로 삭제되었습니다." : "에러가 발생했어요.",
+      {
+        variant: success ? "success" : "error",
+      }
+    );
+    if (!success) return;
+    onClose(true);
+  };
+
+  const handleConfirm = async (isConfirm: boolean) => {
+    const isDeleteAll = openConfirm === "deleteAll";
+    const isDeleteProgram = openConfirm === "deleteProgram";
+
+    if (isConfirm) {
+      if (isEdit) {
+        if (isDeleteProgram) {
+          handleDeleteProgram();
+        } else {
+          handleCreateEdit();
+        }
+      } else {
+        if (isDeleteAll) {
+          handleCleanUpCart();
+        } else {
+          handleCreateEdit();
+        }
+      }
+    }
+
+    setOpenConfirm(undefined);
   };
 
   /**
@@ -318,30 +369,6 @@ export const CreateEditProgramModal = ({
   }, [programName, exerciseSettings]);
 
   const isEdit = !!data;
-
-  const handleConfirm = (isConfirm: boolean) => {
-    const isDeleteAll = openConfirm === "deleteAll";
-    const isDeleteProgram = openConfirm === "deleteProgram";
-    // const isC = openConfirm === "deleteAll";
-    // const isDeleteAll = openConfirm === "deleteAll";
-
-    if (isConfirm) {
-      if (isEdit) {
-        if (isDeleteProgram) {
-          return;
-        }
-      } else {
-        if (isDeleteAll) {
-          handleDeleteAll();
-          return;
-        }
-        handleRegister();
-      }
-
-      return;
-    }
-    setOpenConfirm(undefined);
-  };
 
   return (
     <ModalWrapper
@@ -404,7 +431,7 @@ export const CreateEditProgramModal = ({
         <Button
           title={isEdit ? "Confirm" : "Register"}
           onClick={() => {
-            if (cartItems.length < 2) {
+            if (!isEdit && cartItems.length < 2) {
               bodySnackbar(
                 "프로그램은 적어도 2개의 운동으로 구성되어야 해요.",
                 {

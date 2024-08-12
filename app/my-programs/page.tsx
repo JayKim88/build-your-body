@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { getPrograms } from "../api/programs/getData";
 import { Header } from "../component/Header";
 import { ProgramList } from "./ProgramList";
