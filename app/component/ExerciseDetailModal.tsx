@@ -5,21 +5,26 @@ import { useSession } from "next-auth/react";
 
 import { Exercise } from "../api/types";
 import { useCartStore } from "../store";
-import { ModalWrapper } from "./ModalWrapper";
+import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { CartTitleButton } from "./CartTitleButton";
 import { useBodySnackbar } from "../hook/useSnackbar";
+import { getExerciseData } from "../api/exercise/getData";
+import { useEffect, useState } from "react";
 
 type ExerciseDetailModalProps = {
   isOpen: boolean;
   data?: Exercise;
   onClose: () => void;
+  exerciseId?: string;
 };
 
 export const ExerciseDetailModal = ({
   isOpen,
   data,
   onClose,
+  exerciseId,
 }: ExerciseDetailModalProps) => {
+  const [exerciseData, setExerciseData] = useState<Exercise>();
   const { bodySnackbar } = useBodySnackbar();
   const { data: session } = useSession();
   const cartItems = useCartStore((state) => state.stored);
@@ -27,6 +32,17 @@ export const ExerciseDetailModal = ({
   const removeFromCart = useCartStore((state) => state.remove);
 
   const isLoggedIn = !!session;
+
+  const handleGetData = async () => {
+    const fetchedData = exerciseId && (await getExerciseData(exerciseId));
+
+    fetchedData && setExerciseData(fetchedData);
+  };
+
+  useEffect(() => {
+    if (!exerciseId) return;
+    handleGetData();
+  }, [exerciseId]);
 
   const {
     _id,
@@ -37,7 +53,7 @@ export const ExerciseDetailModal = ({
     description,
     thumbnail_img_url,
     type,
-  } = data ?? {};
+  } = data ?? exerciseData ?? {};
 
   const isAleadyInCart = !!cartItems.find((v) => v.id === _id);
 
@@ -70,8 +86,15 @@ export const ExerciseDetailModal = ({
     _id && removeFromCart(_id);
   };
 
+  useEffect(() => {
+    if (isOpen || !exerciseData) return;
+    setTimeout(() => setExerciseData(undefined), OVERLAY_OPEN_DELAY);
+  }, [isOpen]);
+
+  const isDataReady = data ?? exerciseData;
+
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose}>
+    <ModalWrapper isOpen={isOpen && !!isDataReady} onClose={onClose}>
       <main className="flex flex-col gap-y-5">
         <iframe
           title="Exercise video player"
@@ -111,7 +134,7 @@ export const ExerciseDetailModal = ({
           </div>
         </section>
       </main>
-      {isLoggedIn && (
+      {isLoggedIn && !exerciseData && (
         <footer className="flex justify-end gap-10 mt-auto">
           <CartTitleButton
             title="Add"

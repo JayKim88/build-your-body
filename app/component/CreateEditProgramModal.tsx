@@ -4,9 +4,9 @@ import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
 import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 
-import { Exercise } from "../api/types";
+import { Exercise, RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
-import { ModalWrapper } from "./ModalWrapper";
+import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { Cart } from "../icon/Cart";
 import { getBgColor } from "../utils";
 import { CartTitleButton } from "./CartTitleButton";
@@ -15,9 +15,11 @@ import { ConfirmModal } from "./ConfirmModal";
 import { registerProgram } from "../api/programs/register";
 import { useBodySnackbar } from "../hook/useSnackbar";
 
-type MakeProgramModalProps = {
+type ConfirmTypes = "deleteAll" | "register" | "editConfirm" | "deleteProgram";
+
+type CreateEditProgramModalProps = {
   isOpen: boolean;
-  data?: Exercise;
+  data?: RegisteredProgram;
   onClose: () => void;
 };
 
@@ -34,11 +36,13 @@ export type ExerciseSet = {
   set?: number;
 };
 
-const Title = () => {
+const Title = ({ isEdit }: { isEdit?: boolean }) => {
   return (
     <div className="flex gap-6 items-center">
       <Cart className="text-gray6 w-14 h-14" />
-      <h1 className="text-5xl">Make your new program</h1>
+      <h1 className="text-5xl">
+        {isEdit ? "Change your program" : "Make your new program"}
+      </h1>
     </div>
   );
 };
@@ -148,10 +152,21 @@ const ExerciseSetting = (
   v: CartProps & {
     onDelete: (v: string) => void;
     onSettings: (v: ExerciseSettings) => void;
+    isEdit?: boolean;
   }
 ) => {
-  const { id, img_url, name, type, onDelete, onSettings, repeat, set, weight } =
-    v;
+  const {
+    id,
+    img_url,
+    name,
+    type,
+    onDelete,
+    onSettings,
+    repeat,
+    set,
+    weight,
+    isEdit,
+  } = v;
   const bgColor = getBgColor(type);
 
   return (
@@ -169,7 +184,7 @@ const ExerciseSetting = (
           priority
         />
       </div>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-around">
         <div className="text-4xl leading-10">{name}</div>
         <ExerciseInputs
           id={id}
@@ -181,22 +196,25 @@ const ExerciseSetting = (
             weight,
           }}
         />
-        <div className="flex justify-end items-center w-full">
-          <CartTitleButton
-            title="Delete"
-            onClick={() => onDelete(id)}
-            className={"h-[44px]"}
-          />
-        </div>
+        {!isEdit && (
+          <div className="flex justify-end items-center w-full">
+            <CartTitleButton
+              title="Delete"
+              onClick={() => onDelete(id)}
+              className={"h-[44px]"}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export const MakeProgramModal = ({
+export const CreateEditProgramModal = ({
   isOpen,
   onClose,
-}: MakeProgramModalProps) => {
+  data,
+}: CreateEditProgramModalProps) => {
   const { bodySnackbar } = useBodySnackbar();
   const cartItems = useCartStore((state) => state.stored);
   const removeFromCart = useCartStore((state) => state.remove);
@@ -205,7 +223,7 @@ export const MakeProgramModal = ({
   const storedProgramName = useCartStore((state) => state.programName);
   const storeProgramName = useCartStore((state) => state.setProgramName);
 
-  const [openConfirm, setOpenConfirm] = useState<"deleteAll" | "register">();
+  const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [programName, setProgramName] = useState("");
   const [exerciseSettings, setExerciseSettings] = useState<CartProps[]>([]);
 
@@ -262,6 +280,15 @@ export const MakeProgramModal = ({
    */
   useEffect(() => {
     if (isOpen) return;
+    if (data) {
+      setTimeout(() => {
+        setProgramName("");
+        setExerciseSettings([]);
+      }, OVERLAY_OPEN_DELAY);
+
+      return;
+    }
+
     addSettingsToCart(exerciseSettings);
     storeProgramName(programName);
   }, [
@@ -278,10 +305,10 @@ export const MakeProgramModal = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    setProgramName(storedProgramName);
-    setExerciseSettings(cartItems);
+    setProgramName(data ? data.programName : storedProgramName);
+    setExerciseSettings(data ? data.exercises : cartItems);
     // eslint-disable-next-line
-  }, [isOpen]);
+  }, [isOpen, data]);
 
   const isAllFilled = useMemo(() => {
     return (
@@ -290,8 +317,38 @@ export const MakeProgramModal = ({
     );
   }, [programName, exerciseSettings]);
 
+  const isEdit = !!data;
+
+  const handleConfirm = (isConfirm: boolean) => {
+    const isDeleteAll = openConfirm === "deleteAll";
+    const isDeleteProgram = openConfirm === "deleteProgram";
+    // const isC = openConfirm === "deleteAll";
+    // const isDeleteAll = openConfirm === "deleteAll";
+
+    if (isConfirm) {
+      if (isEdit) {
+        if (isDeleteProgram) {
+          return;
+        }
+      } else {
+        if (isDeleteAll) {
+          handleDeleteAll();
+          return;
+        }
+        handleRegister();
+      }
+
+      return;
+    }
+    setOpenConfirm(undefined);
+  };
+
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose} Title={<Title />}>
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      Title={<Title isEdit={isEdit} />}
+    >
       <main className="flex flex-col gap-y-12 mt-2 overflow-auto">
         <div className="flex relative items-center w-[480px] gap-6">
           <span className="text-4xl">Name:</span>
@@ -304,14 +361,16 @@ export const MakeProgramModal = ({
             className="border-2 border-gray2 w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
           />
         </div>
-        <div className="flex gap-6 items-start">
-          <span className="text-4xl">How to do ?</span>
-          <ol className="list-decimal list-inside gap-y-3 text-3xl [&>li:not(:first-of-type)]:mt-2">
-            <li>Order your exercises!</li>
-            <li>Set up initial settings!</li>
-            <li>Confirm!</li>
-          </ol>
-        </div>
+        {!isEdit && (
+          <div className="flex gap-6 items-start">
+            <span className="text-4xl">How to do ?</span>
+            <ol className="list-decimal list-inside gap-y-3 text-3xl [&>li:not(:first-of-type)]:mt-2">
+              <li>Order your exercises!</li>
+              <li>Set up initial settings!</li>
+              <li>Confirm!</li>
+            </ol>
+          </div>
+        )}
         <section>
           <ReactSortable
             list={exerciseSettings}
@@ -329,6 +388,7 @@ export const MakeProgramModal = ({
                 {...item}
                 onDelete={handleDelete}
                 onSettings={handleExerciseSettings}
+                isEdit={isEdit}
               />
             ))}
           </ReactSortable>
@@ -336,13 +396,13 @@ export const MakeProgramModal = ({
       </main>
       <footer className="flex justify-evenly gap-10 mt-8">
         <Button
-          title="Delete All"
-          onClick={() => setOpenConfirm("deleteAll")}
+          title={isEdit ? "Delete" : "Delete All"}
+          onClick={() => setOpenConfirm(isEdit ? "deleteProgram" : "deleteAll")}
           className={"w-[220px] h-[60px] bg-red"}
           fontSize={32}
         />
         <Button
-          title="Register"
+          title={isEdit ? "Confirm" : "Register"}
           onClick={() => {
             if (cartItems.length < 2) {
               bodySnackbar(
@@ -361,27 +421,13 @@ export const MakeProgramModal = ({
               return;
             }
 
-            setOpenConfirm("register");
+            setOpenConfirm(isEdit ? "editConfirm" : "register");
           }}
           className={"w-[220px] h-[60px] bg-lightGreen"}
           fontSize={32}
         />
       </footer>
-      <ConfirmModal
-        isOpen={!!openConfirm}
-        onClick={(isConfirm) => {
-          const isDeleteAll = openConfirm === "deleteAll";
-
-          if (isConfirm) {
-            if (isDeleteAll) {
-              handleDeleteAll();
-            } else {
-              handleRegister();
-            }
-          }
-          setOpenConfirm(undefined);
-        }}
-      />
+      <ConfirmModal isOpen={!!openConfirm} onClick={handleConfirm} />
     </ModalWrapper>
   );
 };

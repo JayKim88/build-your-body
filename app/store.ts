@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ExerciseType } from "./component/Filter";
-import { ExerciseSet } from "./component/MakeProgramModal";
+import { ExerciseSet } from "./component/CreateEditProgramModal";
 
 export type CartProps = {
   id: string;
@@ -62,8 +62,8 @@ export const useCartStore = create<CartState>()(
           };
         }),
       setProgramName: (v: string) =>
-        set(() => ({
-          programName: v,
+        set((state) => ({
+          programName: v || state.programName,
         })),
     }),
     {

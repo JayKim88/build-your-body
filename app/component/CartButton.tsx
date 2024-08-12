@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { SnackbarProvider } from "notistack";
 
 import { useCartStore } from "../store";
-import { MakeProgramModal } from "./MakeProgramModal";
+import { CreateEditProgramModal } from "./CreateEditProgramModal";
 
 export const CartButton = () => {
   const cartItems = useCartStore((state) => state.stored);
@@ -51,7 +51,7 @@ export const CartButton = () => {
             width={48}
           />
         </div>
-        <MakeProgramModal isOpen={open} onClose={() => setOpen(false)} />
+        <CreateEditProgramModal isOpen={open} onClose={() => setOpen(false)} />
       </SnackbarProvider>
     </>
   ) : (
