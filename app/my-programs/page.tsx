@@ -1,9 +1,10 @@
 import { getPrograms } from "../api/programs/getData";
+import { RegisteredProgram } from "../api/types";
 import { Header } from "../component/Header";
 import { ProgramList } from "./ProgramList";
 
 export default async function Page() {
-  const fetchedData = await getPrograms();
+  const fetchedData = (await getPrograms()) as RegisteredProgram[] | undefined;
   const formattedData = fetchedData?.map(({ _id, userId, ...rest }) => ({
     ...rest,
     _id: _id.toString(),

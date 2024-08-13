@@ -2,12 +2,12 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { RegisteredProgram } from "../types";
 
 const uri = process.env.MONGODB_URI ?? "";
 
-async function getData() {
+async function getData(id?: string) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -28,14 +28,21 @@ async function getData() {
 
     const userId = user?._id;
 
-    const result = await db
-      ?.collection("programs")
-      .find({
-        userId: userId,
-      })
-      .toArray();
+    const result = id
+      ? await db?.collection("programs").findOne({
+          userId,
+          _id: new ObjectId(id),
+        })
+      : await db
+          ?.collection("programs")
+          .find({
+            userId: userId,
+          })
+          .toArray();
 
-    return result as unknown as RegisteredProgram[];
+    return id
+      ? (result as unknown as RegisteredProgram)
+      : (result as unknown as RegisteredProgram[]);
   } catch (error) {
     console.log("fetch failed", error);
   }

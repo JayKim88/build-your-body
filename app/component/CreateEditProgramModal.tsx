@@ -285,9 +285,9 @@ export const CreateEditProgramModal = ({
     if (!success) return;
 
     setUpdated(true);
-    handleCleanUpCart();
     onClose(true);
-  };
+    setTimeout(() => handleCleanUpCart(), OVERLAY_OPEN_DELAY);
+   };
 
   const handleDeleteProgram = async () => {
     if (!data) return;

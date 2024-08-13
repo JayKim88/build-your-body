@@ -62,6 +62,7 @@ const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
 
 const ProgramItem = (data: RegisteredProgram) => {
   const setUpdated = useCartStore((state) => state.setIsUpdated);
+  const router = useRouter();
   const { bodySnackbar } = useBodySnackbar();
   const [editOpen, setEditOpen] = useState(false);
   const [editProgram, setEditProgram] = useState<RegisteredProgram>();
@@ -99,7 +100,7 @@ const ProgramItem = (data: RegisteredProgram) => {
           <h1 className="text-4xl">{programName}</h1>
           <Button
             title="Enter"
-            onClick={() => {}}
+            onClick={() => router.push(`/my-programs/${_id}`)}
             className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
             fontSize={48}
           />
@@ -144,7 +145,7 @@ const ProgramItem = (data: RegisteredProgram) => {
           setEditOpen(false);
           setTimeout(() => {
             setEditProgram(undefined);
-          }, OVERLAY_OPEN_DELAY + 200);
+          }, OVERLAY_OPEN_DELAY + 500);
         }}
         data={editProgram}
       />
