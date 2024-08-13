@@ -11,6 +11,7 @@ import { useCartStore } from "../store";
 import { CreateEditProgramModal } from "./CreateEditProgramModal";
 
 export const CartButton = () => {
+  const storeProgramName = useCartStore((state) => state.setProgramName);
   const cartItems = useCartStore((state) => state.stored);
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -30,6 +31,7 @@ export const CartButton = () => {
   useEffect(() => {
     if (cartItems.length) return;
     setOpen(false);
+    storeProgramName("");
   }, [cartItems.length]);
 
   return isLoggedIn && isExercisesPage ? (

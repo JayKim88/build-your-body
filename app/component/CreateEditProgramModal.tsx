@@ -22,7 +22,7 @@ type ConfirmTypes = "deleteAll" | "register" | "editConfirm" | "deleteProgram";
 type CreateEditProgramModalProps = {
   isOpen: boolean;
   data?: RegisteredProgram;
-  onClose: (isEdit?: boolean) => void;
+  onClose: () => void;
 };
 
 type ExerciseSettings = {
@@ -256,6 +256,20 @@ export const CreateEditProgramModal = ({
     setProgramName("");
   };
 
+  const handleClose = () => {
+    setTimeout(() => {
+      if (isEdit) {
+        setProgramName("");
+        setExerciseSettings([]);
+      } else {
+        addSettingsToCart(exerciseSettings);
+        storeProgramName(programName);
+      }
+    }, OVERLAY_OPEN_DELAY);
+
+    onClose();
+  };
+
   const handleCreateEdit = async () => {
     if (!exerciseSettings.length) return;
 
@@ -285,9 +299,9 @@ export const CreateEditProgramModal = ({
     if (!success) return;
 
     setUpdated(true);
-    onClose(true);
+    handleClose();
     setTimeout(() => handleCleanUpCart(), OVERLAY_OPEN_DELAY);
-   };
+  };
 
   const handleDeleteProgram = async () => {
     if (!data) return;
@@ -303,7 +317,7 @@ export const CreateEditProgramModal = ({
     );
     if (!success) return;
     setUpdated(true);
-    onClose(true);
+    handleClose();
   };
 
   const handleConfirm = async (isConfirm: boolean) => {
@@ -329,29 +343,7 @@ export const CreateEditProgramModal = ({
     setOpenConfirm(undefined);
   };
 
-  /**
-   * @description 모달이 닫힐때 전역에 저장
-   */
-  useEffect(() => {
-    if (isOpen) return;
-    if (data) {
-      setTimeout(() => {
-        setProgramName("");
-        setExerciseSettings([]);
-      }, OVERLAY_OPEN_DELAY);
-
-      return;
-    }
-
-    addSettingsToCart(exerciseSettings);
-    storeProgramName(programName);
-  }, [
-    isOpen,
-    addSettingsToCart,
-    exerciseSettings,
-    programName,
-    storeProgramName,
-  ]);
+  const isEdit = !!data;
 
   /**
    * @description 모달이 열릴때 프로그램 이름과 운동들 세팅
@@ -359,8 +351,8 @@ export const CreateEditProgramModal = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    setProgramName(data ? data.programName : storedProgramName);
-    setExerciseSettings(data ? data.exercises : cartItems);
+    setProgramName(isEdit ? data.programName : storedProgramName);
+    setExerciseSettings(isEdit ? data.exercises : cartItems);
     // eslint-disable-next-line
   }, [isOpen, data]);
 
@@ -371,12 +363,10 @@ export const CreateEditProgramModal = ({
     );
   }, [programName, exerciseSettings]);
 
-  const isEdit = !!data;
-
   return (
     <ModalWrapper
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       Title={<Title isEdit={isEdit} />}
     >
       <main className="flex flex-col gap-y-12 mt-2 overflow-auto">

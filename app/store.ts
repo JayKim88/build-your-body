@@ -65,8 +65,8 @@ export const useCartStore = create<CartState>()(
           };
         }),
       setProgramName: (v: string) =>
-        set((state) => ({
-          programName: v ?? state.programName,
+        set(() => ({
+          programName: v,
         })),
       setIsUpdated: (v: boolean) =>
         set(() => ({
