@@ -13,6 +13,7 @@ export type CartProps = {
   };
 
 interface CartState {
+  isUpdated: boolean;
   programName: string;
   stored: CartProps[];
   add: (v: CartProps) => void;
@@ -20,11 +21,13 @@ interface CartState {
   removeAll: () => void;
   addSettings: (v: ExerciseSet[]) => void;
   setProgramName: (v: string) => void;
+  setIsUpdated: (v: boolean) => void;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
+      isUpdated: false,
       programName: "",
       stored: [],
       add: (v) =>
@@ -64,6 +67,10 @@ export const useCartStore = create<CartState>()(
       setProgramName: (v: string) =>
         set((state) => ({
           programName: v ?? state.programName,
+        })),
+      setIsUpdated: (v: boolean) =>
+        set(() => ({
+          isUpdated: v ?? false,
         })),
     }),
     {

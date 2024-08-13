@@ -7,11 +7,14 @@ import Image from "next/image";
 
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
-import { CartProps } from "../store";
+import { CartProps, useCartStore } from "../store";
 import { getBgColor } from "../utils";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 import { CreateEditProgramModal } from "../component/CreateEditProgramModal";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
+import { deleteProgram } from "../api/programs/delete";
+import { useBodySnackbar } from "../hook/useSnackbar";
+import { ConfirmModal } from "../component/ConfirmModal";
 
 type EditableExerciseCardProps = {
   data: CartProps;
@@ -58,12 +61,36 @@ const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
 };
 
 const ProgramItem = (data: RegisteredProgram) => {
-  const router = useRouter();
+  const setUpdated = useCartStore((state) => state.setIsUpdated);
+  const { bodySnackbar } = useBodySnackbar();
   const [editOpen, setEditOpen] = useState(false);
   const [editProgram, setEditProgram] = useState<RegisteredProgram>();
   const [clicked, setClicked] = useState<string>();
+  const [openConfirm, setOpenConfirm] = useState(false);
 
-  const { exercises: initialExercises, programName, userId } = data ?? {};
+  const { exercises: initialExercises, programName, _id } = data ?? {};
+
+  const handleConfirm = async (v: boolean) => {
+    if (v) {
+      const { success } = (await deleteProgram(_id)) ?? {};
+
+      bodySnackbar(
+        success
+          ? "프로그램이 성공적으로 삭제되었습니다."
+          : "에러가 발생했어요.",
+        {
+          variant: success ? "success" : "error",
+        }
+      );
+
+      if (!success) return;
+      setOpenConfirm(false);
+      setUpdated(true);
+      return;
+    }
+
+    setOpenConfirm(false);
+  };
 
   return (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit">
@@ -88,7 +115,13 @@ const ProgramItem = (data: RegisteredProgram) => {
               setEditProgram(data);
             }}
           />
-          <Image src="/delete_bin.png" alt="delete" width={48} height={48} />
+          <Image
+            src="/delete_bin.png"
+            alt="delete"
+            width={48}
+            height={48}
+            onClick={() => setOpenConfirm(true)}
+          />
         </div>
       </header>
       <main className="flex gap-x-6">
@@ -107,25 +140,29 @@ const ProgramItem = (data: RegisteredProgram) => {
       />
       <CreateEditProgramModal
         isOpen={editOpen}
-        onClose={(isEdit) => {
+        onClose={() => {
           setEditOpen(false);
           setTimeout(() => {
             setEditProgram(undefined);
-            isEdit && router.refresh();
-          }, OVERLAY_OPEN_DELAY + 500);
+          }, OVERLAY_OPEN_DELAY + 200);
         }}
         data={editProgram}
       />
+      <ConfirmModal isOpen={!!openConfirm} onClick={handleConfirm} />
     </div>
   );
 };
 
 const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
   const router = useRouter();
+  const isUpdated = useCartStore((state) => state.isUpdated);
+  const setUpdated = useCartStore((state) => state.setIsUpdated);
 
   useEffect(() => {
+    if (!isUpdated) return;
     router.refresh();
-  }, []);
+    setUpdated(false);
+  }, [isUpdated]);
 
   return (
     <div className="flex flex-col gap-y-8">

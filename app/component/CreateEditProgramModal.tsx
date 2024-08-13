@@ -224,6 +224,7 @@ export const CreateEditProgramModal = ({
   const addSettingsToCart = useCartStore((state) => state.addSettings);
   const storedProgramName = useCartStore((state) => state.programName);
   const storeProgramName = useCartStore((state) => state.setProgramName);
+  const setUpdated = useCartStore((state) => state.setIsUpdated);
 
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [programName, setProgramName] = useState("");
@@ -283,6 +284,7 @@ export const CreateEditProgramModal = ({
 
     if (!success) return;
 
+    setUpdated(true);
     handleCleanUpCart();
     onClose(true);
   };
@@ -300,6 +302,7 @@ export const CreateEditProgramModal = ({
       }
     );
     if (!success) return;
+    setUpdated(true);
     onClose(true);
   };
 
@@ -446,6 +449,23 @@ export const CreateEditProgramModal = ({
                 variant: "warning",
               });
               return;
+            }
+
+            if (isEdit) {
+              const { programName: initialProgramName, exercises } = data;
+
+              const identicalExercises =
+                JSON.stringify(exercises) === JSON.stringify(exerciseSettings);
+
+              const identicalProgramName = initialProgramName === programName;
+
+              if (identicalExercises && identicalProgramName) {
+                bodySnackbar("내용을 변경해주세요.", {
+                  variant: "warning",
+                });
+
+                return;
+              }
             }
 
             setOpenConfirm(isEdit ? "editConfirm" : "register");
