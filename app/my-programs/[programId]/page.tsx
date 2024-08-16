@@ -12,21 +12,10 @@ export default async function Page({
     | RegisteredProgram
     | undefined;
 
-  const { _id, userId, exercises, programName } = fetchedData ?? {};
-
-  if (!_id || !userId || !programName || !exercises) return <></>;
-
-  const formattedData = {
-    _id: _id?.toString(),
-    userId: userId?.toString(),
-    programName,
-    exercises,
-  };
-
   return (
     <div className="h-fit w-screen relative bg-black flex flex-col pt-[20px] px-[80px] gap-y-8">
       <Header />
-      <Progress data={formattedData} />
+      <Progress data={fetchedData} />
     </div>
   );
 }

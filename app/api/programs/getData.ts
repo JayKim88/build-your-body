@@ -1,11 +1,10 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/authOptions";
-import { MongoClient, ObjectId } from "mongodb";
-import { RegisteredProgram } from "../types";
+import axios from "axios";
 
-const uri = process.env.MONGODB_URI ?? "";
+import { authOptions } from "../auth/[...nextauth]/authOptions";
+import { RegisteredProgram } from "../types";
 
 async function getData(id?: string) {
   const session = await getServerSession(authOptions);
@@ -14,40 +13,40 @@ async function getData(id?: string) {
     throw new Error("Unauthorized");
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
-
   try {
-    const user = await db?.collection("users").findOne({
-      email: session?.user?.email,
-    });
+    const result = await axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/programs`, {
+        params: {
+          email: session.user?.email,
+          id: id,
+        },
+      })
+      .then((res) => res.data);
 
-    if (!user) {
-      throw new Error("User not found");
+    let formattedData: RegisteredProgram | RegisteredProgram[];
+
+    if (Array.isArray(result.data)) {
+      formattedData = (result.data as RegisteredProgram[])?.map(
+        ({ _id, userId, ...rest }) => ({
+          ...rest,
+          _id: _id.toString(),
+          userId: userId.toString(),
+        })
+      );
+    } else {
+      const { _id, userId, ...rest } = result.data ?? {};
+      formattedData = {
+        ...rest,
+        _id: _id?.toString(),
+        userId: userId?.toString(),
+      };
     }
 
-    const userId = user?._id;
-
-    const result = id
-      ? await db?.collection("programs").findOne({
-          userId,
-          _id: new ObjectId(id),
-        })
-      : await db
-          ?.collection("programs")
-          .find({
-            userId: userId,
-          })
-          .toArray();
-
-    return id
-      ? (result as unknown as RegisteredProgram)
-      : (result as unknown as RegisteredProgram[]);
+    return formattedData;
   } catch (error) {
     console.log("fetch failed", error);
+    return null;
   }
-
-  client?.close();
 }
 
 export { getData as getPrograms };

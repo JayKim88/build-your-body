@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { SnackbarProvider } from "notistack";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import axios from "axios";
 
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
@@ -155,20 +157,38 @@ const ProgramItem = (data: RegisteredProgram) => {
 };
 
 const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
-  const router = useRouter();
+  const { data: session } = useSession();
   const isUpdated = useCartStore((state) => state.isUpdated);
   const setUpdated = useCartStore((state) => state.setIsUpdated);
+  const [programList, setProgramList] = useState<RegisteredProgram[]>(
+    data ?? []
+  );
+
+  const handleGetUpdatedPrograms = async () => {
+    const fetchedData = (
+      await axios
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/api/programs`, {
+          params: {
+            email: session?.user?.email,
+          },
+        })
+        .then((res) => res.data)
+    ).data as RegisteredProgram[] | undefined;
+
+    setProgramList(fetchedData ?? []);
+  };
 
   useEffect(() => {
     if (!isUpdated) return;
-    router.refresh();
+    handleGetUpdatedPrograms();
     setUpdated(false);
+    // eslint-disable-next-line
   }, [isUpdated]);
 
   return (
     <div className="flex flex-col gap-y-8">
       <SnackbarProvider>
-        {data?.map((v) => (
+        {programList?.map((v) => (
           <ProgramItem key={v._id} {...v} />
         ))}
       </SnackbarProvider>
