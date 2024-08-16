@@ -6,6 +6,7 @@ type ButtonProps = {
   useIcon?: boolean;
   fontSize?: number;
   disabled?: boolean;
+  letterSpacing?: number;
 };
 
 export const Button = ({
@@ -13,6 +14,7 @@ export const Button = ({
   onClick,
   className,
   fontSize = 20,
+  letterSpacing = 2,
   disabled,
 }: ButtonProps) => {
   return (
@@ -28,6 +30,7 @@ export const Button = ({
       <span
         style={{
           fontSize,
+          letterSpacing,
         }}
       >
         {title}

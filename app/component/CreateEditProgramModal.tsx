@@ -247,6 +247,7 @@ export const CreateEditProgramModal = ({
   const handleDelete = (id: string) => {
     removeFromCart(id);
     setExerciseSettings((prev) => prev.filter((v) => v.id !== id));
+    exerciseSettings.length === 1 && storeProgramName("");
   };
 
   const handleCleanUpCart = () => {
