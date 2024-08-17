@@ -11,6 +11,7 @@ const config: Config = {
   theme: {
     colors: {
       black: "#000000",
+      gray0: "#222222",
       gray1: "#333333",
       gray2: "#4F4F4F",
       gray6: "#F2F2F2",
@@ -23,6 +24,7 @@ const config: Config = {
       blue: "#2F80ED",
       purple: "#B149D2",
       orange: "#F2994A",
+      transparent: "transparent",
     },
     extend: {
       // fontFamily: {

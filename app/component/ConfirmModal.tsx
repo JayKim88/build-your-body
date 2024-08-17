@@ -6,9 +6,14 @@ import { Button } from "./Button";
 type ConfirmModalProps = {
   isOpen: boolean;
   onClick: (v: boolean) => void;
+  content?: string;
 };
 
-export const ConfirmModal = ({ isOpen, onClick }: ConfirmModalProps) => {
+export const ConfirmModal = ({
+  isOpen,
+  onClick,
+  content = "Are you sure?",
+}: ConfirmModalProps) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -35,7 +40,7 @@ export const ConfirmModal = ({ isOpen, onClick }: ConfirmModalProps) => {
             priority
           />
         </div>
-        <div className="text-4xl text-black">Are you sure?</div>
+        <div className="text-4xl text-black">{content}</div>
         <div className="flex gap-x-4 mt-4">
           <Button
             title="Nope"

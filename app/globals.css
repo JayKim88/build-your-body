@@ -58,4 +58,8 @@ input[type="number"] {
   .btn-basic {
     @apply w-fit rounded-[32px] px-10 py-5 text-[32px] font-normal;
   }
+  .exercise-checkbox:checked::after {
+    content: '✔';
+    @apply text-[24px] flex items-center justify-center h-6;
+  }
 }

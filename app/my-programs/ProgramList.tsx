@@ -9,7 +9,7 @@ import axios from "axios";
 
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
-import { CartProps, useCartStore } from "../store";
+import { CartProps, useCartStore, useProgressStore } from "../store";
 import { getBgColor } from "../utils";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 import { CreateEditProgramModal } from "../component/CreateEditProgramModal";
@@ -63,6 +63,7 @@ const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
 };
 
 const ProgramItem = (data: RegisteredProgram) => {
+  const savedProgramId = useProgressStore((state) => state.programId);
   const setUpdated = useCartStore((state) => state.setIsUpdated);
   const router = useRouter();
   const { bodySnackbar } = useBodySnackbar();
@@ -95,37 +96,55 @@ const ProgramItem = (data: RegisteredProgram) => {
     setOpenConfirm(false);
   };
 
+  const isInprogress = !!savedProgramId;
+  const isProgramInprogress = isInprogress && savedProgramId === _id;
+
   return (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit">
       <header className="flex justify-between h-20">
         <div className="flex items-center gap-x-8">
           <h1 className="text-4xl">{programName}</h1>
-          <Button
-            title="Enter"
-            onClick={() => router.push(`/my-programs/${_id}`)}
-            className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
-            fontSize={48}
-          />
+          {isInprogress ? (
+            isProgramInprogress ? (
+              <Button
+                title={"Continue"}
+                onClick={() => router.push(`/my-programs/${_id}`)}
+                className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
+                fontSize={48}
+              />
+            ) : (
+              <></>
+            )
+          ) : (
+            <Button
+              title={"Enter"}
+              onClick={() => router.push(`/my-programs/${_id}`)}
+              className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
+              fontSize={48}
+            />
+          )}
         </div>
-        <div className="flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]">
-          <Image
-            src="/edit.png"
-            alt="edit"
-            width={48}
-            height={48}
-            onClick={() => {
-              setEditOpen(true);
-              setEditProgram(data);
-            }}
-          />
-          <Image
-            src="/delete_bin.png"
-            alt="delete"
-            width={48}
-            height={48}
-            onClick={() => setOpenConfirm(true)}
-          />
-        </div>
+        {!isProgramInprogress && (
+          <div className="flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]">
+            <Image
+              src="/edit.png"
+              alt="edit"
+              width={48}
+              height={48}
+              onClick={() => {
+                setEditOpen(true);
+                setEditProgram(data);
+              }}
+            />
+            <Image
+              src="/delete_bin.png"
+              alt="delete"
+              width={48}
+              height={48}
+              onClick={() => setOpenConfirm(true)}
+            />
+          </div>
+        )}
       </header>
       <main className="flex gap-x-6">
         {initialExercises?.map((exercise) => (

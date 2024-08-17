@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
-import { KeyboardEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
 import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { Cart } from "../icon/Cart";
-import { getBgColor } from "../utils";
+import { getBgColor, handleNumberKeyDown } from "../utils";
 import { CartTitleButton } from "./CartTitleButton";
 import { Button } from "./Button";
 import { ConfirmModal } from "./ConfirmModal";
@@ -47,30 +47,6 @@ const Title = ({ isEdit }: { isEdit?: boolean }) => {
       </h1>
     </div>
   );
-};
-
-const handleNumberKeyDown = (
-  event: KeyboardEvent<HTMLInputElement>,
-  decimalAvailable: boolean
-) => {
-  const key = event.key;
-  const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"];
-
-  // Allow control keys
-  if (allowedKeys.includes(key)) {
-    return;
-  }
-
-  // Prevent non-numeric and decimal point keys
-  if (decimalAvailable ? !/^[0-9.]$/.test(key) : !/^[0-9]$/.test(key)) {
-    event.preventDefault();
-  }
-
-  // Prevent multiple decimal points
-  const value = (event.target as HTMLInputElement).value;
-  if (key === "." && value.includes(".")) {
-    event.preventDefault();
-  }
 };
 
 const ExerciseInput = ({

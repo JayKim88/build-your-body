@@ -24,6 +24,15 @@ interface CartState {
   setIsUpdated: (v: boolean) => void;
 }
 
+interface ProgressState {
+  programId: string;
+  workoutTime: number;
+  saveWorkoutTime: (v: number) => void;
+  resetWorkoutTime: () => void;
+  saveProgramId: (v: string) => void;
+  resetProgramId: () => void;
+}
+
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
@@ -75,6 +84,35 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "cartStore",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);
+
+export const useProgressStore = create<ProgressState>()(
+  persist(
+    (set) => ({
+      programId: "",
+      workoutTime: 0,
+      saveWorkoutTime: (v: number) =>
+        set(() => ({
+          workoutTime: v,
+        })),
+      resetWorkoutTime: () =>
+        set(() => ({
+          workoutTime: 0,
+        })),
+      saveProgramId: (v: string) =>
+        set(() => ({
+          programId: v,
+        })),
+      resetProgramId: () =>
+        set(() => ({
+          programId: "",
+        })),
+    }),
+    {
+      name: "progressStore",
       storage: createJSONStorage(() => sessionStorage),
     }
   )
