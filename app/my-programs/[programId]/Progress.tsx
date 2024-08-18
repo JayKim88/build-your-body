@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RegisteredProgram } from "@/app/api/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper/modules";
+import "swiper/swiper-bundle.css";
 
 import { Button } from "@/app/component/Button";
 import { ConfirmModal } from "@/app/component/ConfirmModal";
 import { CartProps, useProgressStore } from "@/app/store";
 import { handleNumberKeyDown } from "@/app/utils";
+import ProgressTimerButton from "./ProgressTimer";
 
 type ProgressProps = {
   data: RegisteredProgram | undefined;
@@ -28,13 +32,27 @@ type UpdateExerciseSetRowValues = {
   value?: number | boolean;
 };
 
-const formattedTime = (time: number) => {
-  const getSeconds = `0${time % 60}`.slice(-2);
-  const minutes = `${Math.floor(time / 60)}`;
-  const getMinutes = `0${parseInt(minutes) % 60}`.slice(-2);
-  const getHours = `0${Math.floor(time / 3600)}`.slice(-2);
+type ExerciseProgressCardProps = {
+  data: ExercisesStatus[0];
+  index: number;
+  isRunning: boolean;
+  isInprogress: boolean;
+  isLastExercise: boolean;
+  onUpdate: (v: UpdateExerciseSetRowValues) => void;
+  onAddDeleteSet: (id: string, isAdd: boolean) => void;
+  onProceedToNextExercise: (index: number, id: string) => void;
+};
 
-  return `${getHours}:${getMinutes}:${getSeconds}`;
+export type ExercisesStatus = (CartProps & {
+  exerciseSetValues: ExerciseSetValues[];
+  isCompleted?: boolean;
+})[];
+
+type ExerciseInputProps = {
+  title: string;
+  value?: number;
+  onChange: (title: string, value?: number) => void;
+  isInProgess: boolean;
 };
 
 const ExerciseInput = ({
@@ -42,18 +60,13 @@ const ExerciseInput = ({
   value,
   onChange,
   isInProgess,
-}: {
-  title: string;
-  value?: number;
-  onChange: (title: string, value?: number) => void;
-  isInProgess: boolean;
-}) => {
+}: ExerciseInputProps) => {
   const isWeight = title === "Weight";
 
   return (
     <div className="flex relative items-center">
       <input
-        className={`${
+        className={`exercise-input ${
           isInProgess ? "border-2 border-yellow bg-gray2" : "bg-gray0"
         } w-[72px] h-[34px] rounded-lg outline-none text-2xl pl-2 pr-2 text-end mr-1`}
         value={value ?? ""}
@@ -82,9 +95,11 @@ const ExerciseSetRow = ({
   onUpdateExerciseSetRow,
   exerciseSetValues,
   checked,
+  isInprogress,
 }: ExerciseSetValues & {
   onUpdateExerciseSetRow: (v: UpdateExerciseSetRowValues) => void;
   exerciseSetValues: ExerciseSetValues[];
+  isInprogress: boolean;
 }) => {
   const updateExerciseSetValue = (title: string, value?: number | boolean) => {
     onUpdateExerciseSetRow({
@@ -94,20 +109,26 @@ const ExerciseSetRow = ({
     });
   };
 
-  const isInProgess =
-    (order === 1 && !checked) ||
-    (exerciseSetValues[order - 2]?.checked && !checked);
-  const isNextSet = !isInProgess && !checked;
+  const isFirstSetAndUnchecked = order === 1 && !checked;
+  const isPrevCheckedAndThisUnchecked =
+    exerciseSetValues[order - 2]?.checked && !checked;
 
-  const checkboxBorderColor = isInProgess
+  const isInProgessSet =
+    isInprogress && (isFirstSetAndUnchecked || isPrevCheckedAndThisUnchecked);
+  const isNextSet = !isInProgessSet && !checked;
+
+  const checkboxBorderColor = isInProgessSet
     ? "border-yellow"
     : isNextSet
     ? "border-transparent"
     : "border-gray6";
-
-  const progressStyles = isInProgess
+  const progressStyles = isInProgessSet
     ? "border-2 border-yellow bg-gray2"
     : "pointer-events-none bg-gray0";
+  const valuesRequiredStyles = !repeat || !weight ? "pointer-events-none" : "";
+  const checkedStyles = checked
+    ? "after:content-['✔'] text-[24px] flex items-center justify-center h-6"
+    : "";
 
   return (
     <div
@@ -118,19 +139,19 @@ const ExerciseSetRow = ({
         title="Weight"
         onChange={updateExerciseSetValue}
         value={weight}
-        isInProgess={isInProgess}
+        isInProgess={isInProgessSet}
       />
       <ExerciseInput
         title="Repeat"
         onChange={updateExerciseSetValue}
         value={repeat}
-        isInProgess={isInProgess}
+        isInProgess={isInProgessSet}
       />
       <input
         type="checkbox"
-        className={`exercise-checkbox appearance-none outline-none w-8 h-8 border-2 rounded-lg text-gray6 cursor-pointer ${checkboxBorderColor} ${
-          (!repeat || !weight) && "pointer-events-none"
-        }`}
+        className={`appearance-none outline-none w-8 h-8 border-2 rounded-lg text-gray6 cursor-pointer 
+          ${checkboxBorderColor} ${valuesRequiredStyles} ${checkedStyles}         
+        `}
         onChange={(e) => {
           updateExerciseSetValue("checked", e.target.checked);
         }}
@@ -141,16 +162,23 @@ const ExerciseSetRow = ({
 
 const ExerciseProgressCard = ({
   data,
+  index,
   onUpdate,
   isRunning,
-}: {
-  data: ExercisesStatus[0];
-  onUpdate: (v: UpdateExerciseSetRowValues) => void;
-  isRunning: boolean;
-}) => {
+  isInprogress,
+  isLastExercise,
+  onAddDeleteSet,
+  onProceedToNextExercise,
+}: ExerciseProgressCardProps) => {
   const updateExerciseSetRow = (v: UpdateExerciseSetRowValues) => onUpdate(v);
 
   const isCompleted = data.isCompleted;
+  const isUnclickable = !isRunning || !isInprogress;
+  const isRestAllChecked =
+    !!data.exerciseSetValues.length &&
+    data.exerciseSetValues.every((v) => v.checked);
+  const isNextButtonAvailable =
+    isInprogress && !isCompleted && isRestAllChecked;
 
   return (
     <div className="relative">
@@ -160,9 +188,9 @@ const ExerciseProgressCard = ({
         </div>
       )}
       <div
-        className={`w-[400px] min-w-[400px] h-fit rounded-[32px] border-2 p-5 bg-gray1 flex flex-col gap-y-5 ${
-          (!isRunning || isCompleted) && "pointer-events-none opacity-25"
-        }`}
+        className={`w-[400px] min-w-[400px] h-fit rounded-[32px] p-5 bg-gray1 flex flex-col gap-y-5 
+          ${isUnclickable && "pointer-events-none opacity-25"}
+        `}
       >
         <h1 className="text-[32px] font-medium">{data.name}</h1>
         <div className="relative w-full h-[360px] rounded-2xl overflow-hidden">
@@ -180,6 +208,7 @@ const ExerciseProgressCard = ({
             <ExerciseSetRow
               key={v.order}
               {...v}
+              isInprogress={isInprogress}
               exerciseSetValues={data.exerciseSetValues}
               onUpdateExerciseSetRow={(v) =>
                 updateExerciseSetRow({
@@ -190,76 +219,169 @@ const ExerciseProgressCard = ({
             />
           ))}
         </div>
+        <div className="flex justify-between px-8">
+          <button
+            className="text-2xl text-realGreen"
+            onClick={() => {
+              onAddDeleteSet(data.id, true);
+            }}
+          >
+            + Add Set
+          </button>
+          <button
+            className="text-2xl text-red"
+            onClick={() => {
+              onAddDeleteSet(data.id, false);
+            }}
+          >
+            - Remove Set
+          </button>
+        </div>
+        <button
+          className={`text-2xl ${
+            isNextButtonAvailable ? "text-yellow" : "text-gray2"
+          }`}
+          onClick={() => {
+            onProceedToNextExercise(index + 1, data.id);
+          }}
+          disabled={!isNextButtonAvailable}
+        >
+          {isLastExercise ? "Complete Program" : "➔ Next Exercise"}
+        </button>
       </div>
     </div>
   );
 };
 
-type ExercisesStatus = (CartProps & {
-  exerciseSetValues: ExerciseSetValues[];
-  isCompleted?: boolean;
-})[];
-
 export const Progress = ({ data }: ProgressProps) => {
+  const swiperRef = useRef<SwiperClass | null>(null);
   const router = useRouter();
-  const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
-  const saveWorkoutTime = useProgressStore((state) => state.saveWorkoutTime);
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
-  const saveProgramId = useProgressStore((state) => state.saveProgramId);
   const resetProgramId = useProgressStore((state) => state.resetProgramId);
+  const savedExercisesStatus = useProgressStore(
+    (state) => state.savedExercisesStatus
+  );
+  const saveExercisesStatus = useProgressStore(
+    (state) => state.saveExercisesStatus
+  );
+  const resetExercisesStatus = useProgressStore(
+    (state) => state.resetExercisesStatus
+  );
 
   const [exercisesStatus, setExercisesStatus] = useState<ExercisesStatus>();
-  const [time, setTime] = useState(0); // Time in seconds
   const [isRunning, setIsRunning] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const handleStart = () => {
-    !time && saveProgramId(data?._id ?? "");
-    setIsRunning(true);
+  const setRunning = (isRunning: boolean) => {
+    setIsRunning(isRunning);
   };
 
-  const handlePause = () => {
-    setIsRunning(false);
-  };
+  const updateProgressStatus = useCallback(
+    (newStatus: UpdateExerciseSetRowValues) => {
+      setExercisesStatus((prev) => {
+        const lastExercisesStatus = prev;
 
-  const handleUpdateProgressStatus = (
-    newStatus: UpdateExerciseSetRowValues
-  ) => {
-    setExercisesStatus((prev) => {
-      const lastExercisesStatus = prev;
+        const newExercisesStatus = lastExercisesStatus?.map((prevStatus) => {
+          if (prevStatus.id === newStatus.id) {
+            const newExerciseSetValues = prevStatus.exerciseSetValues.map(
+              (v) => {
+                if (v.order === newStatus.order) {
+                  return {
+                    ...v,
+                    [newStatus.title.toLocaleLowerCase()]: newStatus.value,
+                  };
+                }
+                return v;
+              }
+            );
 
-      const newExercisesStatus = lastExercisesStatus?.map((prevStatus) => {
-        if (prevStatus.id === newStatus.id) {
-          const newExerciseSetValues = prevStatus.exerciseSetValues.map((v) => {
-            if (v.order === newStatus.order) {
-              return {
-                ...v,
-                [newStatus.title.toLocaleLowerCase()]: newStatus.value,
-              };
+            const isAllChecked = newExerciseSetValues.every((v) => v.checked);
+
+            return {
+              ...prevStatus,
+              exerciseSetValues: newExerciseSetValues,
+              isCompleted: isAllChecked,
+            };
+          }
+          return prevStatus;
+        });
+
+        newExercisesStatus && saveExercisesStatus(newExercisesStatus);
+
+        return newExercisesStatus;
+      });
+    },
+    [saveExercisesStatus]
+  );
+
+  const addDeleteExerciseSet = useCallback(
+    (id: string, isAdd: boolean) => {
+      setExercisesStatus((prev) => {
+        const newExercisesStatus = prev?.map((v) => {
+          if (v.id === id) {
+            if (isAdd) {
+              const initialSetValues = data?.exercises.find((v) => v.id === id);
+
+              v.exerciseSetValues.push({
+                order: v.exerciseSetValues.length + 1,
+                weight: initialSetValues?.weight,
+                repeat: initialSetValues?.repeat,
+                checked: false,
+              });
+
+              return v;
             }
-            return v;
-          });
+            v.exerciseSetValues.pop();
 
-          const isAllChecked = newExerciseSetValues.every((v) => v.checked);
+            return {
+              ...v,
+              isCompleted: false,
+            };
+          }
+          return v;
+        });
 
+        newExercisesStatus && saveExercisesStatus(newExercisesStatus);
+
+        return newExercisesStatus;
+      });
+    },
+    [data?.exercises, saveExercisesStatus]
+  );
+
+  const proceedToNextExercise = (nextIndex: number, id: string) => {
+    setExercisesStatus((prev) => {
+      const lastStatus = prev;
+
+      const newStatus = lastStatus?.map((v) => {
+        if (v.id === id) {
           return {
-            ...prevStatus,
-            exerciseSetValues: newExerciseSetValues,
-            isCompleted: isAllChecked,
+            ...v,
+            isCompleted: true,
           };
         }
-        return prevStatus;
+        return v;
       });
 
-      return newExercisesStatus;
+      newStatus && saveExercisesStatus(newStatus);
+
+      return newStatus;
     });
+
+    const isNextExerciseAvailable = !!exercisesStatus?.[nextIndex];
+    isNextExerciseAvailable && swiperRef.current?.slideTo(nextIndex);
   };
 
   useEffect(() => {
     if (!data) return;
 
+    if (savedExercisesStatus.length) {
+      setExercisesStatus(savedExercisesStatus);
+      return;
+    }
+
     const formattedExercises = data.exercises.map((v) => {
-      const exerciseSetValues = [];
+      const exerciseSetValues = [] as ExerciseSetValues[];
 
       const setCount = v.set ?? 0;
 
@@ -279,72 +401,93 @@ export const Progress = ({ data }: ProgressProps) => {
     });
 
     setExercisesStatus(formattedExercises);
-  }, [data]);
+  }, [data, savedExercisesStatus]);
+
+  const nextProgressExerciseIndex = useMemo(
+    () => exercisesStatus?.findIndex((v) => !v.isCompleted),
+    [exercisesStatus]
+  );
 
   useEffect(() => {
-    setTime(savedWorkoutTime);
-  }, [savedWorkoutTime]);
+    const isOverZero =
+      nextProgressExerciseIndex && nextProgressExerciseIndex > 0;
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    if (!isOverZero) return;
 
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTime((prev) => {
-          saveWorkoutTime(prev + 1);
-          return prev + 1;
-        });
-      }, 1000);
-    } else if (!isRunning && time !== 0) {
-      clearInterval(interval!);
-    }
+    swiperRef.current?.slideTo(nextProgressExerciseIndex);
+  }, [nextProgressExerciseIndex]);
 
-    return () => {
-      clearInterval(interval!);
-    };
-    // eslint-disable-next-line
-  }, [isRunning]);
+  const MemoizedExerciseProgressCards = useMemo(() => {
+    return (
+      <div className="flex gap-x-10">
+        <Swiper
+          noSwipingClass="exercise-input"
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          effect={"coverflow"}
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView={"auto"}
+          coverflowEffect={{
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+            scale: 0.7,
+          }}
+          modules={[EffectCoverflow, Pagination]}
+          className="exercise-progress-cards-swiper"
+          style={{
+            paddingTop: 16,
+            paddingBottom: 16,
+          }}
+        >
+          {exercisesStatus?.map((exerciseStatus, index) => {
+            const isInprogressExercise = index === nextProgressExerciseIndex;
+            const isLastExercise = index === exercisesStatus.length - 1;
+
+            return (
+              <SwiperSlide
+                key={exerciseStatus.id}
+                style={{
+                  width: "fit-content",
+                }}
+              >
+                <ExerciseProgressCard
+                  key={exerciseStatus.id}
+                  index={index}
+                  data={exerciseStatus}
+                  isRunning={isRunning}
+                  isInprogress={isInprogressExercise}
+                  isLastExercise={isLastExercise}
+                  onUpdate={updateProgressStatus}
+                  onAddDeleteSet={addDeleteExerciseSet}
+                  onProceedToNextExercise={proceedToNextExercise}
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
+    );
+  }, [
+    exercisesStatus,
+    isRunning,
+    updateProgressStatus,
+    nextProgressExerciseIndex,
+    addDeleteExerciseSet,
+  ]);
 
   return (
-    <section className="flex flex-col gap-y-[100px]">
+    <section className="flex flex-col gap-y-[48px]">
       <div className="flex justify-between h-16">
         <div className="flex items-center gap-x-12">
           <h1 className="text-5xl">{data?.programName}</h1>
-          {time ? (
-            <div className="rounded-3xl flex gap-x-4 items-center border-2 px-[20px] h-16">
-              <div className="text-[32px] min-w-28">{formattedTime(time)}</div>
-              {isRunning ? (
-                <div className="relative w-8 h-8">
-                  <Image
-                    className="object-contain cursor-pointer"
-                    src="/pause.png"
-                    alt="pause program"
-                    fill
-                    onClick={handlePause}
-                  />
-                </div>
-              ) : (
-                <div className="relative w-8 h-8">
-                  <Image
-                    className="object-contain cursor-pointer"
-                    src="/resume.png"
-                    alt="resume program"
-                    fill
-                    onClick={handleStart}
-                  />
-                </div>
-              )}
-            </div>
-          ) : (
-            <Button
-              title="START"
-              onClick={() => {
-                handleStart();
-              }}
-              className="border-2 px-[40px]"
-              fontSize={32}
-            />
-          )}
+          <ProgressTimerButton
+            data={data}
+            isRunning={isRunning}
+            onSetRunning={setRunning}
+          />
         </div>
         <Button
           title="TERMINATE"
@@ -356,16 +499,7 @@ export const Progress = ({ data }: ProgressProps) => {
           className="text-red bg-red/50 hover:text-red hover:bg-red/50 px-[40px] h-16"
         />
       </div>
-      <div className="flex gap-x-10">
-        {exercisesStatus?.map((exerciseStatus) => (
-          <ExerciseProgressCard
-            key={exerciseStatus.id}
-            data={exerciseStatus}
-            onUpdate={(values) => handleUpdateProgressStatus(values)}
-            isRunning={isRunning}
-          />
-        ))}
-      </div>
+      {MemoizedExerciseProgressCards}
       <ConfirmModal
         isOpen={!!openConfirm}
         onClick={(v) => {
@@ -373,6 +507,7 @@ export const Progress = ({ data }: ProgressProps) => {
             router.replace("/my-programs");
             resetProgramId();
             resetWorkoutTime();
+            resetExercisesStatus();
 
             return;
           }

@@ -24,6 +24,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-sortablejs": "^6.1.4",
+    "swiper": "^11.1.9",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

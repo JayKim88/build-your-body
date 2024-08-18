@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ExerciseType } from "./component/Filter";
 import { ExerciseSet } from "./component/CreateEditProgramModal";
+import { ExercisesStatus } from "./my-programs/[programId]/Progress";
 
 export type CartProps = {
   id: string;
@@ -31,6 +32,9 @@ interface ProgressState {
   resetWorkoutTime: () => void;
   saveProgramId: (v: string) => void;
   resetProgramId: () => void;
+  saveExercisesStatus: (v: ExercisesStatus) => void;
+  savedExercisesStatus: ExercisesStatus;
+  resetExercisesStatus: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -94,6 +98,7 @@ export const useProgressStore = create<ProgressState>()(
     (set) => ({
       programId: "",
       workoutTime: 0,
+      savedExercisesStatus: [],
       saveWorkoutTime: (v: number) =>
         set(() => ({
           workoutTime: v,
@@ -109,6 +114,14 @@ export const useProgressStore = create<ProgressState>()(
       resetProgramId: () =>
         set(() => ({
           programId: "",
+        })),
+      saveExercisesStatus: (v: ExercisesStatus) =>
+        set(() => ({
+          savedExercisesStatus: v,
+        })),
+      resetExercisesStatus: () =>
+        set(() => ({
+          savedExercisesStatus: [],
         })),
     }),
     {
