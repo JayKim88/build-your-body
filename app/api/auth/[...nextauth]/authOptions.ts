@@ -18,6 +18,7 @@ async function addUserToDB(user: User | AdapterUser) {
     image: user.image,
     createdAt: new Date(),
   });
+  client.close();
 }
 
 export const authOptions = {

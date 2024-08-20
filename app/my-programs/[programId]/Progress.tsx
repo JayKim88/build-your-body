@@ -13,6 +13,7 @@ import { ConfirmModal } from "@/app/component/ConfirmModal";
 import { CartProps, useProgressStore } from "@/app/store";
 import { handleNumberKeyDown } from "@/app/utils";
 import ProgressTimerButton from "./ProgressTimer";
+import { BreakTimeModal } from "./BreakTimeModal";
 
 type ProgressProps = {
   data: RegisteredProgram | undefined;
@@ -163,10 +164,10 @@ const ExerciseSetRow = ({
 const ExerciseProgressCard = ({
   data,
   index,
-  onUpdate,
   isRunning,
   isInprogress,
   isLastExercise,
+  onUpdate,
   onAddDeleteSet,
   onProceedToNextExercise,
 }: ExerciseProgressCardProps) => {
@@ -241,9 +242,7 @@ const ExerciseProgressCard = ({
           className={`text-2xl ${
             isNextButtonAvailable ? "text-yellow" : "text-gray2"
           }`}
-          onClick={() => {
-            onProceedToNextExercise(index + 1, data.id);
-          }}
+          onClick={() => onProceedToNextExercise(index + 1, data.id)}
           disabled={!isNextButtonAvailable}
         >
           {isLastExercise ? "Complete Program" : "➔ Next Exercise"}
@@ -271,6 +270,7 @@ export const Progress = ({ data }: ProgressProps) => {
   const [exercisesStatus, setExercisesStatus] = useState<ExercisesStatus>();
   const [isRunning, setIsRunning] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openBreakTimeModal, setOpenBreakTimeModal] = useState(false);
 
   const setRunning = (isRunning: boolean) => {
     setIsRunning(isRunning);
@@ -286,6 +286,9 @@ export const Progress = ({ data }: ProgressProps) => {
             const newExerciseSetValues = prevStatus.exerciseSetValues.map(
               (v) => {
                 if (v.order === newStatus.order) {
+                  const isCheckStatus = newStatus.title === "checked";
+                  if (isCheckStatus) setOpenBreakTimeModal(true);
+
                   return {
                     ...v,
                     [newStatus.title.toLocaleLowerCase()]: newStatus.value,
@@ -349,27 +352,34 @@ export const Progress = ({ data }: ProgressProps) => {
     [data?.exercises, saveExercisesStatus]
   );
 
-  const proceedToNextExercise = (nextIndex: number, id: string) => {
-    setExercisesStatus((prev) => {
-      const lastStatus = prev;
+  const proceedToNextExercise = useCallback(
+    (nextIndex: number, id: string) => {
+      setExercisesStatus((prev) => {
+        const lastStatus = prev;
 
-      const newStatus = lastStatus?.map((v) => {
-        if (v.id === id) {
-          return {
-            ...v,
-            isCompleted: true,
-          };
-        }
-        return v;
+        const newStatus = lastStatus?.map((v) => {
+          if (v.id === id) {
+            return {
+              ...v,
+              isCompleted: true,
+            };
+          }
+          return v;
+        });
+
+        newStatus && saveExercisesStatus(newStatus);
+
+        return newStatus;
       });
 
-      newStatus && saveExercisesStatus(newStatus);
+      const isNextExerciseAvailable = !!exercisesStatus?.[nextIndex];
+      isNextExerciseAvailable && swiperRef.current?.slideTo(nextIndex);
+    },
+    [exercisesStatus, saveExercisesStatus]
+  );
 
-      return newStatus;
-    });
-
-    const isNextExerciseAvailable = !!exercisesStatus?.[nextIndex];
-    isNextExerciseAvailable && swiperRef.current?.slideTo(nextIndex);
+  const closeBreakTimeModal = () => {
+    setOpenBreakTimeModal(false);
   };
 
   useEffect(() => {
@@ -476,6 +486,7 @@ export const Progress = ({ data }: ProgressProps) => {
     updateProgressStatus,
     nextProgressExerciseIndex,
     addDeleteExerciseSet,
+    proceedToNextExercise,
   ]);
 
   return (
@@ -514,6 +525,10 @@ export const Progress = ({ data }: ProgressProps) => {
           setOpenConfirm(false);
         }}
         content="운동을 종료하시겠어요?"
+      />
+      <BreakTimeModal
+        isOpen={openBreakTimeModal}
+        onClose={closeBreakTimeModal}
       />
     </section>
   );

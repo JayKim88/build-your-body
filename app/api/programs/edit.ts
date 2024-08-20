@@ -60,7 +60,6 @@ async function editProgram(data: {
     return plainResult;
   } catch (error) {
     console.log("fetch failed", error);
-    // return { data: [] }; // maybe error occurs in the future.
   }
 
   client?.close();
