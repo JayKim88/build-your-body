@@ -35,6 +35,9 @@ interface ProgressState {
   saveExercisesStatus: (v: ExercisesStatus) => void;
   savedExercisesStatus: ExercisesStatus;
   resetExercisesStatus: () => void;
+  completedAt?: Date;
+  saveCompletedAt: (v: Date) => void;
+  resetCompletedAt: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -99,6 +102,7 @@ export const useProgressStore = create<ProgressState>()(
       programId: "",
       workoutTime: 0,
       savedExercisesStatus: [],
+      completedAt: undefined,
       saveWorkoutTime: (v: number) =>
         set(() => ({
           workoutTime: v,
@@ -122,6 +126,14 @@ export const useProgressStore = create<ProgressState>()(
       resetExercisesStatus: () =>
         set(() => ({
           savedExercisesStatus: [],
+        })),
+      saveCompletedAt: (v: Date) =>
+        set((state) => ({
+          completedAt: state.completedAt ?? v,
+        })),
+      resetCompletedAt: () =>
+        set(() => ({
+          completedAt: undefined,
         })),
     }),
     {

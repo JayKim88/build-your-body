@@ -5,10 +5,12 @@ import {
   signOut as logOut,
   useSession,
 } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 import { useCartStore } from "../store";
 
 export const LoginButton = () => {
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const removeAllFromCart = useCartStore((state) => state.removeAll);
   const storeProgramName = useCartStore((state) => state.setProgramName);
@@ -34,7 +36,9 @@ export const LoginButton = () => {
     logIn("google");
   };
 
-  return (
+  const isWorkoutCompletePage = pathname === "/my-programs/complete";
+
+  return !isWorkoutCompletePage ? (
     <button
       disabled={!!isLoading}
       className="btn-basic bg-black border-4 absolute top-10 right-10 h-20 flex justify-center items-center hover:bg-gray6 hover:border-black hover:text-black z-10"
@@ -42,5 +46,7 @@ export const LoginButton = () => {
     >
       {isLoading ? "loading!" : isLoggedIn ? "LOG OUT" : "JOIN NOW"}
     </button>
+  ) : (
+    <></>
   );
 };

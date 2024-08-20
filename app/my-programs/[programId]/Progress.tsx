@@ -5,7 +5,7 @@ import { RegisteredProgram } from "@/app/api/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
+import { EffectCoverflow } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 
 import { Button } from "@/app/component/Button";
@@ -183,7 +183,7 @@ const ExerciseProgressCard = ({
 
   return (
     <div className="relative">
-      {isCompleted && (
+      {isCompleted && !isLastExercise && (
         <div className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-100 text-realGreen text-[60px] rotate-[-20deg]">
           Completed
         </div>
@@ -266,11 +266,13 @@ export const Progress = ({ data }: ProgressProps) => {
   const resetExercisesStatus = useProgressStore(
     (state) => state.resetExercisesStatus
   );
+  const saveCompletedAt = useProgressStore((state) => state.saveCompletedAt);
 
   const [exercisesStatus, setExercisesStatus] = useState<ExercisesStatus>();
   const [isRunning, setIsRunning] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openBreakTimeModal, setOpenBreakTimeModal] = useState(false);
+  const [programCompleted, setProgramCompleted] = useState(false);
 
   const setRunning = (isRunning: boolean) => {
     setIsRunning(isRunning);
@@ -281,33 +283,40 @@ export const Progress = ({ data }: ProgressProps) => {
       setExercisesStatus((prev) => {
         const lastExercisesStatus = prev;
 
-        const newExercisesStatus = lastExercisesStatus?.map((prevStatus) => {
-          if (prevStatus.id === newStatus.id) {
-            const newExerciseSetValues = prevStatus.exerciseSetValues.map(
-              (v) => {
-                if (v.order === newStatus.order) {
-                  const isCheckStatus = newStatus.title === "checked";
-                  if (isCheckStatus) setOpenBreakTimeModal(true);
+        const newExercisesStatus = lastExercisesStatus?.map(
+          (lastExerciseStatus, index) => {
+            if (lastExerciseStatus.id === newStatus.id) {
+              const newExerciseSetValues =
+                lastExerciseStatus.exerciseSetValues.map((exerciseSetValue) => {
+                  if (exerciseSetValue.order === newStatus.order) {
+                    const isCheckStatus = newStatus.title === "checked";
+                    const isLastSetOfLastExercise =
+                      exerciseSetValue.order ===
+                        lastExerciseStatus.exerciseSetValues.length &&
+                      index === lastExercisesStatus.length - 1;
 
-                  return {
-                    ...v,
-                    [newStatus.title.toLocaleLowerCase()]: newStatus.value,
-                  };
-                }
-                return v;
-              }
-            );
+                    if (isCheckStatus && !isLastSetOfLastExercise)
+                      setOpenBreakTimeModal(true);
 
-            const isAllChecked = newExerciseSetValues.every((v) => v.checked);
+                    return {
+                      ...exerciseSetValue,
+                      [newStatus.title.toLocaleLowerCase()]: newStatus.value,
+                    };
+                  }
+                  return exerciseSetValue;
+                });
 
-            return {
-              ...prevStatus,
-              exerciseSetValues: newExerciseSetValues,
-              isCompleted: isAllChecked,
-            };
+              const isAllChecked = newExerciseSetValues.every((v) => v.checked);
+
+              return {
+                ...lastExerciseStatus,
+                exerciseSetValues: newExerciseSetValues,
+                isCompleted: isAllChecked,
+              };
+            }
+            return lastExerciseStatus;
           }
-          return prevStatus;
-        });
+        );
 
         newExercisesStatus && saveExercisesStatus(newExercisesStatus);
 
@@ -382,10 +391,25 @@ export const Progress = ({ data }: ProgressProps) => {
     setOpenBreakTimeModal(false);
   };
 
+  const moveToCompletedPage = () => {
+    setProgramCompleted(true);
+    saveCompletedAt(new Date());
+    router.push("/my-programs/complete");
+  };
+
   useEffect(() => {
     if (!data) return;
 
     if (savedExercisesStatus.length) {
+      const isProgramCompleted = savedExercisesStatus.every(
+        (v) => v.isCompleted
+      );
+
+      if (isProgramCompleted) {
+        moveToCompletedPage();
+        return;
+      }
+
       setExercisesStatus(savedExercisesStatus);
       return;
     }
@@ -445,11 +469,12 @@ export const Progress = ({ data }: ProgressProps) => {
             slideShadows: true,
             scale: 0.7,
           }}
-          modules={[EffectCoverflow, Pagination]}
+          modules={[EffectCoverflow]}
           className="exercise-progress-cards-swiper"
           style={{
             paddingTop: 16,
             paddingBottom: 16,
+            width: 1000,
           }}
         >
           {exercisesStatus?.map((exerciseStatus, index) => {
@@ -489,6 +514,8 @@ export const Progress = ({ data }: ProgressProps) => {
     proceedToNextExercise,
   ]);
 
+  if (programCompleted) return <></>;
+
   return (
     <section className="flex flex-col gap-y-[48px]">
       <div className="flex justify-between h-16">
@@ -527,7 +554,7 @@ export const Progress = ({ data }: ProgressProps) => {
         content="운동을 종료하시겠어요?"
       />
       <BreakTimeModal
-        isOpen={openBreakTimeModal}
+        isOpen={openBreakTimeModal && !programCompleted}
         onClose={closeBreakTimeModal}
       />
     </section>
