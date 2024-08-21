@@ -28,14 +28,14 @@ interface CartState {
 interface ProgressState {
   programId: string;
   workoutTime: number;
+  savedExercisesStatus: ExercisesStatus;
+  completedAt?: Date;
   saveWorkoutTime: (v: number) => void;
   resetWorkoutTime: () => void;
   saveProgramId: (v: string) => void;
   resetProgramId: () => void;
   saveExercisesStatus: (v: ExercisesStatus) => void;
-  savedExercisesStatus: ExercisesStatus;
   resetExercisesStatus: () => void;
-  completedAt?: Date;
   saveCompletedAt: (v: Date) => void;
   resetCompletedAt: () => void;
 }

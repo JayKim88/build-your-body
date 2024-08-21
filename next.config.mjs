@@ -15,17 +15,15 @@ const nextConfig = {
       // },
     ],
   },
-  // @description https://github.com/vercel/next.js/issues/66526
-  // experimental: {
-  //   turbo: {
-  //     rules: {
-  //       "*.svg": {
-  //         loaders: ["@svgr/webpack"],
-  //         as: "*.js, *.tsx, *.ts",
-  //       },
-  //     },
-  //   },
-  // },
+  webpack(config, { isServer }) {
+    // Add support for importing SVGs as React components
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

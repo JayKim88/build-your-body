@@ -33,6 +33,11 @@ type UpdateExerciseSetRowValues = {
   value?: number | boolean;
 };
 
+export type ExercisesStatus = (CartProps & {
+  exerciseSetValues: ExerciseSetValues[];
+  isCompleted?: boolean;
+})[];
+
 type ExerciseProgressCardProps = {
   data: ExercisesStatus[0];
   index: number;
@@ -43,11 +48,6 @@ type ExerciseProgressCardProps = {
   onAddDeleteSet: (id: string, isAdd: boolean) => void;
   onProceedToNextExercise: (index: number, id: string) => void;
 };
-
-export type ExercisesStatus = (CartProps & {
-  exerciseSetValues: ExerciseSetValues[];
-  isCompleted?: boolean;
-})[];
 
 type ExerciseInputProps = {
   title: string;
@@ -184,7 +184,8 @@ const ExerciseProgressCard = ({
   return (
     <div className="relative">
       {isCompleted && !isLastExercise && (
-        <div className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 opacity-100 text-realGreen text-[60px] rotate-[-20deg]">
+        <div className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 
+        -translate-y-1/2 z-10 opacity-100 text-realGreen text-[60px] rotate-[-20deg]">
           Completed
         </div>
       )}
