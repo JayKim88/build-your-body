@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import { Exercise } from "../api/types";
 import { ExerciseType } from "./Filter";
 import { ExerciseDetailModal } from "./ExerciseDetailModal";
-import { AddToCart } from "../icon/AddToCart";
-import { RemoveFromCart } from "../icon/RemoveFromCart";
+import AddToCart from "@/public/cart-icon/add-to-cart.svg";
+import RemoveFromCart from "@/public/cart-icon/remove-from-cart.svg";
 import { useCartStore } from "../store";
 import { OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { getBgColor } from "../utils";
@@ -36,8 +36,8 @@ const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => (
   >
     <Icon
       className={`${
-        isAleadyInCart && "text-gray6 cursor-default"
-      }  text-gray1 hover:text-gray6 transition-all ease-in-out duration-300`}
+        isAleadyInCart ? "fill-gray6 cursor-default" : "fill-gray1"
+      } hover:fill-gray6 transition-all ease-in-out duration-300`}
     />
   </button>
 );

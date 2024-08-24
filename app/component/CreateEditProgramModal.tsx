@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
 import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
-import { Cart } from "../icon/Cart";
+import Cart from "@/public/cart-icon/cart.svg";
 import { getBgColor, handleNumberKeyDown } from "../utils";
 import { CartTitleButton } from "./CartTitleButton";
 import { Button } from "./Button";
@@ -41,7 +41,7 @@ export type ExerciseSet = {
 const Title = ({ isEdit }: { isEdit?: boolean }) => {
   return (
     <div className="flex gap-6 items-center">
-      <Cart className="text-gray6 w-14 h-14" />
+      <Cart className="fill-gray6" />
       <h1 className="text-5xl">
         {isEdit ? "Change your program" : "Make your new program"}
       </h1>

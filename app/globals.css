@@ -59,3 +59,27 @@ input[type="number"] {
     @apply w-fit rounded-[32px] px-10 py-5 text-[32px] font-normal;
   }  
 }
+
+/* below for image cropper */
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-view-box {
+  outline-color: #fff;
+}
+
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point {
+  background-color: #fff;
+  height: 10px;
+  width: 10px;
+  opacity: 1;
+  border-radius: 10px;
+}
+
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-e,
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-n,
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-w,
+.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-s {
+  display: none;
+}
+
+.custom-cropper-styles .cropper-container .cropper-modal {
+  opacity: 0.7;
+} 

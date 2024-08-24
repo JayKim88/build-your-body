@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useReducer, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 type ModalWrapperProps = {
