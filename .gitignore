@@ -37,3 +37,6 @@ next-env.d.ts
 
 #google service account key
 service-account-key.json
+
+#image upload cors config
+cors-config.json

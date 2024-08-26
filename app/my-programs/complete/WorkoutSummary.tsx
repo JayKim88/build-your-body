@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -107,6 +108,8 @@ export const WorkoutSummary = () => {
   const [croppedImg, setCroppedImg] = useState("");
   const [imgFile, setImgFile] = useState<File>();
 
+  const imageName = `${format(completedAt ?? "", "yyyy/MM/dd")}-workout`;
+
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
 
@@ -144,8 +147,8 @@ export const WorkoutSummary = () => {
       /**
        * @todo 추가적으로 넣을 데이터 있을지 확인 그리고 Blob 으로 그냥 올려도 무방한지.
        */
-      const imgFile = new File([resultBlob], "hello.txt", {
-        type: "text/plain",
+      const imgFile = new File([resultBlob], `${imageName}.jpg`, {
+        type: "image/jpg",
         lastModified: Date.now(),
       });
 
@@ -193,6 +196,28 @@ export const WorkoutSummary = () => {
 
   if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
 
+  const handleSaveImage = async () => {
+    try {
+      const response = await axios.get(`/api/image/getSignedUrl`, {
+        params: {
+          fileName: imgFile?.name,
+        },
+      });
+
+      const signedUrl = response.data.url;
+
+      const imageUploadResult = await axios.put(signedUrl, imgFile, {
+        headers: {
+          "Content-Type": imgFile?.type,
+        },
+      });
+
+      console.log("image upload success!", imageUploadResult);
+    } catch (error) {
+      console.log("Error uploading file", error);
+    }
+  };
+
   return (
     <div className="flex flex-col text-gray6 gap-y-20">
       <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
@@ -200,7 +225,7 @@ export const WorkoutSummary = () => {
         <section className="flex flex-col gap-y-[100px]">
           <section className="flex flex-col gap-y-10">
             <div className={defaultRowStyles}>
-              <span>START</span>
+              <span>Completed At</span>
               <div className="flex gap-x-8">
                 <span className="flex gap-x-2 items-center">
                   <PngIcon name="calendar" />
@@ -212,7 +237,7 @@ export const WorkoutSummary = () => {
                 </span>
               </div>
             </div>
-            <div className="flex gap-x-[112px] text-[40px]">
+            <div className="flex gap-x-[174px] text-[40px]">
               <span>TOTAL</span>
               <span className="flex gap-x-2 items-center">
                 <PngIcon name="duration" />
@@ -254,11 +279,13 @@ export const WorkoutSummary = () => {
             </div>
           </section>
         </section>
-        <section>
+        <section className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-4">
             <span className="text-[40px] text-[#74cf8f]">Upload Photo </span>
             <div
-              className={`${croppedImg ? "w-[400px]" : "w-fit"} 
+              className={`${
+                croppedImg ? "w-[400px]" : "max-w-[400px] max-h-[400px]"
+              } 
               border-2 border-[#74cf8f] rounded-2xl overflow-hidden`}
             >
               {croppedImg ? (
@@ -314,7 +341,18 @@ export const WorkoutSummary = () => {
                   className={"h-[40px] bg-red hover:bg-red hover:text-gray6"}
                 />
               )}
+              <Button
+                title="image save test"
+                onClick={() => {
+                  handleSaveImage();
+                }}
+              />
             </div>
+          </div>
+
+          <div>
+            <div>privtate</div>
+            <div>save</div>
           </div>
         </section>
       </div>
