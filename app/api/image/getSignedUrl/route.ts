@@ -10,13 +10,15 @@ const storage = new Storage({
 const bucketName = "program-complete-image";
 
 export async function GET(req: NextRequest) {
+  if (req.method !== "GET") return;
+
   const { searchParams } = new URL(req.url);
 
-  const fileName = searchParams.get("fileName");
+  const imageName = searchParams.get("imageName");
 
-  if (!fileName) {
+  if (!imageName) {
     return NextResponse.json(
-      { error: "Missing fileName" },
+      { error: "Missing imageName" },
       {
         status: 400,
       }
@@ -26,21 +28,27 @@ export async function GET(req: NextRequest) {
   try {
     const options = {
       version: "v4",
-      action: "read",
+      action: "write",
       expires: Date.now() + 15 * 60 * 1000, // 15 minutes
     };
 
-    const [url] = await storage
+    const [signedUrl] = await storage
       .bucket(bucketName)
-      .file(fileName + new Date().toISOString())
+      .file(imageName)
       .getSignedUrl(options);
+
+    const completedUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(
+      imageName
+    )}`;
 
     return NextResponse.json(
       {
-        url,
+        signedUrl,
+        completedUrl,
       },
       {
         status: 200,
+        statusText: "signed URL created successfully",
       }
     );
   } catch (error) {

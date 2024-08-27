@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -91,10 +92,12 @@ const SatisfiedStatusList = ({
 };
 
 export const WorkoutSummary = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const { bodySnackbar } = useBodySnackbar();
   const completedAt = useProgressStore((state) => state.completedAt);
   const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
+  const savedProgramId = useProgressStore((state) => state.programId);
   const resetProgramId = useProgressStore((state) => state.resetProgramId);
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
   const resetExercisesStatus = useProgressStore(
@@ -106,9 +109,7 @@ export const WorkoutSummary = () => {
   const [cropper, setCropper] = useState<Cropper>();
   const [previewUrl, setPreviewUrl] = useState("");
   const [croppedImg, setCroppedImg] = useState("");
-  const [imgFile, setImgFile] = useState<File>();
-
-  const imageName = `${format(completedAt ?? "", "yyyy/MM/dd")}-workout`;
+  const [imgFile, setImgFile] = useState<Blob>();
 
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
@@ -126,35 +127,27 @@ export const WorkoutSummary = () => {
   };
 
   const getCropData = async () => {
-    if (typeof cropper !== "undefined") {
-      const croppedCanvasElement = cropper.getCroppedCanvas({
-        width: IMG_SIZE,
-        height: IMG_SIZE,
-        imageSmoothingEnabled: true,
-        imageSmoothingQuality: "high",
+    if (typeof cropper === "undefined") return;
+
+    const croppedCanvasElement = cropper.getCroppedCanvas({
+      width: IMG_SIZE,
+      height: IMG_SIZE,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: "high",
+    });
+
+    const resultBlob = (await new Promise((resolve) => {
+      croppedCanvasElement.toBlob((blob) => {
+        blob && resolve(blob);
       });
+    })
+      .then((blob) => blob)
+      .catch((error) => {
+        console.error("Error:", error);
+      })) as Blob;
 
-      const resultBlob = (await new Promise((resolve) => {
-        croppedCanvasElement.toBlob((blob) => {
-          blob && resolve(blob);
-        });
-      })
-        .then((blob) => blob)
-        .catch((error) => {
-          console.error("Error:", error);
-        })) as Blob;
-
-      /**
-       * @todo 추가적으로 넣을 데이터 있을지 확인 그리고 Blob 으로 그냥 올려도 무방한지.
-       */
-      const imgFile = new File([resultBlob], `${imageName}.jpg`, {
-        type: "image/jpg",
-        lastModified: Date.now(),
-      });
-
-      setImgFile(imgFile);
-      setCroppedImg(croppedCanvasElement.toDataURL());
-    }
+    setImgFile(resultBlob);
+    setCroppedImg(croppedCanvasElement.toDataURL());
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -194,29 +187,34 @@ export const WorkoutSummary = () => {
     resetCompletedAt();
   };
 
-  if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
+  const uploadImageAndGetImageUrl = async () => {
+    const imageName = `${session?.user?.name}-${savedProgramId}-${format(
+      new Date(),
+      "yyyy-MM-dd-hh:mm-a"
+    )}`;
 
-  const handleSaveImage = async () => {
     try {
-      const response = await axios.get(`/api/image/getSignedUrl`, {
+      const {
+        data: { signedUrl, completedUrl },
+      } = await axios.get(`/api/image/getSignedUrl`, {
         params: {
-          fileName: imgFile?.name,
+          imageName,
         },
       });
 
-      const signedUrl = response.data.url;
-
-      const imageUploadResult = await axios.put(signedUrl, imgFile, {
+      const uploadToGCPBucketResult = await axios.put(signedUrl, imgFile, {
         headers: {
           "Content-Type": imgFile?.type,
         },
       });
 
-      console.log("image upload success!", imageUploadResult);
+      return uploadToGCPBucketResult.status === 200 ? completedUrl : undefined;
     } catch (error) {
       console.log("Error uploading file", error);
     }
   };
+
+  if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
 
   return (
     <div className="flex flex-col text-gray6 gap-y-20">
@@ -341,15 +339,8 @@ export const WorkoutSummary = () => {
                   className={"h-[40px] bg-red hover:bg-red hover:text-gray6"}
                 />
               )}
-              <Button
-                title="image save test"
-                onClick={() => {
-                  handleSaveImage();
-                }}
-              />
             </div>
           </div>
-
           <div>
             <div>privtate</div>
             <div>save</div>
