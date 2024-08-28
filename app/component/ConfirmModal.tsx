@@ -40,7 +40,9 @@ export const ConfirmModal = ({
             priority
           />
         </div>
-        <div className="text-4xl text-black">{content}</div>
+        <div className="text-4xl text-black whitespace-pre-wrap text-center leading-[48px]">
+          {content}
+        </div>
         <div className="flex gap-x-4 mt-4">
           <Button
             title="Nope"

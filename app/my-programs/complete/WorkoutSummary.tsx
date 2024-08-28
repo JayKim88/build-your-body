@@ -18,8 +18,10 @@ import Happy from "@/public/workout-complete-icon/happy.svg";
 import Lol from "@/public/workout-complete-icon/lol.svg";
 import { useBodySnackbar } from "@/app/hook/useSnackbar";
 import { Button } from "@/app/component/Button";
+import { ConfirmModal } from "@/app/component/ConfirmModal";
 
 type SatisfiedStatus = "terrible" | "notSatisfied" | "soso" | "happy" | "lol";
+type ConfirmTypes = "exit" | "save";
 
 const validImageTypes = ["jpeg", "png", "jpg"];
 
@@ -110,6 +112,8 @@ export const WorkoutSummary = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [croppedImg, setCroppedImg] = useState("");
   const [imgFile, setImgFile] = useState<Blob>();
+  const [isPublic, setIsPublic] = useState(true);
+  const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
 
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
@@ -214,12 +218,36 @@ export const WorkoutSummary = () => {
     }
   };
 
+  const saveWorkoutComplete = async () => {
+    const imageUrl = imgFile && (await uploadImageAndGetImageUrl());
+    /**
+     * @todo make save workout complete function
+     */
+  };
+
+  const handleConfirm = async (isConfirm: boolean) => {
+    const isSave = openConfirm === "save";
+
+    if (isSave) {
+      if (!isConfirm) {
+        setOpenConfirm(undefined);
+        return;
+      }
+      await saveWorkoutComplete();
+      setOpenConfirm(undefined);
+
+      return;
+    }
+
+    isConfirm ? goToListWithoutSave() : setOpenConfirm(undefined);
+  };
+
   if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
 
   return (
-    <div className="flex flex-col text-gray6 gap-y-20">
+    <div className="flex flex-col text-gray6">
       <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
-      <div className="flex gap-x-[280px]">
+      <div className={`${defaultPageStyles} mt-20`}>
         <section className="flex flex-col gap-y-[100px]">
           <section className="flex flex-col gap-y-10">
             <div className={defaultRowStyles}>
@@ -341,21 +369,42 @@ export const WorkoutSummary = () => {
               )}
             </div>
           </div>
-          <div>
-            <div>privtate</div>
-            <div>save</div>
+          <div className={`${defaultRowStyles} items-center`}>
+            <div className="text-10">Public</div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                onChange={(e) => setIsPublic(e.target.checked)}
+                checked={isPublic}
+              />
+              <span className="slider round"></span>
+            </label>
           </div>
         </section>
       </div>
-      <div>
-        <button
-          onClick={() => {
-            goToListWithoutSave();
-          }}
-        >
-          Exit
-        </button>
+      <div className={`${defaultPageStyles} mt-10`}>
+        <Button
+          title="Exit"
+          onClick={() => setOpenConfirm("exit")}
+          className="text-gray1 bg-red hover:bg-red hover:text-gray1 w-[200px]"
+          fontSize={40}
+        />
+        <Button
+          title="SAVE"
+          onClick={() => setOpenConfirm("save")}
+          className="text-gray1 bg-[#74cf8f] hover:bg-[#74cf8f] hover:text-gray1 w-[400px]"
+          fontSize={40}
+        />
       </div>
+      <ConfirmModal
+        isOpen={!!openConfirm}
+        onClick={handleConfirm}
+        content={
+          openConfirm === "save"
+            ? "운동 기록을\n저장하시겠어요?"
+            : `저장없이\n종료하시겠어요?`
+        }
+      />
     </div>
   );
 };
@@ -363,7 +412,11 @@ export const WorkoutSummary = () => {
 const defaultInputStyles =
   "border-2 border-gray2 w-[400px] rounded-2xl outline-none bg-gray6 text-black text-3xl";
 const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
+const defaultPageStyles = "flex justify-between max-w-[1500px] min-w-[1300px]";
 
 const MAX_IMAGE_FILE_MB_SIZE = 5;
 const IMAGE_FILE_SIZE_CALC_FORMULA = 1024;
 const IMG_SIZE = 400;
+
+const MAX_PAGE_WIDTH = 1500;
+const MIN_PAGE_WIDTH = 1300;
