@@ -3,5 +3,5 @@ export default function MyProgramsLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section>{children}</section>;
+  return <section className="flex justify-center">{children}</section>;
 }

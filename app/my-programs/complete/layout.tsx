@@ -3,5 +3,5 @@ export default function CompleteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section> {children}</section>;
+  return <section className="flex justify-center"> {children}</section>;
 }

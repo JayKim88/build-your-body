@@ -247,7 +247,7 @@ export const WorkoutSummary = () => {
   return (
     <div className="flex flex-col text-gray6">
       <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
-      <div className={`${defaultPageStyles} mt-20`}>
+      <div className={`${defaultPageStyles} mt-20 gap-x-[140px]`}>
         <section className="flex flex-col gap-y-[100px]">
           <section className="flex flex-col gap-y-10">
             <div className={defaultRowStyles}>
@@ -412,11 +412,8 @@ export const WorkoutSummary = () => {
 const defaultInputStyles =
   "border-2 border-gray2 w-[400px] rounded-2xl outline-none bg-gray6 text-black text-3xl";
 const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
-const defaultPageStyles = "flex justify-between max-w-[1500px] min-w-[1300px]";
+const defaultPageStyles = "flex justify-between min-w-[1440px]";
 
 const MAX_IMAGE_FILE_MB_SIZE = 5;
 const IMAGE_FILE_SIZE_CALC_FORMULA = 1024;
 const IMG_SIZE = 400;
-
-const MAX_PAGE_WIDTH = 1500;
-const MIN_PAGE_WIDTH = 1300;

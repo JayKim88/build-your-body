@@ -3,7 +3,7 @@ import { SearchInput } from "./SearchInput";
 
 export const Header = () => {
   return (
-    <div className="flex gap-8">
+    <div className="flex gap-8 max-w-[1800px]">
       <Link href="/">
         <h1 className="text-[80px] text-stroke-4 text-stroke-black font-semibold">
           Build Your Body
