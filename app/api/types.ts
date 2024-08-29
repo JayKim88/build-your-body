@@ -1,5 +1,6 @@
 import { ExerciseType } from "../component/Filter";
 import { CartProps } from "../store";
+import { PerfomanceData } from "./program-complete/savePerformance";
 
 export type Exercise = {
   _id: string;
@@ -22,3 +23,8 @@ export type RegisteredProgram = {
   programName: string;
   exercises: CartProps[];
 };
+
+export type MyStat = {
+  _id: string;
+  userId: string;
+} & PerfomanceData;

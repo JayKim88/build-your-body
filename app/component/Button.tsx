@@ -22,7 +22,8 @@ export const Button = ({
       onClick={onClick}
       className={`${
         !disabled && "hover:text-black hover:bg-gray6"
-      } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl width-[110px] transition-all duration-300 ease-in-out
+      } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl 
+      width-[110px] transition-all duration-300 ease-in-out
          ${className}
         `}
       disabled={disabled}

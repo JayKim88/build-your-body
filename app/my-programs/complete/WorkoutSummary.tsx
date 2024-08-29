@@ -19,8 +19,14 @@ import Lol from "@/public/workout-complete-icon/lol.svg";
 import { useBodySnackbar } from "@/app/hook/useSnackbar";
 import { Button } from "@/app/component/Button";
 import { ConfirmModal } from "@/app/component/ConfirmModal";
+import { savePerformance } from "@/app/api/program-complete/savePerformance";
 
-type SatisfiedStatus = "terrible" | "notSatisfied" | "soso" | "happy" | "lol";
+export type SatisfiedStatus =
+  | "terrible"
+  | "notSatisfied"
+  | "soso"
+  | "happy"
+  | "lol";
 type ConfirmTypes = "exit" | "save";
 
 const validImageTypes = ["jpeg", "png", "jpg"];
@@ -59,35 +65,25 @@ const SatisfiedStatusList = ({
     <span className="flex items-center gap-x-4 w-[400px] justify-between [&>svg]:cursor-pointer">
       <Terrible
         className={`${status === "terrible" ? "fill-yellow" : "fill-gray6"}`}
-        onClick={() => {
-          onSetStatus("terrible");
-        }}
+        onClick={() => onSetStatus("terrible")}
       />
       <NotSatisfied
         className={`${
           status === "notSatisfied" ? "fill-yellow" : "fill-gray6"
         }`}
-        onClick={() => {
-          onSetStatus("notSatisfied");
-        }}
+        onClick={() => onSetStatus("notSatisfied")}
       />
       <Soso
         className={`${status === "soso" ? "fill-yellow" : "fill-gray6"}`}
-        onClick={() => {
-          onSetStatus("soso");
-        }}
+        onClick={() => onSetStatus("soso")}
       />
       <Happy
         className={`${status === "happy" ? "fill-yellow" : "fill-gray6"}`}
-        onClick={() => {
-          onSetStatus("happy");
-        }}
+        onClick={() => onSetStatus("happy")}
       />
       <Lol
         className={`${status === "lol" ? "fill-yellow" : "fill-gray6"}`}
-        onClick={() => {
-          onSetStatus("lol");
-        }}
+        onClick={() => onSetStatus("lol")}
       />
     </span>
   );
@@ -98,6 +94,9 @@ export const WorkoutSummary = () => {
   const router = useRouter();
   const { bodySnackbar } = useBodySnackbar();
   const completedAt = useProgressStore((state) => state.completedAt);
+  const savedExercisesStatus = useProgressStore(
+    (state) => state.savedExercisesStatus
+  );
   const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
   const savedProgramId = useProgressStore((state) => state.programId);
   const resetProgramId = useProgressStore((state) => state.resetProgramId);
@@ -183,12 +182,23 @@ export const WorkoutSummary = () => {
     setCroppedImg("");
   };
 
-  const goToListWithoutSave = () => {
-    router.replace("/my-programs");
+  const clearPerformanceAndSummary = () => {
     resetProgramId();
     resetWorkoutTime();
     resetExercisesStatus();
     resetCompletedAt();
+  };
+
+  /**
+   * @todo goto my stats ?
+   */
+  const goToMyStat = () => {
+    clearPerformanceAndSummary();
+  };
+
+  const goToListAfterCleanup = () => {
+    router.replace("/my-programs");
+    clearPerformanceAndSummary();
   };
 
   const uploadImageAndGetImageUrl = async () => {
@@ -212,17 +222,47 @@ export const WorkoutSummary = () => {
         },
       });
 
-      return uploadToGCPBucketResult.status === 200 ? completedUrl : undefined;
+      return uploadToGCPBucketResult.status === 200
+        ? (completedUrl as string)
+        : undefined;
     } catch (error) {
       console.log("Error uploading file", error);
     }
   };
 
-  const saveWorkoutComplete = async () => {
-    const imageUrl = imgFile && (await uploadImageAndGetImageUrl());
+  const saveWorkoutPerformance = async () => {
+    const isTitleEmpty = !title.trim().length;
+
+    if (isTitleEmpty) {
+      bodySnackbar("제목을 입력해주세요.", {
+        variant: "warning",
+      });
+
+      return;
+    }
+
+    const imageUrl = !!imgFile ? await uploadImageAndGetImageUrl() : undefined;
     /**
      * @todo make save workout complete function
      */
+
+    const inputArgs = {
+      savedProgramId,
+      savedExercisesStatus,
+      savedWorkoutTime,
+      completedAt,
+      satisfiedStatus,
+      title,
+      note,
+      isPublic,
+      ...(imageUrl && {
+        imageUrl,
+      }),
+    };
+
+    const result = await savePerformance(inputArgs);
+
+    return !!result?.success;
   };
 
   const handleConfirm = async (isConfirm: boolean) => {
@@ -233,13 +273,27 @@ export const WorkoutSummary = () => {
         setOpenConfirm(undefined);
         return;
       }
-      await saveWorkoutComplete();
+
+      const isSuccess = await saveWorkoutPerformance();
       setOpenConfirm(undefined);
+
+      bodySnackbar(
+        isSuccess
+          ? "운동 기록이 저장되었습니다!"
+          : "에러가 발생했습니다. 재시도 해주세요 :)",
+        {
+          variant: isSuccess ? "success" : "error",
+        }
+      );
+
+      if (isSuccess) {
+        goToListAfterCleanup();
+      }
 
       return;
     }
 
-    isConfirm ? goToListWithoutSave() : setOpenConfirm(undefined);
+    isConfirm ? goToListAfterCleanup() : setOpenConfirm(undefined);
   };
 
   if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
@@ -307,12 +361,12 @@ export const WorkoutSummary = () => {
         </section>
         <section className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-4">
-            <span className="text-[40px] text-[#74cf8f]">Upload Photo </span>
+            <span className="text-[40px] text-softGreen">Upload Photo </span>
             <div
               className={`${
                 croppedImg ? "w-[400px]" : "max-w-[400px] max-h-[400px]"
               } 
-              border-2 border-[#74cf8f] rounded-2xl overflow-hidden`}
+              border-2 border-softGreen rounded-2xl overflow-hidden`}
             >
               {croppedImg ? (
                 <img
@@ -335,7 +389,7 @@ export const WorkoutSummary = () => {
                 />
               ) : (
                 <div
-                  className="w-[400px] h-[400px] border-2 border-[#74cf8f] 
+                  className="w-[400px] h-[400px] border-2 border-softGreen 
                   rounded-2xl flex items-center justify-center cursor-pointer"
                   {...getRootProps()}
                 >
@@ -392,7 +446,7 @@ export const WorkoutSummary = () => {
         <Button
           title="SAVE"
           onClick={() => setOpenConfirm("save")}
-          className="text-gray1 bg-[#74cf8f] hover:bg-[#74cf8f] hover:text-gray1 w-[400px]"
+          className="text-gray1 bg-softGreen hover:bg-softGreen hover:text-gray1 w-[400px]"
           fontSize={40}
         />
       </div>

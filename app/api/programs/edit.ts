@@ -32,11 +32,6 @@ async function editProgram(data: {
 
     const userId = user?._id;
 
-    const newUserProgram = {
-      userId,
-      ...data,
-    };
-
     const { programName, programId, exercises } = data;
 
     const result = await db?.collection("programs").updateOne(
