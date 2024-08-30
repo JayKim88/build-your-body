@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { MODAL_VISIBLE_DELAY } from "@/app/component/ModalWrapper";
+import {
+  MODAL_VISIBLE_DELAY,
+  OVERLAY_OPEN_DELAY,
+} from "@/app/component/ModalWrapper";
 import { Button } from "@/app/component/Button";
 
 type BreakTimeModalProps = {
@@ -116,10 +119,26 @@ const TimerAnimation = ({ breakTime, onClose }: TimerAnimationProps) => {
 
 export const BreakTimeModal = ({ isOpen, onClose }: BreakTimeModalProps) => {
   const [timerIndex, setTimerIndex] = useState(2);
+  const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) return;
-    setTimerIndex(2);
+    if (isOpen) {
+      setOpen(isOpen);
+      setTimerIndex(1);
+      const timer = setTimeout(() => setVisible(true), MODAL_VISIBLE_DELAY);
+      return () => clearTimeout(timer);
+    } else {
+      const openTimer = setTimeout(() => {
+        setOpen(false);
+      }, OVERLAY_OPEN_DELAY);
+      const timer = setTimeout(() => setVisible(false), MODAL_VISIBLE_DELAY);
+
+      return () => {
+        clearTimeout(openTimer);
+        clearTimeout(timer);
+      };
+    }
   }, [isOpen]);
 
   const TimerButton = ({ text, index }: { text: string; index: number }) => {
@@ -140,26 +159,32 @@ export const BreakTimeModal = ({ isOpen, onClose }: BreakTimeModalProps) => {
   return (
     <div
       className={`${
-        isOpen
+        open
           ? "flex fixed inset-0 items-center justify-center z-20 pr-4"
           : "hidden"
-      } bg-black bg-opacity-50 delay-${MODAL_VISIBLE_DELAY + 500}`}
+      } ${visible && "bg-black bg-opacity-50"} delay-${
+        MODAL_VISIBLE_DELAY + 500
+      }`}
     >
       <div
-        className={`w-[300px] h-fit rounded-3xl p-5 bg-gray1 flex flex-col items-center justify-between`}
+        className={`transition-all duration-500 ${
+          visible ? "translate-y-0" : "-translate-y-full mb-[840px]"
+        } w-[300px] h-fit rounded-3xl p-5 
+          bg-gray1 flex flex-col items-center justify-between`}
       >
         <div className="flex gap-x-4">
           <TimerButton text="1m 30s" index={0} />
           <TimerButton text="1min" index={1} />
           <TimerButton text="30s" index={2} />
         </div>
-        {isOpen && <TimerAnimation breakTime={breakTime} onClose={onClose} />}
+        {open && <TimerAnimation breakTime={breakTime} onClose={onClose} />}
         <Button
           title="Stop"
           onClick={() => {
             onClose();
           }}
-          className="bg-red/40 text-red text-10 w-full min-h-[80px] hover:bg-red/40 hover:text-red"
+          className="bg-red/40 text-red text-10 w-full min-h-[80px] 
+          hover:bg-red/40 hover:text-red"
         />
       </div>
     </div>
