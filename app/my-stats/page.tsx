@@ -1,9 +1,10 @@
-import { getStats } from "../api/my-stats/getData";
-import { MyStat } from "../api/types";
+import { getTotalSummary } from "../api/my-stats/getTotalSummary";
+import { TotalWorkoutSummary } from "../api/types";
 import { Header } from "../component/Header";
+import { TotalSummarySection } from "./TotalSummarySection";
 
 export default async function Page() {
-  const fetchedData = (await getStats()) as MyStat[] | undefined;
+  const fetchedData = (await getTotalSummary()) as TotalWorkoutSummary | null;
 
   /**
    * @todo make stats page with data!
@@ -16,6 +17,7 @@ export default async function Page() {
     px-[80px] gap-y-8 max-w-[1800px]"
     >
       <Header />
+      <TotalSummarySection data={fetchedData} />
     </div>
   );
 }

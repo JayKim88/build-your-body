@@ -231,16 +231,6 @@ export const WorkoutSummary = () => {
   };
 
   const saveWorkoutPerformance = async () => {
-    const isTitleEmpty = !title.trim().length;
-
-    if (isTitleEmpty) {
-      bodySnackbar("제목을 입력해주세요.", {
-        variant: "warning",
-      });
-
-      return;
-    }
-
     const imageUrl = !!imgFile ? await uploadImageAndGetImageUrl() : undefined;
     /**
      * @todo make save workout complete function
@@ -269,27 +259,32 @@ export const WorkoutSummary = () => {
     const isSave = openConfirm === "save";
 
     if (isSave) {
-      if (!isConfirm) {
-        setOpenConfirm(undefined);
-        return;
-      }
-
-      const isSuccess = await saveWorkoutPerformance();
-      setOpenConfirm(undefined);
-
-      bodySnackbar(
-        isSuccess
-          ? "운동 기록이 저장되었습니다!"
-          : "에러가 발생했습니다. 재시도 해주세요 :)",
-        {
-          variant: isSuccess ? "success" : "error",
+      if (isConfirm) {
+        if (!title.trim().length) {
+          bodySnackbar("제목을 입력해주세요.", {
+            variant: "warning",
+          });
+          setOpenConfirm(undefined);
+          return;
         }
-      );
 
-      if (isSuccess) {
-        goToListAfterCleanup();
+        const isSuccess = await saveWorkoutPerformance();
+
+        bodySnackbar(
+          isSuccess
+            ? "운동 기록이 저장되었습니다!"
+            : "에러가 발생했습니다. 재시도 해주세요 :)",
+          {
+            variant: isSuccess ? "success" : "error",
+          }
+        );
+
+        if (isSuccess) {
+          goToListAfterCleanup();
+          return;
+        }
       }
-
+      setOpenConfirm(undefined);
       return;
     }
 

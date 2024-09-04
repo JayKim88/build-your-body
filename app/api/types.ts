@@ -28,3 +28,11 @@ export type MyStat = {
   _id: string;
   userId: string;
 } & PerfomanceData;
+
+export type TotalWorkoutSummary = {
+  liftByType: {
+    type: string;
+    lift: number;
+  }[];
+  totalWorkout: number;
+};
