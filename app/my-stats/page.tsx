@@ -6,11 +6,6 @@ import { TotalSummarySection } from "./TotalSummarySection";
 export default async function Page() {
   const fetchedData = (await getTotalSummary()) as TotalWorkoutSummary | null;
 
-  /**
-   * @todo make stats page with data!
-   */
-  console.log("fetchedData", fetchedData);
-
   return (
     <div
       className="h-fit w-screen relative bg-black flex flex-col pt-[20px] 

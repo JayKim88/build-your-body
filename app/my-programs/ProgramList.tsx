@@ -10,7 +10,7 @@ import axios from "axios";
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
 import { CartProps, useCartStore, useProgressStore } from "../store";
-import { getBgColor } from "../utils";
+import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 import { CreateEditProgramModal } from "../component/CreateEditProgramModal";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
@@ -52,7 +52,7 @@ const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
           priority
         />
       </div>
-      <div className="text-[32px]">{name}</div>
+      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
       <div className="flex gap-x-2">
         <Chip text={`${weight} kg`} />
         <Chip text={`${repeat} times`} />

@@ -3,8 +3,8 @@ import { ExerciseType, exerciseTypes } from "../component/Filter";
 
 function getBgColor(v: ExerciseType) {
   const bgColor = exerciseTypes.find(
-    (t) => t.type.toLowerCase() === v.toLowerCase()
-  )?.selectedColor;
+    (exerciseType) => exerciseType.type === v
+  )?.selectedBgColor;
 
   return bgColor;
 }
@@ -33,4 +33,7 @@ function handleNumberKeyDown(
   }
 }
 
-export { getBgColor, handleNumberKeyDown };
+const capitalizeFirstLetter = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
+export { getBgColor, handleNumberKeyDown, capitalizeFirstLetter };

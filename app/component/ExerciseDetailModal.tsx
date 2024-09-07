@@ -10,6 +10,7 @@ import { CartTitleButton } from "./CartTitleButton";
 import { useBodySnackbar } from "../hook/useSnackbar";
 import { getExerciseData } from "../api/exercise/getData";
 import { useEffect, useState } from "react";
+import { capitalizeFirstLetter } from "../utils";
 
 type ExerciseDetailModalProps = {
   isOpen: boolean;
@@ -103,7 +104,7 @@ export const ExerciseDetailModal = ({
           height="430"
         />
         <section className="flex flex-col gap-y-6">
-          <div className="text-3xl">{name}</div>
+          <div className="text-3xl">{capitalizeFirstLetter(name ?? "")}</div>
           <div>{description}</div>
           <div className="flex gap-x-2 justify-start">
             <div className="min-w-[160px] text-2xl font-medium">운동 방법</div>

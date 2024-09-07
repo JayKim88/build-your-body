@@ -8,7 +8,7 @@ import { Filter, ExerciseType } from "../component/Filter";
 import { Exercises } from "../component/Exercises";
 
 const FilteredList = ({ data }: { data: Exercise[] }) => {
-  const [selectedType, setSelectedType] = useState<ExerciseType>("All");
+  const [selectedType, setSelectedType] = useState<ExerciseType>("all");
 
   const handleFilter = (v: ExerciseType) => setSelectedType(v);
 

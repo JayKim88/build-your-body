@@ -10,7 +10,7 @@ import AddToCart from "@/public/cart-icon/add-to-cart.svg";
 import RemoveFromCart from "@/public/cart-icon/remove-from-cart.svg";
 import { useCartStore } from "../store";
 import { OVERLAY_OPEN_DELAY } from "./ModalWrapper";
-import { getBgColor } from "../utils";
+import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { useBodySnackbar } from "../hook/useSnackbar";
 
 type ExercisesProps = {
@@ -95,7 +95,7 @@ const ExerciseCard = (
           priority
         />
       </div>
-      <div className="text-[32px]">{name}</div>
+      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
       <div className="text-lg min-h-[84px] text-black">{summary}</div>
       {isLoggedIn && (
         <div className="flex w-full justify-evenly">
@@ -136,11 +136,9 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
     if (!data?.length) return;
 
     const filteredData =
-      selectedType === "All"
+      selectedType === "all"
         ? data
-        : data.filter(
-            (v) => v.type.toLowerCase() === selectedType.toLocaleLowerCase()
-          );
+        : data.filter((v) => v.type === selectedType);
 
     setExercisesData(filteredData);
   }, [data, selectedType]);

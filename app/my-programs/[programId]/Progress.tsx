@@ -11,7 +11,7 @@ import "swiper/swiper-bundle.css";
 import { Button } from "@/app/component/Button";
 import { ConfirmModal } from "@/app/component/ConfirmModal";
 import { CartProps, useProgressStore } from "@/app/store";
-import { handleNumberKeyDown } from "@/app/utils";
+import { capitalizeFirstLetter, handleNumberKeyDown } from "@/app/utils";
 import ProgressTimerButton from "./ProgressTimer";
 import { BreakTimeModal } from "./BreakTimeModal";
 
@@ -184,8 +184,10 @@ const ExerciseProgressCard = ({
   return (
     <div className="relative">
       {isCompleted && !isLastExercise && (
-        <div className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 
-        -translate-y-1/2 z-10 opacity-100 text-realGreen text-[60px] rotate-[-20deg]">
+        <div
+          className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 
+        -translate-y-1/2 z-10 opacity-100 text-realGreen text-[60px] rotate-[-20deg]"
+        >
           Completed
         </div>
       )}
@@ -194,7 +196,9 @@ const ExerciseProgressCard = ({
           ${isUnclickable && "pointer-events-none opacity-25"}
         `}
       >
-        <h1 className="text-[32px] font-medium">{data.name}</h1>
+        <h1 className="text-[32px] font-medium">
+          {capitalizeFirstLetter(data.name)}
+        </h1>
         <div className="relative w-full h-[360px] rounded-2xl overflow-hidden">
           <Image
             src={data.img_url}

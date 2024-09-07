@@ -8,7 +8,11 @@ import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
 import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import Cart from "@/public/cart-icon/cart.svg";
-import { getBgColor, handleNumberKeyDown } from "../utils";
+import {
+  capitalizeFirstLetter,
+  getBgColor,
+  handleNumberKeyDown,
+} from "../utils";
 import { CartTitleButton } from "./CartTitleButton";
 import { Button } from "./Button";
 import { ConfirmModal } from "./ConfirmModal";
@@ -163,7 +167,7 @@ const ExerciseSetting = (
         />
       </div>
       <div className="flex flex-col justify-around">
-        <div className="text-4xl leading-10">{name}</div>
+        <div className="text-4xl leading-10">{capitalizeFirstLetter(name)}</div>
         <ExerciseInputs
           id={id}
           onSettings={onSettings}

@@ -1,57 +1,63 @@
 "use client";
 
 import Image from "next/image";
+import { capitalizeFirstLetter } from "../utils";
 
 export type ExerciseType =
-  | "All"
-  | "Chest"
-  | "Back"
-  | "Leg"
-  | "Shoulder"
-  | "Arm";
+  | "all"
+  | "chest"
+  | "back"
+  | "leg"
+  | "shoulder"
+  | "arm";
 
 type ChipProps = {
   type: ExerciseType;
   src?: string;
-  selectedColor: string;
+  selectedBgColor: string;
   onSelect: (v: ExerciseType) => void;
   selected?: ExerciseType;
 };
 
 export const exerciseTypes: Omit<ChipProps, "onSelect" | "selected">[] = [
   {
-    type: "All",
-    selectedColor: "bg-orange",
+    type: "all",
+    selectedBgColor: "bg-orange",
   },
   {
-    type: "Chest",
+    type: "chest",
     src: "/filter-icon/chest.png",
-    selectedColor: "bg-lightRed",
+    selectedBgColor: "bg-lightRed",
   },
   {
-    type: "Back",
+    type: "back",
     src: "/filter-icon/back.png",
-    selectedColor: "bg-yellow",
+    selectedBgColor: "bg-yellow",
   },
   {
-    type: "Leg",
+    type: "leg",
     src: "/filter-icon/leg.png",
-    selectedColor: "bg-blue",
+    selectedBgColor: "bg-blue",
   },
-
   {
-    type: "Shoulder",
+    type: "shoulder",
     src: "/filter-icon/shoulder.png",
-    selectedColor: "bg-green",
+    selectedBgColor: "bg-green",
   },
   {
-    type: "Arm",
+    type: "arm",
     src: "/filter-icon/arm.png",
-    selectedColor: "bg-purple",
+    selectedBgColor: "bg-purple",
   },
 ];
 
-const Chip = ({ type, src, selectedColor, onSelect, selected }: ChipProps) => {
+const Chip = ({
+  type,
+  src,
+  selectedBgColor,
+  onSelect,
+  selected,
+}: ChipProps) => {
   const isSelected = selected === type;
 
   return (
@@ -59,14 +65,14 @@ const Chip = ({ type, src, selectedColor, onSelect, selected }: ChipProps) => {
       onClick={() => {
         onSelect(type);
       }}
-      className={`${isSelected ? selectedColor : "bg-gray2"}
+      className={`${isSelected ? selectedBgColor : "bg-gray2"}
        flex items-center justify-center gap-2 rounded-[32px] py-2 px-4 text-[20px] ${
          isSelected ? "" : "hover:bg-gray6 hover:text-black"
        }  
       `}
     >
       {src && <Image src={src} width={24} height={24} alt={type} />}
-      <span>{type}</span>
+      <span>{capitalizeFirstLetter(type)}</span>
     </button>
   );
 };
@@ -84,7 +90,7 @@ export const Filter = ({
         key={v.type}
         type={v.type}
         src={v.src}
-        selectedColor={v.selectedColor}
+        selectedBgColor={v.selectedBgColor}
         onSelect={onFilter}
         selected={selectedType}
       />
