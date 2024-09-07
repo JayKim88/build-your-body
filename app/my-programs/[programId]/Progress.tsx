@@ -261,7 +261,7 @@ export const Progress = ({ data }: ProgressProps) => {
   const swiperRef = useRef<SwiperClass | null>(null);
   const router = useRouter();
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
-  const resetProgramId = useProgressStore((state) => state.resetProgramId);
+  const resetProgramInfo = useProgressStore((state) => state.resetProgramInfo);
   const savedExercisesStatus = useProgressStore(
     (state) => state.savedExercisesStatus
   );
@@ -548,7 +548,7 @@ export const Progress = ({ data }: ProgressProps) => {
         onClick={(v) => {
           if (v) {
             router.replace("/my-programs");
-            resetProgramId();
+            resetProgramInfo();
             resetWorkoutTime();
             resetExercisesStatus();
 

@@ -2,6 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { MongoClient, ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 
@@ -28,15 +29,23 @@ async function deleteProgram(id: string) {
 
     const userId = user?._id;
 
-    const result = await db?.collection("programs").deleteOne({
-      _id: new ObjectId(id),
-      userId: userId,
-    });
+    const result = await db?.collection("programs").updateOne(
+      {
+        _id: new ObjectId(id),
+        userId: userId,
+      },
+      {
+        $set: {
+          deleted: true,
+        },
+      }
+    );
 
     const plainResult = {
       success: result.acknowledged,
-      count: result.deletedCount, // Convert ObjectId to string
     };
+
+    revalidatePath("/programs");
 
     return plainResult;
   } catch (error) {

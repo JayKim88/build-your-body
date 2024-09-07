@@ -99,7 +99,8 @@ export const WorkoutSummary = () => {
   );
   const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
   const savedProgramId = useProgressStore((state) => state.programId);
-  const resetProgramId = useProgressStore((state) => state.resetProgramId);
+  const savedProgramName = useProgressStore((state) => state.programName);
+  const resetProgramInfo = useProgressStore((state) => state.resetProgramInfo);
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
   const resetExercisesStatus = useProgressStore(
     (state) => state.resetExercisesStatus
@@ -183,7 +184,7 @@ export const WorkoutSummary = () => {
   };
 
   const clearPerformanceAndSummary = () => {
-    resetProgramId();
+    resetProgramInfo();
     resetWorkoutTime();
     resetExercisesStatus();
     resetCompletedAt();
@@ -238,6 +239,7 @@ export const WorkoutSummary = () => {
 
     const inputArgs = {
       savedProgramId,
+      savedProgramName,
       savedExercisesStatus,
       savedWorkoutTime,
       completedAt,

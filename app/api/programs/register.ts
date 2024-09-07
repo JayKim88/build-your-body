@@ -1,9 +1,11 @@
 "use server";
 
-import { CartProps } from "@/app/store";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { MongoClient } from "mongodb";
+import { revalidatePath } from "next/cache";
+
+import { CartProps } from "@/app/store";
+import { authOptions } from "../auth/[...nextauth]/authOptions";
 
 const uri = process.env.MONGODB_URI ?? "";
 
@@ -42,6 +44,8 @@ async function registerProgram(data: {
       success: result.acknowledged,
       itemId: result.insertedId.toString(), // Convert ObjectId to string
     };
+
+    revalidatePath("/programs");
 
     return plainResult;
   } catch (error) {

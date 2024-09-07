@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
 
   const email = searchParams.get("email");
   const id = searchParams.get("id");
+  const includeDeleted = searchParams.get("includeDeleted") === "true";
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -34,6 +35,9 @@ export async function GET(req: NextRequest) {
           ?.collection("programs")
           .find({
             userId: userId,
+            ...(!includeDeleted && {
+              deleted: { $ne: true },
+            }),
           })
           .toArray();
 

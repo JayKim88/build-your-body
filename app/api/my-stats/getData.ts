@@ -6,7 +6,14 @@ import axios from "axios";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { MyStat } from "../types";
 
-async function getData(id?: string) {
+type getStatsProps = {
+  workoutId?: string;
+  programId?: string;
+};
+
+async function getData(props: getStatsProps) {
+  const { workoutId, programId } = props ?? {};
+
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -18,7 +25,8 @@ async function getData(id?: string) {
       .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
         params: {
           email: session.user?.email,
-          id: id,
+          workoutId,
+          programId,
         },
       })
       .then((res) => res.data);

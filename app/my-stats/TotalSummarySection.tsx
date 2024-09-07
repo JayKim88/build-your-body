@@ -43,7 +43,7 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
 
           return rgbColor;
         }),
-        borderColor: ["transparent"],
+        borderColor: [colors.transparent],
         hoverOffset: 6,
       },
     ],
@@ -83,7 +83,7 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
                 strokeStyle: style.borderColor,
                 lineWidth: style.borderWidth,
                 index: i,
-                fontColor: "#F2F2F2",
+                fontColor: colors.gray6,
               };
             });
           },
@@ -119,7 +119,7 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
           unit="Times"
         />
       </div>
-      <div className="w-[440px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
+      <div className="w-[440px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 relative">
         <h1 className="text-2xl">Total Portion Ratio</h1>
         <Doughnut
           data={chartData}

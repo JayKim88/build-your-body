@@ -27,13 +27,14 @@ interface CartState {
 
 interface ProgressState {
   programId: string;
+  programName: string;
   workoutTime: number;
   savedExercisesStatus: ExercisesStatus;
   completedAt?: Date;
   saveWorkoutTime: (v: number) => void;
   resetWorkoutTime: () => void;
-  saveProgramId: (v: string) => void;
-  resetProgramId: () => void;
+  saveProgramInfo: (v: { id: string; name: string }) => void;
+  resetProgramInfo: () => void;
   saveExercisesStatus: (v: ExercisesStatus) => void;
   resetExercisesStatus: () => void;
   saveCompletedAt: (v: Date) => void;
@@ -100,6 +101,7 @@ export const useProgressStore = create<ProgressState>()(
   persist(
     (set) => ({
       programId: "",
+      programName: "",
       workoutTime: 0,
       savedExercisesStatus: [],
       completedAt: undefined,
@@ -111,13 +113,15 @@ export const useProgressStore = create<ProgressState>()(
         set(() => ({
           workoutTime: 0,
         })),
-      saveProgramId: (v: string) =>
+      saveProgramInfo: ({ id, name }) =>
         set(() => ({
-          programId: v,
+          programId: id,
+          programName: name,
         })),
-      resetProgramId: () =>
+      resetProgramInfo: () =>
         set(() => ({
           programId: "",
+          programName: "",
         })),
       saveExercisesStatus: (v: ExercisesStatus) =>
         set(() => ({

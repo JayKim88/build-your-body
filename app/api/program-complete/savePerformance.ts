@@ -12,6 +12,7 @@ const uri = process.env.MONGODB_URI ?? "";
 export type PerfomanceData = {
   imageUrl?: string | undefined;
   savedProgramId: string;
+  savedProgramName: string;
   savedExercisesStatus: ExercisesStatus;
   savedWorkoutTime: number;
   completedAt: Date | undefined;

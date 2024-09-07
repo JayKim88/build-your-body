@@ -6,7 +6,13 @@ import axios from "axios";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { RegisteredProgram } from "../types";
 
-async function getData(id?: string) {
+type getProgramsProps = {
+  id?: string;
+  includeDeleted?: boolean;
+};
+
+async function getData(props?: getProgramsProps) {
+  const { id, includeDeleted } = props ?? {};
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -18,7 +24,8 @@ async function getData(id?: string) {
       .get(`${process.env.NEXT_PUBLIC_API_URL}/api/programs`, {
         params: {
           email: session.user?.email,
-          id: id,
+          id,
+          includeDeleted,
         },
       })
       .then((res) => res.data);

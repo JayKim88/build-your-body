@@ -2,8 +2,10 @@
 
 import { CartProps } from "@/app/store";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { MongoClient, ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
+
+import { authOptions } from "../auth/[...nextauth]/authOptions";
 
 const uri = process.env.MONGODB_URI ?? "";
 
@@ -51,6 +53,8 @@ async function editProgram(data: {
       success: result.acknowledged,
       itemId: result.modifiedCount.toString(), // Convert ObjectId to string
     };
+
+    revalidatePath("/programs");
 
     return plainResult;
   } catch (error) {

@@ -8,6 +8,7 @@ type ModalWrapperProps = {
   onClose: () => void;
   Title?: ReactNode;
   children: ReactNode;
+  customClassName?: string;
 };
 
 export const ModalWrapper = ({
@@ -15,6 +16,7 @@ export const ModalWrapper = ({
   onClose,
   Title,
   children,
+  customClassName,
 }: ModalWrapperProps) => {
   const modalWrapperRef = useRef<HTMLDivElement>(null);
   const childrenRef = useRef<HTMLDivElement>(null);
@@ -60,7 +62,9 @@ export const ModalWrapper = ({
         className={`transition-all duration-500 ${
           visible ? "translate-x-0" : `translate-x-full -mr-96`
         }
-           w-[800px] max-h-[94vh] rounded-3xl p-5 bg-gray1 flex flex-col`}
+           w-[800px] max-h-[94vh] rounded-3xl p-5 bg-gray1 flex flex-col ${
+             customClassName ?? ""
+           }`}
       >
         <header
           className={`flex pb-5 ${Title ? "justify-between" : "justify-end"}`}

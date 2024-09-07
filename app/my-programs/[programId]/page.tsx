@@ -8,9 +8,9 @@ export default async function Page({
 }: {
   params: { programId: string };
 }) {
-  const fetchedData = (await getPrograms(params.programId)) as
-    | RegisteredProgram
-    | undefined;
+  const fetchedData = (await getPrograms({
+    id: params.programId,
+  })) as RegisteredProgram | undefined;
 
   return (
     <div

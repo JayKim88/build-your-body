@@ -9,7 +9,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const email = searchParams.get("email");
-  const id = searchParams.get("id");
+  const workoutId = searchParams.get("workoutId");
+  const programId = searchParams.get("programId");
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -25,17 +26,33 @@ export async function GET(req: NextRequest) {
 
     const userId = user?._id;
 
-    const data = id
-      ? await db?.collection("workout-performance").findOne({
+    let data;
+
+    if (workoutId) {
+      data = await db?.collection("workout-performance").findOne({
+        userId,
+        _id: new ObjectId(workoutId),
+      });
+    } else if (programId) {
+      data = await db
+        ?.collection("workout-performance")
+        .find({
           userId,
-          _id: new ObjectId(id),
+          savedProgramId: programId,
         })
-      : await db
-          ?.collection("workout-performance")
-          .find({
-            userId: userId,
-          })
-          .toArray();
+        .sort({
+          createdAt: -1,
+        })
+        .limit(7)
+        .toArray();
+    } else {
+      data = await db
+        ?.collection("workout-performance")
+        .find({
+          userId: userId,
+        })
+        .toArray();
+    }
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {

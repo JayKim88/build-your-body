@@ -27,13 +27,18 @@ const ProgressTimerButton = ({
 }: ProgressTimerButtonProps) => {
   const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
   const saveWorkoutTime = useProgressStore((state) => state.saveWorkoutTime);
-  const saveProgramId = useProgressStore((state) => state.saveProgramId);
+  const saveProgramInfo = useProgressStore((state) => state.saveProgramInfo);
   const [time, setTime] = useState(0); // Time in seconds
 
   const handleStart = useCallback(() => {
-    !time && saveProgramId(data?._id ?? "");
+    if (!time) {
+      saveProgramInfo({
+        id: data?._id ?? "",
+        name: data?.programName ?? "",
+      });
+    }
     onSetRunning(true);
-  }, [data?._id, saveProgramId, time, onSetRunning]);
+  }, [data?._id, saveProgramInfo, time, onSetRunning]);
 
   const handlePause = () => {
     onSetRunning(false);

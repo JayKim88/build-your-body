@@ -9,56 +9,20 @@ import axios from "axios";
 
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
-import { CartProps, useCartStore, useProgressStore } from "../store";
-import { capitalizeFirstLetter, getBgColor } from "../utils";
+import { useCartStore, useProgressStore } from "../store";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 import { CreateEditProgramModal } from "../component/CreateEditProgramModal";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
 import { deleteProgram } from "../api/programs/delete";
 import { useBodySnackbar } from "../hook/useSnackbar";
 import { ConfirmModal } from "../component/ConfirmModal";
-
-type EditableExerciseCardProps = {
-  data: CartProps;
-  onClick: (v: string) => void;
-};
+import { ExerciseSummaryCard } from "../component/ExerciseSummaryCard";
 
 export const Chip = ({ text }: { text: string }) => {
   return (
     <span className="rounded-[32px] bg-black text-gray6 h-9 w-fit flex justify-center items-center p-2">
       {text}
     </span>
-  );
-};
-
-const SummaryExerciseCard = ({ data, onClick }: EditableExerciseCardProps) => {
-  const { id, type, img_url, name, repeat, set, weight } = data ?? {};
-
-  const bgColor = getBgColor(type);
-
-  return (
-    <div
-      key={id}
-      className={`${bgColor} w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
-      onClick={() => onClick(id)}
-    >
-      <div className="relative w-full h-72 rounded-2xl overflow-hidden">
-        <Image
-          src={img_url}
-          alt="name"
-          fill
-          style={{ objectFit: "cover" }}
-          sizes="(max-width: 1200px) 100vw"
-          priority
-        />
-      </div>
-      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
-      <div className="flex gap-x-2">
-        <Chip text={`${weight} kg`} />
-        <Chip text={`${repeat} times`} />
-        <Chip text={`${set} sets`} />
-      </div>
-    </div>
   );
 };
 
@@ -148,7 +112,7 @@ const ProgramItem = (data: RegisteredProgram) => {
       </header>
       <main className="flex gap-x-6">
         {initialExercises?.map((exercise) => (
-          <SummaryExerciseCard
+          <ExerciseSummaryCard
             key={exercise.id}
             data={exercise}
             onClick={(v) => setClicked(v)}
