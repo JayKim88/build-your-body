@@ -77,6 +77,8 @@ export const HistorySection = ({ data }: HistoryProps) => {
     () => data?.find((v) => v._id === clickedDetailProgramId),
     [clickedDetailProgramId]
   );
+  const programName =
+    data?.find((v) => v._id === selectedProgramId)?.programName ?? "";
 
   return (
     <section className="flex gap-x-5">
@@ -87,7 +89,7 @@ export const HistorySection = ({ data }: HistoryProps) => {
         onClickDetailProgramId={(v) => setClickedDetailProgramId(v)}
         onSelectProgramId={(v) => setSelectedProgramId(v)}
       />
-      <HistoryChart programId={selectedProgramId} />
+      <HistoryChart programId={selectedProgramId} programName={programName} />
       <ExerciseSummaryModal
         isOpen={isOpen}
         data={clickedProgramDetail}

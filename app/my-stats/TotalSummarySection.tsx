@@ -10,14 +10,14 @@ import { exerciseTypes } from "../component/Filter";
 import { colors } from "@/tailwind.config";
 import { capitalizeFirstLetter } from "../utils";
 
-type ColorKey = keyof typeof colors;
+export type ColorKey = keyof typeof colors;
 type TotalSummarySectionProps = {
   data: TotalWorkoutSummary | null;
 };
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const getRGBColor = (v: ColorKey) => colors[v];
+export const getRGBColor = (v: ColorKey) => colors[v];
 
 export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
   const memoizedTotalLift = useMemo(

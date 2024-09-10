@@ -36,3 +36,14 @@ export type TotalWorkoutSummary = {
   }[];
   totalWorkout: number;
 };
+
+export type WorkoutHistory = {
+  _id: string;
+  items: MyStat[];
+}[];
+
+export type HistoryChartData = {
+  name: string;
+  type: string;
+  items: { date: string; lift: number }[];
+}[];

@@ -351,16 +351,24 @@ export const CreateEditProgramModal = ({
       Title={<Title isEdit={isEdit} />}
     >
       <main className="flex flex-col gap-y-12 mt-2 overflow-auto">
-        <div className="flex relative items-center w-[480px] gap-6">
+        <div
+          className={`flex relative items-center w-[480px] ${
+            isEdit ? "gap-x-4" : "gap-x-6"
+          }`}
+        >
           <span className="text-4xl">Name:</span>
-          <input
-            value={programName}
-            onChange={(e) => {
-              const value = e.target.value;
-              setProgramName(value);
-            }}
-            className="border-2 border-gray2 w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
-          />
+          {isEdit ? (
+            <span className="text-4xl">{programName}</span>
+          ) : (
+            <input
+              value={programName}
+              onChange={(e) => {
+                const value = e.target.value;
+                setProgramName(value);
+              }}
+              className="border-2 border-gray2 w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
+            />
+          )}
         </div>
         {!isEdit && (
           <div className="flex gap-6 items-start">

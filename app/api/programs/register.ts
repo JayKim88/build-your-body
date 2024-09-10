@@ -51,9 +51,9 @@ async function registerProgram(data: {
   } catch (error) {
     console.log("fetch failed", error);
     // return { data: [] }; // maybe error occurs in the future.
+  } finally {
+    client?.close();
   }
-
-  client?.close();
 }
 
 export { registerProgram };

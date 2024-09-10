@@ -23,6 +23,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data }, { status: 200 });
     } catch (error) {
       console.log("error occurs!", error);
+    } finally {
+      client?.close();
     }
   } else {
     return NextResponse.json(
@@ -30,5 +32,4 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
-  client?.close();
 }

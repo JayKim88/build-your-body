@@ -60,9 +60,9 @@ async function savePerformance(data: PerfomanceData) {
     return plainResult;
   } catch (error) {
     console.log("fetch failed", error);
+  } finally {
+    client?.close();
   }
-
-  client?.close();
 }
 
 export { savePerformance };

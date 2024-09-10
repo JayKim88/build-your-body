@@ -50,9 +50,9 @@ async function deleteProgram(id: string) {
     return plainResult;
   } catch (error) {
     console.log("fetch failed", error);
+  } finally {
+    client?.close();
   }
-
-  client?.close();
 }
 
 export { deleteProgram };
