@@ -71,21 +71,19 @@ export async function GET(req: NextRequest) {
         ])
         .toArray();
 
-      const groupedByDate: {
-        date: string;
-        items: {
-          name: string;
-          type: string;
-          lift: number;
-        }[];
-      }[] = [];
+      const groupedByExercise: HistoryChartData = [];
 
       (dataFromDB as WorkoutHistory).forEach((h) => {
         const date = h._id;
-        const resultItems: { name: string; lift: number; type: string }[] = [];
+        const exercisesOnThisDate: {
+          name: string;
+          type: string;
+          item: { date: string; lift: number };
+        }[] = [];
 
         h.items.forEach((item) => {
-          item.savedExercisesStatus.forEach((status) => {
+          const singlePerformance = item;
+          singlePerformance.savedExercisesStatus.forEach((status) => {
             const name = status.name;
             const type = status.type;
             const lift = status.exerciseSetValues.reduce(
@@ -93,55 +91,40 @@ export async function GET(req: NextRequest) {
               0
             );
 
-            const target = resultItems.find((t) => t.name === name);
+            const target = exercisesOnThisDate.find(
+              (exercise) => exercise.name === name
+            );
 
             if (target) {
-              target.lift = target.lift + lift;
+              target.item.lift = target.item.lift + lift;
             } else {
-              resultItems.push({
+              exercisesOnThisDate.push({
                 name: name,
                 type: type,
-                lift: lift,
+                item: {
+                  date: date,
+                  lift: lift,
+                },
               });
             }
           });
         });
 
-        groupedByDate.push({
-          date: date,
-          items: resultItems,
-        });
-      });
-
-      const groupedByName: HistoryChartData = [];
-
-      groupedByDate.forEach((v) => {
-        const date = v.date;
-
-        v.items.forEach((item) => {
-          const target = groupedByName.find((fi) => fi.name === item.name);
+        exercisesOnThisDate.forEach(({ item, ...rest }) => {
+          const target = groupedByExercise.find((g) => g.name === rest.name);
 
           if (target) {
-            target.items.push({
-              date: date,
-              lift: item.lift,
-            });
+            target.items.push(item);
           } else {
-            groupedByName.push({
-              name: item.name,
-              type: item.type,
-              items: [
-                {
-                  date: date,
-                  lift: item.lift,
-                },
-              ],
+            groupedByExercise.push({
+              ...rest,
+              items: [item],
             });
           }
         });
       });
 
-      data = groupedByName;
+      data = groupedByExercise;
     } else {
       data = await db
         ?.collection("workout-performance")

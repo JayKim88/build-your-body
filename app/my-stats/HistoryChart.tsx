@@ -12,6 +12,7 @@ import {
   LineElement,
   PointElement,
   Tooltip,
+  TooltipItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -79,6 +80,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
             borderColor: colors[index],
             fill: true,
             tension: 0.4,
+            pointBackgroundColor: colors[index],
           };
         }),
       [history]
@@ -141,6 +143,21 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
             size: 14,
             weight: "bold" as const,
           },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context: TooltipItem<"line">) {
+            const value = context.raw as number;
+
+            return ` ${value.toLocaleString()} kg`;
+          },
+        },
+        titleFont: {
+          size: 22,
+        },
+        bodyFont: {
+          size: 20,
         },
       },
     },
