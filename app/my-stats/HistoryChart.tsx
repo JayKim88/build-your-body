@@ -15,12 +15,20 @@ import {
   TooltipItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import {
+  startOfDay,
+  subDays,
+  format,
+  eachDayOfInterval,
+  addDays,
+  isSameDay,
+} from "date-fns";
 
 import { HistoryChartData } from "../api/types";
-import { format } from "date-fns";
 import { exerciseTypes } from "../component/Filter";
 import { ColorKey, getRGBColor } from "./TotalSummarySection";
 import { colors } from "@/tailwind.config";
+import CircleArrow from "@/public/circle-arrow.svg";
 
 Chart.register(
   Tooltip,
@@ -36,34 +44,67 @@ type HistoryChartProps = {
   programName: string;
 };
 
+function getRecent7Days(target: Date) {
+  const end = startOfDay(target);
+  const start = subDays(end, 6);
+  const daysArray = eachDayOfInterval({ start, end });
+
+  return daysArray.map((date) => format(date, "yyyy-MM-dd"));
+}
+
 export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
   const { data: session } = useSession();
   const email = session?.user?.email;
   const [history, setHistory] = useState<HistoryChartData>();
+  const [endDate, setEndDate] = useState(new Date());
+  const [labels, setLabels] = useState<string[] | undefined>();
 
   const getWorkoutHistory = useCallback(async () => {
+    const labels = getRecent7Days(endDate);
+
     const fetchedData = (
       await axios
         .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
           params: {
             email: email,
             programId: programId,
+            endDate: endDate,
           },
         })
         .then((res) => res.data)
     ).data as HistoryChartData | undefined;
 
-    setHistory(fetchedData);
-  }, [email, programId]);
+    const formatted7DaysHistory = fetchedData?.map((v) => {
+      const items = labels
+        ?.map((label) => {
+          const foundItem = v.items.find((item) => item.date === label);
+          return {
+            date: label,
+            lift: foundItem ? foundItem.lift : 0, // fill 0 in case no data
+          };
+        })
+        .reverse();
+
+      return {
+        name: v.name,
+        type: v.type,
+        items,
+      };
+    });
+
+    setLabels(labels);
+    setHistory(formatted7DaysHistory);
+  }, [email, programId, endDate]);
 
   useEffect(() => {
     if (!programId || !email) return;
     getWorkoutHistory();
-  }, [programId, email, getWorkoutHistory]);
+  }, [programId, email, endDate]);
 
-  const labels = history?.[0]?.items
-    .map((v) => format(v.date, "MM/dd"))
-    .reverse();
+  useEffect(() => {
+    setEndDate(new Date());
+  }, [programId]);
+
   const datasets =
     useMemo(
       () =>
@@ -166,21 +207,46 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
   const noHistory = !history?.length;
 
   return (
-    <div className="w-[440px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
-      <h1 className="text-2xl">
-        {`History ${programName}`}
-        {noHistory ? (
-          "운동을 먼저 진행해주세요!"
-        ) : (
+    <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
+      <h1 className="text-2xl">{`History ${programName}`}</h1>
+      <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">
+          {noHistory && (
+            <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2">
+              No Data
+            </div>
+          )}
+          <CircleArrow
+            width={32}
+            height={32}
+            alt="left button"
+            className={`${arrowStyles} rotate-180 -left-6 -translate-y-[40px]`}
+            onClick={() => {
+              setEndDate((prev) => subDays(prev, 1));
+            }}
+          />
           <Line
             data={data}
             options={options}
             style={{
-              marginTop: 40,
+              marginRight: 10,
             }}
           />
-        )}
-      </h1>
+          <CircleArrow
+            width={32}
+            height={32}
+            alt="left button"
+            className={`${arrowStyles} -right-6 -translate-y-[44px]`}
+            onClick={() => {
+              if (isSameDay(endDate, new Date())) return;
+              setEndDate((prev) => addDays(prev, 1));
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
+
+const arrowStyles =
+  "absolute stroke-gray6 hover:stroke-yellow cursor-pointer top-1/2";

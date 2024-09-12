@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
+import { subDays } from "date-fns";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
 
@@ -13,6 +14,7 @@ export async function GET(req: NextRequest) {
   const email = searchParams.get("email");
   const workoutId = searchParams.get("workoutId");
   const programId = searchParams.get("programId");
+  const endDate = searchParams.get("endDate");
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -36,6 +38,9 @@ export async function GET(req: NextRequest) {
         _id: new ObjectId(workoutId),
       });
     } else if (programId) {
+      const now = new Date();
+      const timeZoneDifference = -now.getTimezoneOffset() / 60;
+
       const dataFromDB = await db
         ?.collection("workout-performance")
         .aggregate([
@@ -43,6 +48,10 @@ export async function GET(req: NextRequest) {
             $match: {
               userId,
               savedProgramId: programId,
+              completedAt: {
+                $gte: subDays(endDate ? new Date(endDate) : now, 6),
+                $lte: endDate ? new Date(endDate) : now,
+              },
             },
           },
           {
@@ -51,9 +60,23 @@ export async function GET(req: NextRequest) {
             },
           },
           {
+            $addFields: {
+              completedAtLocalTime: {
+                $dateAdd: {
+                  startDate: "$completedAt",
+                  unit: "hour",
+                  amount: timeZoneDifference, // Convert UTC to Local time by timeZoneDifference
+                },
+              },
+            },
+          },
+          {
             $group: {
               _id: {
-                $dateToString: { format: "%Y-%m-%d", date: "$completedAt" },
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$completedAtLocalTime",
+                },
               },
               items: {
                 $push: "$$ROOT",

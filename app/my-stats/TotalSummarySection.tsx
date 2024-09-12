@@ -119,16 +119,18 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
           unit="Times"
         />
       </div>
-      <div className="w-[440px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 relative">
+      <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 relative">
         <h1 className="text-2xl">Total Portion Ratio</h1>
-        <Doughnut
-          data={chartData}
-          options={options}
-          style={{
-            position: "absolute",
-            bottom: 0,
-          }}
-        />
+        <div className="w-[490px]">
+          <Doughnut
+            data={chartData}
+            options={options}
+            style={{
+              position: "absolute",
+              bottom: 20,
+            }}
+          />
+        </div>
       </div>
     </section>
   );

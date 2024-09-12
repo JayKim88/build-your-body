@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { ExercisesStatus } from "@/app/my-programs/[programId]/Progress";
 import { SatisfiedStatus } from "@/app/my-programs/complete/WorkoutSummary";
+import { revalidatePath } from "next/cache";
 
 const uri = process.env.MONGODB_URI ?? "";
 
@@ -56,6 +57,8 @@ async function savePerformance(data: PerfomanceData) {
       success: result.acknowledged,
       itemId: result.insertedId.toString(),
     };
+
+    revalidatePath("/my-stats");
 
     return plainResult;
   } catch (error) {
