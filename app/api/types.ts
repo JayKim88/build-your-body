@@ -34,7 +34,8 @@ export type TotalWorkoutSummary = {
     type: string;
     lift: number;
   }[];
-  totalWorkout: number;
+  totalWorkout?: number;
+  totalTargetDateWorkoutTime?: number;
 };
 
 export type WorkoutHistory = {

@@ -19,18 +19,18 @@ type ProgressProps = {
   data: RegisteredProgram | undefined;
 };
 
-type ExerciseSetValues = {
-  order: number;
-  weight: number | undefined;
-  repeat: number | undefined;
-  checked: boolean;
-};
-
 type UpdateExerciseSetRowValues = {
   id?: string;
   order: number;
   title: string;
   value?: number | boolean;
+};
+
+export type ExerciseSetValues = {
+  order: number;
+  weight: number | undefined;
+  repeat: number | undefined;
+  checked: boolean;
 };
 
 export type ExercisesStatus = (CartProps & {
@@ -396,11 +396,11 @@ export const Progress = ({ data }: ProgressProps) => {
     setOpenBreakTimeModal(false);
   };
 
-  const moveToCompletedPage = () => {
+  const moveToCompletedPage = useCallback(() => {
     setProgramCompleted(true);
     saveCompletedAt(new Date());
     router.push("/my-programs/complete");
-  };
+  }, [router, saveCompletedAt]);
 
   useEffect(() => {
     if (!data) return;
@@ -440,7 +440,7 @@ export const Progress = ({ data }: ProgressProps) => {
     });
 
     setExercisesStatus(formattedExercises);
-  }, [data, savedExercisesStatus]);
+  }, [data, savedExercisesStatus, moveToCompletedPage]);
 
   const nextProgressExerciseIndex = useMemo(
     () => exercisesStatus?.findIndex((v) => !v.isCompleted),

@@ -1,6 +1,12 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { subDays } from "date-fns";
+import {
+  endOfDay,
+  endOfMonth,
+  startOfDay,
+  startOfMonth,
+  subDays,
+} from "date-fns";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
 
@@ -15,6 +21,8 @@ export async function GET(req: NextRequest) {
   const workoutId = searchParams.get("workoutId");
   const programId = searchParams.get("programId");
   const endDate = searchParams.get("endDate");
+  const targetDate = searchParams.get("targetDate");
+  const targetMonthDate = searchParams.get("targetMonthDate");
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -33,11 +41,13 @@ export async function GET(req: NextRequest) {
     let data;
 
     if (workoutId) {
+      // get specific program history data
       data = await db?.collection("workout-performance").findOne({
         userId,
         _id: new ObjectId(workoutId),
       });
     } else if (programId) {
+      // get available programs history within a specific week
       const now = new Date();
       const timeZoneDifference = -now.getTimezoneOffset() / 60;
 
@@ -148,11 +158,54 @@ export async function GET(req: NextRequest) {
       });
 
       data = groupedByExercise;
+    } else if (targetMonthDate) {
+      // get dates having program history for a specific month
+      const startofMonth = startOfMonth(targetMonthDate);
+      const endofMonth = endOfMonth(targetMonthDate);
+
+      const dataAvailableInTargetMonth = await db
+        ?.collection("workout-performance")
+        .aggregate([
+          {
+            $match: {
+              userId,
+              completedAt: {
+                $gte: startofMonth,
+                $lte: endofMonth,
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$completedAt",
+                },
+              },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
+            },
+          },
+        ])
+        .toArray();
+
+      data = dataAvailableInTargetMonth.map((item) => item._id);
     } else {
+      // find all or specific date programs history
       data = await db
         ?.collection("workout-performance")
         .find({
           userId: userId,
+          ...(targetDate && {
+            completedAt: {
+              $gte: startOfDay(targetDate), // Greater than or equal to the start of the day
+              $lte: endOfDay(targetDate), // Less than or equal to the end of the day
+            },
+          }),
         })
         .toArray();
     }

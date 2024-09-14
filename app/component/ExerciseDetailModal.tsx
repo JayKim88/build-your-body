@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Exercise } from "../api/types";
 import { useCartStore } from "../store";
@@ -9,7 +10,6 @@ import { ModalWrapper, OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { CartTitleButton } from "./CartTitleButton";
 import { useBodySnackbar } from "../hook/useSnackbar";
 import { getExerciseData } from "../api/exercise/getData";
-import { useEffect, useState } from "react";
 import { capitalizeFirstLetter } from "../utils";
 
 type ExerciseDetailModalProps = {
@@ -34,16 +34,16 @@ export const ExerciseDetailModal = ({
 
   const isLoggedIn = !!session;
 
-  const handleGetData = async () => {
+  const handleGetData = useCallback(async () => {
     const fetchedData = exerciseId && (await getExerciseData(exerciseId));
 
     fetchedData && setExerciseData(fetchedData);
-  };
+  }, [exerciseId]);
 
   useEffect(() => {
     if (!exerciseId) return;
     handleGetData();
-  }, [exerciseId]);
+  }, [exerciseId, handleGetData]);
 
   const {
     _id,
@@ -90,7 +90,7 @@ export const ExerciseDetailModal = ({
   useEffect(() => {
     if (isOpen || !exerciseData) return;
     setTimeout(() => setExerciseData(undefined), OVERLAY_OPEN_DELAY);
-  }, [isOpen]);
+  }, [isOpen, exerciseData]);
 
   const isDataReady = data ?? exerciseData;
 

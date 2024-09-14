@@ -9,10 +9,12 @@ import { MyStat } from "../types";
 type getStatsProps = {
   workoutId?: string;
   programId?: string;
+  targetDate?: Date;
+  targetMonthDate?: Date;
 };
 
 async function getData(props: getStatsProps) {
-  const { workoutId, programId } = props ?? {};
+  const { workoutId, programId, targetDate } = props ?? {};
 
   const session = await getServerSession(authOptions);
 
@@ -27,6 +29,7 @@ async function getData(props: getStatsProps) {
           email: session.user?.email,
           workoutId,
           programId,
+          targetDate,
         },
       })
       .then((res) => res.data);

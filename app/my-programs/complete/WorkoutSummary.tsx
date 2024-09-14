@@ -28,6 +28,10 @@ export type SatisfiedStatus =
   | "happy"
   | "lol";
 type ConfirmTypes = "exit" | "save";
+type PngIconProps = {
+  name: string;
+  className?: string;
+};
 
 const validImageTypes = ["jpeg", "png", "jpg"];
 
@@ -41,18 +45,16 @@ const formattedDuration = (value: number) => {
   }`;
 };
 
-const PngIcon = ({ name }: { name: string }) => {
-  return (
-    <div className="relative w-12 h-12">
-      <Image
-        className="object-contain"
-        src={`/workout-complete-icon/${name}.png`}
-        alt={name}
-        fill
-      />
-    </div>
-  );
-};
+export const PngIcon = ({ name, className }: PngIconProps) => (
+  <div className={`relative w-12 h-12 ${className}`}>
+    <Image
+      className="object-contain"
+      src={`/workout-complete-icon/${name}.png`}
+      alt={name}
+      fill
+    />
+  </div>
+);
 
 const SatisfiedStatusList = ({
   status,
@@ -154,25 +156,28 @@ export const WorkoutSummary = () => {
     setCroppedImg(croppedCanvasElement.toDataURL());
   };
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const imageFileToUpload = acceptedFiles[0];
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const imageFileToUpload = acceptedFiles[0];
 
-    const errorMessage = checkImageFileValid(imageFileToUpload);
+      const errorMessage = checkImageFileValid(imageFileToUpload);
 
-    if (errorMessage) {
-      bodySnackbar(errorMessage, {
-        variant: "error",
-      });
+      if (errorMessage) {
+        bodySnackbar(errorMessage, {
+          variant: "error",
+        });
 
-      return;
-    }
+        return;
+      }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(imageFileToUpload);
-  }, []);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(imageFileToUpload);
+    },
+    [bodySnackbar]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -366,10 +371,11 @@ export const WorkoutSummary = () => {
               border-2 border-softGreen rounded-2xl overflow-hidden`}
             >
               {croppedImg ? (
-                <img
-                  style={{ width: "100%" }}
+                <Image
                   src={croppedImg}
                   alt="cropped image"
+                  width={400}
+                  height={400}
                 />
               ) : previewUrl ? (
                 <Cropper

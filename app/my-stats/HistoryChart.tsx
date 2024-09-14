@@ -99,7 +99,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
   useEffect(() => {
     if (!programId || !email) return;
     getWorkoutHistory();
-  }, [programId, email, endDate]);
+  }, [programId, email, endDate, getWorkoutHistory]);
 
   useEffect(() => {
     setEndDate(new Date());
@@ -208,11 +208,11 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
 
   return (
     <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
-      <h1 className="text-2xl">{`History ${programName}`}</h1>
+      <h1 className="text-2xl">{`History by Week - ${programName}`}</h1>
       <div className="flex justify-center items-center h-full">
         <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">
           {noHistory && (
-            <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2">
+            <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2 text-2">
               No Data
             </div>
           )}

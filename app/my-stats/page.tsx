@@ -1,9 +1,10 @@
 import { getStats } from "../api/my-stats/getData";
 import { getTotalSummary } from "../api/my-stats/getTotalSummary";
 import { getPrograms } from "../api/programs/getData";
-import { RegisteredProgram, TotalWorkoutSummary } from "../api/types";
+import { MyStat, RegisteredProgram, TotalWorkoutSummary } from "../api/types";
 import { Header } from "../component/Header";
-import { HistorySection } from "./HistorySection";
+import { HistoryByDateSection } from "./HistoryByDateSection";
+import { HistoryByWeekSection } from "./HistoryByWeekSection";
 import { TotalSummarySection } from "./TotalSummarySection";
 
 export default async function Page() {
@@ -12,18 +13,22 @@ export default async function Page() {
     includeDeleted: true,
   })) as RegisteredProgram[] | undefined;
 
+  const todayWorkoutsData = (await getStats({
+    targetDate: new Date(),
+  })) as MyStat[];
+
   return (
     <div
       className="h-fit w-screen relative bg-black flex flex-col pt-[20px] 
     px-[80px] gap-y-8 max-w-[1800px]"
     >
       <Header />
-      <main className="flex">
+      <main className="flex gap-x-5">
         <section className="flex flex-col gap-y-5">
           <TotalSummarySection data={totalSummary} />
-          <HistorySection data={programs} />
+          <HistoryByWeekSection data={programs} />
         </section>
-        <section>right side</section>
+        <HistoryByDateSection data={todayWorkoutsData} />
       </main>
     </div>
   );

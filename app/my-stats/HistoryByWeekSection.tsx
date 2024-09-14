@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RegisteredProgram } from "../api/types";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
-import { ExerciseSummaryModal } from "../component/ExerciseSummaryModal";
+import { ProgramSummaryModal } from "../component/ProgramSummaryModal";
 import { HistoryChart } from "./HistoryChart";
 
-type HistoryProps = {
+type HistoryByWeekSectionProps = {
   data?: RegisteredProgram[];
 };
 
@@ -29,7 +29,7 @@ const Programs = ({
   onSetIsOpen,
 }: ProgramsProps) => {
   return (
-    <div className="w-[360px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
+    <div className="w-[360px] h-[340px] flex flex-col gap-y-5 rounded-[32px] p-5 bg-gray0">
       <h1 className="text-2xl">Programs</h1>
       <ul className="flex flex-col gap-y-4 overflow-auto">
         {data?.map((v) => {
@@ -38,8 +38,8 @@ const Programs = ({
           return (
             <li
               key={v._id}
-              className={`h-10 rounded-3xl bg-gray1 flex justify-between px-4 py-2 cursor-pointer ${
-                isSelected ? "border-2 border-yellow" : ""
+              className={`m-1 h-10 rounded-3xl bg-gray1 flex justify-between px-4 py-2 cursor-pointer ${
+                isSelected ? "outline outline-2 outline-yellow" : ""
               }`}
               onClick={() => onSelectProgramId(v._id)}
             >
@@ -66,7 +66,7 @@ const Programs = ({
   );
 };
 
-export const HistorySection = ({ data }: HistoryProps) => {
+export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
   const [selectedProgramId, setSelectedProgramId] = useState(
     data?.[0]._id ?? ""
   );
@@ -75,7 +75,7 @@ export const HistorySection = ({ data }: HistoryProps) => {
 
   const clickedProgramDetail = useMemo(
     () => data?.find((v) => v._id === clickedDetailProgramId),
-    [clickedDetailProgramId]
+    [clickedDetailProgramId, data]
   );
   const programName =
     data?.find((v) => v._id === selectedProgramId)?.programName ?? "";
@@ -90,7 +90,7 @@ export const HistorySection = ({ data }: HistoryProps) => {
         onSelectProgramId={(v) => setSelectedProgramId(v)}
       />
       <HistoryChart programId={selectedProgramId} programName={programName} />
-      <ExerciseSummaryModal
+      <ProgramSummaryModal
         isOpen={isOpen}
         data={clickedProgramDetail}
         onClose={() => {

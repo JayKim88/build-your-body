@@ -4,20 +4,12 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { RegisteredProgram } from "@/app/api/types";
 import { Button } from "@/app/component/Button";
 import { useProgressStore } from "@/app/store";
+import { formattedTime } from "@/app/utils";
 
 type ProgressTimerButtonProps = {
   data?: RegisteredProgram;
   isRunning: boolean;
   onSetRunning: (isRunning: boolean) => void;
-};
-
-const formattedTime = (time: number) => {
-  const getSeconds = `0${time % 60}`.slice(-2);
-  const minutes = `${Math.floor(time / 60)}`;
-  const getMinutes = `0${parseInt(minutes) % 60}`.slice(-2);
-  const getHours = `0${Math.floor(time / 3600)}`.slice(-2);
-
-  return `${getHours}:${getMinutes}:${getSeconds}`;
 };
 
 const ProgressTimerButton = ({
@@ -38,7 +30,7 @@ const ProgressTimerButton = ({
       });
     }
     onSetRunning(true);
-  }, [data?._id, saveProgramInfo, time, onSetRunning]);
+  }, [data?._id, data?.programName, saveProgramInfo, time, onSetRunning]);
 
   const handlePause = () => {
     onSetRunning(false);
@@ -72,7 +64,7 @@ const ProgressTimerButton = ({
 
   return time ? (
     <div className="rounded-3xl flex gap-x-4 items-center border-2 px-[20px] h-16">
-      <div className="text-[32px] min-w-28">{formattedTime(time)}</div>
+      <div className="text-[32px] min-w-28">{formattedTime(time, true)}</div>
       {isRunning ? (
         <div className="relative w-8 h-8">
           <Image

@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { RegisteredProgram } from "../api/types";
-import { ExerciseSummaryCard } from "./ExerciseSummaryCard";
+import { format } from "date-fns";
+
+import { MyStat } from "../api/types";
 import { ModalWrapper } from "./ModalWrapper";
 import { ExerciseDetailModal } from "./ExerciseDetailModal";
+import { ProgramHistoryDetailCard } from "./ProgramHistoryDetailCard";
 
-type ExerciseSummaryModalProps = {
+type ProgramHistoryDetailModalProps = {
   isOpen: boolean;
-  data?: RegisteredProgram;
+  data: MyStat | null;
   onClose: () => void;
 };
 
-export const ExerciseSummaryModal = ({
+export const ProgramHistoryDetailModal = ({
   isOpen,
   onClose,
   data,
-}: ExerciseSummaryModalProps) => {
+}: ProgramHistoryDetailModalProps) => {
   const [clickedExerciseId, setClickedExerciseId] = useState<string>();
 
   return (
@@ -22,14 +24,21 @@ export const ExerciseSummaryModal = ({
       <ModalWrapper
         isOpen={isOpen}
         onClose={onClose}
-        Title={<h1 className="text-4xl">{data?.programName}</h1>}
+        Title={
+          <h1 className="text-4xl flex justify-center items-center leading-none gap-x-2">
+            <span>
+              {data?.completedAt ? format(data?.completedAt, "MM/dd") : ""}
+            </span>
+            <span>{data?.savedProgramName}</span>
+          </h1>
+        }
         customClassName="w-fit"
       >
         <main className="flex gap-x-6">
-          {data?.exercises?.map((exercise) => (
-            <ExerciseSummaryCard
-              key={exercise.id}
-              data={exercise}
+          {data?.savedExercisesStatus?.map((status) => (
+            <ProgramHistoryDetailCard
+              key={status.id}
+              data={status}
               onClick={(v) => setClickedExerciseId(v)}
             />
           ))}
