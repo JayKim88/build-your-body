@@ -32,7 +32,7 @@ export const ProgramHistoryDetailModal = ({
             <span>{data?.savedProgramName}</span>
           </h1>
         }
-        customClassName="w-fit"
+        customClassName="w-fit overflow-auto"
       >
         <main className="flex gap-x-6">
           {data?.savedExercisesStatus?.map((status) => (

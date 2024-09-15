@@ -363,7 +363,7 @@ export const WorkoutSummary = () => {
         </section>
         <section className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-4">
-            <span className="text-[40px] text-softGreen">Upload Photo </span>
+            <span className="text-[40px] text-softGreen">Upload Photo</span>
             <div
               className={`${
                 croppedImg ? "w-[400px]" : "max-w-[400px] max-h-[400px]"
@@ -469,7 +469,7 @@ export const WorkoutSummary = () => {
 const defaultInputStyles =
   "border-2 border-gray2 w-[400px] rounded-2xl outline-none bg-gray6 text-black text-3xl";
 const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
-const defaultPageStyles = "flex justify-between min-w-[1440px]";
+const defaultPageStyles = "flex justify-between min-w-[1000px]";
 
 const MAX_IMAGE_FILE_MB_SIZE = 5;
 const IMAGE_FILE_SIZE_CALC_FORMULA = 1024;

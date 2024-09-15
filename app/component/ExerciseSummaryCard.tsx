@@ -3,7 +3,7 @@ import { CartProps } from "../store";
 import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { Chip } from "../my-programs/ProgramList";
 
-type EditableExerciseCardProps = {
+type ExerciseSummaryCardProps = {
   data: CartProps;
   onClick: (v: string) => void;
 };
@@ -11,7 +11,7 @@ type EditableExerciseCardProps = {
 export const ExerciseSummaryCard = ({
   data,
   onClick,
-}: EditableExerciseCardProps) => {
+}: ExerciseSummaryCardProps) => {
   const { id, type, img_url, name, repeat, set, weight } = data ?? {};
 
   const bgColor = getBgColor(type);

@@ -5,7 +5,7 @@ import { ExerciseSummaryCard } from "./ExerciseSummaryCard";
 import { ModalWrapper } from "./ModalWrapper";
 import { ExerciseDetailModal } from "./ExerciseDetailModal";
 
-type ExerciseSummaryModalProps = {
+type ProgramSummaryModalProps = {
   isOpen: boolean;
   data?: RegisteredProgram;
   onClose: () => void;
@@ -15,7 +15,7 @@ export const ProgramSummaryModal = ({
   isOpen,
   onClose,
   data,
-}: ExerciseSummaryModalProps) => {
+}: ProgramSummaryModalProps) => {
   const [clickedExerciseId, setClickedExerciseId] = useState<string>();
 
   return (
@@ -24,7 +24,7 @@ export const ProgramSummaryModal = ({
         isOpen={isOpen}
         onClose={onClose}
         Title={<h1 className="text-4xl">{data?.programName}</h1>}
-        customClassName="w-fit"
+        customClassName="w-fit overflow-auto"
       >
         <main className="flex gap-x-6">
           {data?.exercises?.map((exercise) => (

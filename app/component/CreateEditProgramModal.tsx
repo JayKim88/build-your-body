@@ -68,7 +68,7 @@ const ExerciseInput = ({
     <div className="flex relative items-center w-full">
       <span className="absolute top-[-24px]">{title}</span>
       <input
-        className="border-2 border-gray2 w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4 text-end"
+        className="w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4 text-end"
         value={value ?? ""}
         onChange={(e) => {
           const value = e.target.value;
@@ -366,7 +366,7 @@ export const CreateEditProgramModal = ({
                 const value = e.target.value;
                 setProgramName(value);
               }}
-              className="border-2 border-gray2 w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
+              className="w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
             />
           )}
         </div>

@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RegisteredProgram } from "../api/types";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
-import { ProgramSummaryModal } from "../component/ProgramSummaryModal";
 import { HistoryChart } from "./HistoryChart";
+import { ProgramSummaryModal } from "../component/ProgramSummaryModal";
 
 type HistoryByWeekSectionProps = {
   data?: RegisteredProgram[];
