@@ -27,6 +27,9 @@ export async function GET(req: NextRequest) {
   const client = new MongoClient(uri);
   const db = client?.db();
 
+  const now = new Date();
+  const timeZoneDifference = -now.getTimezoneOffset() / 60;
+
   try {
     const user = await db?.collection("users").findOne({
       email: email,
@@ -48,8 +51,6 @@ export async function GET(req: NextRequest) {
       });
     } else if (programId) {
       // get available programs history within a specific week
-      const now = new Date();
-      const timeZoneDifference = -now.getTimezoneOffset() / 60;
 
       const dataFromDB = await db
         ?.collection("workout-performance")
@@ -176,12 +177,26 @@ export async function GET(req: NextRequest) {
             },
           },
           {
+            $addFields: {
+              completedAtLocalTime: {
+                $dateAdd: {
+                  startDate: "$completedAt",
+                  unit: "hour",
+                  amount: timeZoneDifference,
+                },
+              },
+            },
+          },
+          {
             $group: {
               _id: {
                 $dateToString: {
                   format: "%Y-%m-%d",
-                  date: "$completedAt",
+                  date: "$completedAtLocalTime",
                 },
+              },
+              items: {
+                $push: "$$ROOT",
               },
             },
           },
