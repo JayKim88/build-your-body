@@ -11,7 +11,7 @@ async function getData() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Unauthorized");
+    return null;
   }
 
   const client = new MongoClient(uri);

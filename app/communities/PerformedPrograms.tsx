@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 
 import { MyStat as PerformedData } from "../api/types";
 import { ExerciseType } from "../component/Filter";
@@ -21,6 +22,7 @@ const PerformedProgramCard = (
   props: PerformedData & {
     onClick: (v: string) => void;
     memberUserId?: string;
+    isLoggedIn: boolean;
   }
 ) => {
   const [liked, setLiked] = useState(false);
@@ -38,6 +40,7 @@ const PerformedProgramCard = (
     completedAt,
     memberUserId,
     likedUserIds,
+    isLoggedIn,
   } = props;
 
   const liftsByExercise = savedExercisesStatus.map((v) => {
@@ -127,13 +130,18 @@ const PerformedProgramCard = (
       <div className="flex justify-end">
         <div className="flex items-center gap-x-1">
           <button
+            className={`${
+              isLoggedIn ? "pointer-events-auto" : "pointer-events-none"
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               handleLike();
             }}
           >
             <Like
-              className={`${liked ? "fill-red" : "fill-transparent"} scale-75`}
+              className={`${
+                liked || !isLoggedIn ? "fill-red" : "fill-transparent"
+              } scale-75`}
             />
           </button>
           <span className="text-3xl">{likedCount}</span>
@@ -148,6 +156,7 @@ const PerformedPrograms = ({
   selectedType,
   userId,
 }: PerformedProgramsProps) => {
+  const { data: session } = useSession();
   const [communitiesData, setCommunitiesData] = useState<PerformedData[]>([]);
   const [clickedProgram, setClickedProgram] = useState<PerformedData | null>(
     null
@@ -180,22 +189,26 @@ const PerformedPrograms = ({
     );
   }, [data, selectedType, showMyData]);
 
+  const isLoggedIn = !!session;
+
   return (
     <>
       <section className="flex gap-6 flex-wrap relative">
-        <div
-          className={`${defaultRowStyles} items-center w-fit absolute -top-[72px] right-0`}
-        >
-          <div className="text-4xl">Show my list</div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              onChange={(e) => setShowMyData(e.target.checked)}
-              checked={showMyData}
-            />
-            <span className="slider round"></span>
-          </label>
-        </div>
+        {isLoggedIn && (
+          <div
+            className={`${defaultRowStyles} items-center w-fit absolute -top-[72px] right-0`}
+          >
+            <div className="text-4xl">Show my list</div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                onChange={(e) => setShowMyData(e.target.checked)}
+                checked={showMyData}
+              />
+              <span className="slider round"></span>
+            </label>
+          </div>
+        )}
         {communitiesData.length ? (
           communitiesData.map((data) => (
             <PerformedProgramCard
@@ -203,6 +216,7 @@ const PerformedPrograms = ({
               {...data}
               onClick={handleClickProgram}
               memberUserId={userId}
+              isLoggedIn={isLoggedIn}
             />
           ))
         ) : (
