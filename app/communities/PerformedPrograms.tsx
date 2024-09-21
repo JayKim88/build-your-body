@@ -140,7 +140,9 @@ const PerformedProgramCard = (
           >
             <Like
               className={`${
-                liked || !isLoggedIn ? "fill-red" : "fill-transparent"
+                liked || (!isLoggedIn && !!likedCount)
+                  ? "fill-red"
+                  : "fill-transparent"
               } scale-75`}
             />
           </button>
