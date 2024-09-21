@@ -68,7 +68,7 @@ const Programs = ({
 
 export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
   const [selectedProgramId, setSelectedProgramId] = useState(
-    data?.[0]._id ?? ""
+    data?.[0]?._id ?? ""
   );
   const [clickedDetailProgramId, setClickedDetailProgramId] = useState("");
   const [isOpen, setIsOpen] = useState(false);

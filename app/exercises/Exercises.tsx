@@ -4,14 +4,14 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 import { Exercise } from "../api/types";
-import { ExerciseType } from "./Filter";
-import { ExerciseDetailModal } from "./ExerciseDetailModal";
 import AddToCart from "@/public/cart-icon/add-to-cart.svg";
 import RemoveFromCart from "@/public/cart-icon/remove-from-cart.svg";
 import { useCartStore } from "../store";
-import { OVERLAY_OPEN_DELAY } from "./ModalWrapper";
 import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { useBodySnackbar } from "../hook/useSnackbar";
+import { ExerciseType } from "../component/Filter";
+import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
+import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 
 type ExercisesProps = {
   data?: Exercise[];

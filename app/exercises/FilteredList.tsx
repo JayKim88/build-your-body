@@ -5,7 +5,7 @@ import { SnackbarProvider } from "notistack";
 
 import { Exercise } from "../api/types";
 import { Filter, ExerciseType } from "../component/Filter";
-import { Exercises } from "../component/Exercises";
+import { Exercises } from "./Exercises";
 
 const FilteredList = ({ data }: { data: Exercise[] }) => {
   const [selectedType, setSelectedType] = useState<ExerciseType>("all");

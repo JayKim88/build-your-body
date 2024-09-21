@@ -27,6 +27,7 @@ export type RegisteredProgram = {
 export type MyStat = {
   _id: string;
   userId: string;
+  likedUserIds?: string[];
 } & PerfomanceData;
 
 export type TotalWorkoutSummary = {
