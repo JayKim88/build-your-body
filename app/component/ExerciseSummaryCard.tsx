@@ -32,7 +32,7 @@ export const ExerciseSummaryCard = ({
           priority
         />
       </div>
-      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
+      <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
       <div className="flex gap-x-2">
         <Chip text={`${weight} kg`} />
         <Chip text={`${repeat} times`} />

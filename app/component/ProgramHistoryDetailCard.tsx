@@ -22,7 +22,7 @@ export const ProgramHistoryDetailCard = ({
       className={`${bgColor} w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
       onClick={() => onClick(id)}
     >
-      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
+      <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
       <div className="relative w-full h-[260px] rounded-2xl overflow-hidden">
         <Image
           src={img_url}

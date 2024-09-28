@@ -12,10 +12,7 @@ export default async function Page() {
   // console.dir(fetchedData, { depth: null });
 
   return (
-    <div
-      className="h-fit w-screen relative bg-black flex-col pt-[20px] 
-    px-[80px] max-w-[1800px]"
-    >
+    <div className="h-fit w-screen relative bg-black flex-col max-w-[1800px] overflow-auto">
       <Header />
       <FilteredList data={fetchedData.data} />
     </div>

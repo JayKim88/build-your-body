@@ -8,8 +8,8 @@ export default async function Page() {
 
   return (
     <div
-      className="h-fit w-screen relative bg-black flex flex-col pt-[20px] 
-    px-[80px] gap-y-8 max-w-[1800px]"
+      className="h-fit w-screen relative bg-black flex flex-col  
+    gap-y-8 max-w-[1800px] overflow-auto"
     >
       <Header />
       <ProgramList data={fetchedData} />

@@ -19,11 +19,11 @@ export default async function Page() {
 
   return (
     <div
-      className="h-fit w-screen relative bg-black flex flex-col pt-[20px] 
-    px-[80px] gap-y-8 max-w-[1800px]"
+      className="h-fit relative bg-black flex flex-col gap-y-8 max-w-[1800px] 
+      overflow-auto"
     >
       <Header />
-      <main className="flex gap-x-5 flex-wrap gap-y-5">
+      <main className="flex gap-x-5 gap-y-5">
         <section className="flex flex-col gap-y-5">
           <TotalSummarySection data={totalSummary} />
           <HistoryByWeekSection data={programs} />

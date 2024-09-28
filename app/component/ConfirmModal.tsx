@@ -7,12 +7,14 @@ type ConfirmModalProps = {
   isOpen: boolean;
   onClick: (v: boolean) => void;
   content?: string;
+  loading?: boolean;
 };
 
 export const ConfirmModal = ({
   isOpen,
   onClick,
   content = "Are you sure?",
+  loading,
 }: ConfirmModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -54,7 +56,10 @@ export const ConfirmModal = ({
           />
           <Button
             title="Yeah"
-            onClick={() => onClick(true)}
+            onClick={() => {
+              if (loading) return;
+              onClick(true);
+            }}
             className={
               "w-[144px] h-[80px] hover:bg-lightGreen hover:text-gray6 bg-lightGreen"
             }

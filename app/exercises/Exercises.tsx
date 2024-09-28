@@ -95,7 +95,7 @@ const ExerciseCard = (
           priority
         />
       </div>
-      <div className="text-[32px]">{capitalizeFirstLetter(name)}</div>
+      <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
       <div className="text-lg min-h-[84px] text-black">{summary}</div>
       {isLoggedIn && (
         <div className="flex w-full justify-evenly">

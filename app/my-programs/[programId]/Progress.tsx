@@ -196,7 +196,7 @@ const ExerciseProgressCard = ({
           ${isUnclickable && "pointer-events-none opacity-25"}
         `}
       >
-        <h1 className="text-[32px] font-medium">
+        <h1 className="text-[30px] font-medium">
           {capitalizeFirstLetter(data.name)}
         </h1>
         <div className="relative w-full h-[360px] rounded-2xl overflow-hidden">

@@ -116,6 +116,7 @@ export const WorkoutSummary = () => {
   const [imgFile, setImgFile] = useState<Blob>();
   const [isPublic, setIsPublic] = useState(true);
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
+  const [loading, setLoading] = useState(false);
 
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
@@ -205,6 +206,7 @@ export const WorkoutSummary = () => {
   const goToListAfterCleanup = () => {
     router.replace("/my-programs");
     clearPerformanceAndSummary();
+    setLoading(false);
   };
 
   const uploadImageAndGetImageUrl = async () => {
@@ -237,6 +239,7 @@ export const WorkoutSummary = () => {
   };
 
   const saveWorkoutPerformance = async () => {
+    setLoading(true);
     const imageUrl = !!imgFile ? await uploadImageAndGetImageUrl() : undefined;
     /**
      * @todo make save workout complete function
@@ -288,6 +291,7 @@ export const WorkoutSummary = () => {
 
         if (isSuccess) {
           goToListAfterCleanup();
+
           return;
         }
       }
@@ -461,6 +465,7 @@ export const WorkoutSummary = () => {
             ? "운동 기록을\n저장하시겠어요?"
             : `저장없이\n종료하시겠어요?`
         }
+        loading={loading}
       />
     </div>
   );

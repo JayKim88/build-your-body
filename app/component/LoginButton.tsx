@@ -38,11 +38,15 @@ export const LoginButton = () => {
   };
 
   const isWorkoutCompletePage = pathname === "/my-programs/complete";
+  const isIntroPage = pathname === "/";
 
   return !isWorkoutCompletePage ? (
     <button
       disabled={!!isLoading}
-      className="btn-basic bg-black border-4 absolute top-10 right-10 h-20 flex justify-center items-center hover:bg-gray6 hover:border-black hover:text-black z-10"
+      className={`${
+        isIntroPage ? "top-10" : "top-[72px]"
+      } btn-basic bg-black border-4 absolute right-10 h-20 flex justify-center 
+      items-center hover:bg-gray6 hover:border-black hover:text-black z-10`}
       onClick={handleLoggingAction}
     >
       {isLoading ? "loading!" : isLoggedIn ? "LOG OUT" : "JOIN NOW"}

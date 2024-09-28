@@ -29,7 +29,7 @@ export default function RootLayout({
             <LoginButton />
             <Menu />
             {/* <YoutubeModal /> */}
-            <main className="h-fit">{children}</main>
+            <main className="px-[50px] py-[50px] h-fit">{children}</main>
           </AuthContext>
         </body>
       </html>
