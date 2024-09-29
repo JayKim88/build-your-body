@@ -39,6 +39,9 @@ export async function GET(req: NextRequest) {
               deleted: { $ne: true },
             }),
           })
+          .sort({
+            lastCompletedAt: -1,
+          })
           .toArray();
 
     return NextResponse.json({ data }, { status: 200 });

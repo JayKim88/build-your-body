@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import axios from "axios";
+import { format } from "date-fns";
 
 import { RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
@@ -17,6 +18,7 @@ import { deleteProgram } from "../api/programs/delete";
 import { useBodySnackbar } from "../hook/useSnackbar";
 import { ConfirmModal } from "../component/ConfirmModal";
 import { ExerciseSummaryCard } from "../component/ExerciseSummaryCard";
+import { PngIcon } from "./complete/WorkoutSummary";
 
 export const Chip = ({ text }: { text: string }) => {
   return (
@@ -36,7 +38,12 @@ const ProgramItem = (data: RegisteredProgram) => {
   const [clicked, setClicked] = useState<string>();
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const { exercises: initialExercises, programName, _id } = data ?? {};
+  const {
+    exercises: initialExercises,
+    programName,
+    _id,
+    lastCompletedAt,
+  } = data ?? {};
 
   const handleConfirm = async (v: boolean) => {
     if (v) {
@@ -65,50 +72,62 @@ const ProgramItem = (data: RegisteredProgram) => {
 
   return (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit">
-      <header className="flex justify-between h-20">
-        <div className="flex items-center gap-x-8">
-          <h1 className="text-4xl">{programName}</h1>
-          {isInprogress ? (
-            isProgramInprogress ? (
-              <Button
-                title={"Continue"}
-                onClick={() => router.push(`/my-programs/${_id}`)}
-                className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
-                fontSize={48}
-              />
+      <header className="flex flex-col relative">
+        {lastCompletedAt && (
+          <span className="flex justify-start items-center gap-x-1 border-2 w-fit p-2 rounded-[32px]">
+            <PngIcon name="calendar" className="w-[24px] h-[24px]" />
+            last performed on: {format(lastCompletedAt, "yyyy.MM.dd")}
+          </span>
+        )}
+        <div className="flex justify-between h-20">
+          <div
+            className={`flex items-center gap-x-8 ${
+              isProgramInprogress ? "justify-between w-full" : ""
+            }`}
+          >
+            <h1 className="text-4xl">{programName}</h1>
+            {isInprogress ? (
+              isProgramInprogress ? (
+                <Button
+                  title="Continue"
+                  onClick={() => router.push(`/my-programs/${_id}`)}
+                  className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
+                  fontSize={40}
+                />
+              ) : (
+                <></>
+              )
             ) : (
-              <></>
-            )
-          ) : (
-            <Button
-              title={"Enter"}
-              onClick={() => router.push(`/my-programs/${_id}`)}
-              className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-20"
-              fontSize={48}
-            />
+              <Button
+                title="Enter"
+                onClick={() => router.push(`/my-programs/${_id}`)}
+                className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
+                fontSize={40}
+              />
+            )}
+          </div>
+          {!isProgramInprogress && (
+            <div className="flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]">
+              <Image
+                src="/edit.png"
+                alt="edit"
+                width={48}
+                height={48}
+                onClick={() => {
+                  setEditOpen(true);
+                  setEditProgram(data);
+                }}
+              />
+              <Image
+                src="/delete_bin.png"
+                alt="delete"
+                width={48}
+                height={48}
+                onClick={() => setOpenConfirm(true)}
+              />
+            </div>
           )}
         </div>
-        {!isProgramInprogress && (
-          <div className="flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]">
-            <Image
-              src="/edit.png"
-              alt="edit"
-              width={48}
-              height={48}
-              onClick={() => {
-                setEditOpen(true);
-                setEditProgram(data);
-              }}
-            />
-            <Image
-              src="/delete_bin.png"
-              alt="delete"
-              width={48}
-              height={48}
-              onClick={() => setOpenConfirm(true)}
-            />
-          </div>
-        )}
       </header>
       <main className="flex gap-x-6">
         {initialExercises?.map((exercise) => (

@@ -20,6 +20,10 @@ import { useBodySnackbar } from "@/app/hook/useSnackbar";
 import { Button } from "@/app/component/Button";
 import { ConfirmModal } from "@/app/component/ConfirmModal";
 import { savePerformance } from "@/app/api/program-complete/savePerformance";
+import { editProgram } from "@/app/api/programs/edit";
+import Summary from "@/public/workout-complete-icon/summary.svg";
+import { ProgramHistoryDetailModal } from "@/app/component/ProgramHistoryDetailModal";
+import { MyStat } from "@/app/api/types";
 
 export type SatisfiedStatus =
   | "terrible"
@@ -117,6 +121,7 @@ export const WorkoutSummary = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
@@ -260,9 +265,13 @@ export const WorkoutSummary = () => {
       }),
     };
 
-    const result = await savePerformance(inputArgs);
+    const savePerformanceResult = await savePerformance(inputArgs);
+    const lastCompletedAtResult = await editProgram({
+      programId: savedProgramId,
+      lastCompletedAt: completedAt,
+    });
 
-    return !!result?.success;
+    return !!savePerformanceResult?.success && !!lastCompletedAtResult?.success;
   };
 
   const handleConfirm = async (isConfirm: boolean) => {
@@ -304,6 +313,8 @@ export const WorkoutSummary = () => {
 
   if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
 
+  console.log("savedExercisesStatus", savedExercisesStatus);
+
   return (
     <div className="flex flex-col text-gray6">
       <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
@@ -323,12 +334,20 @@ export const WorkoutSummary = () => {
                 </span>
               </div>
             </div>
-            <div className="flex gap-x-[174px] text-[40px]">
-              <span>TOTAL</span>
-              <span className="flex gap-x-2 items-center">
-                <PngIcon name="duration" />
-                {formattedDuration(savedWorkoutTime)}
-              </span>
+            <div className="flex gap-x-[108px] text-[40px] justify-start">
+              <span>Summary</span>
+              <div className="flex gap-x-8">
+                <span className="flex gap-x-2 items-center">
+                  <PngIcon name="duration" />
+                  {formattedDuration(savedWorkoutTime)}
+                </span>
+                <span className="flex gap-x-2 items-center">
+                  <Summary
+                    className="fill-gray6 cursor-pointer hover:fill-yellow"
+                    onClick={() => setIsOpen(true)}
+                  />
+                </span>
+              </div>
             </div>
           </section>
           <section className="flex flex-col gap-y-10">
@@ -466,6 +485,15 @@ export const WorkoutSummary = () => {
             : `저장없이\n종료하시겠어요?`
         }
         loading={loading}
+      />
+      <ProgramHistoryDetailModal
+        isOpen={isOpen}
+        data={
+          {
+            savedExercisesStatus,
+          } as MyStat
+        }
+        onClose={() => setIsOpen(false)}
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { CartProps } from "@/app/store";
 import { getServerSession } from "next-auth";
-import { MongoClient, ObjectId } from "mongodb";
+import { MatchKeysAndValues, MongoClient, ObjectId } from "mongodb";
 import { revalidatePath } from "next/cache";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
@@ -11,8 +11,8 @@ const uri = process.env.MONGODB_URI ?? "";
 
 async function editProgram(data: {
   programId: string;
-  programName: string;
-  exercises: CartProps[];
+  lastCompletedAt?: Date;
+  exercises?: CartProps[];
 }) {
   const session = await getServerSession(authOptions);
 
@@ -34,7 +34,16 @@ async function editProgram(data: {
 
     const userId = user?._id;
 
-    const { programName, programId, exercises } = data;
+    const { lastCompletedAt, programId, exercises } = data;
+
+    const updateFields: MatchKeysAndValues<Document> | undefined = {};
+
+    if (exercises) {
+      updateFields.exercises = exercises;
+    }
+    if (lastCompletedAt) {
+      updateFields.lastCompletedAt = lastCompletedAt;
+    }
 
     const result = await db?.collection("programs").updateOne(
       {
@@ -42,10 +51,7 @@ async function editProgram(data: {
         userId,
       },
       {
-        $set: {
-          programName,
-          exercises,
-        },
+        $set: updateFields,
       }
     );
 

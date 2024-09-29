@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
   const endDate = searchParams.get("endDate");
   const targetDate = searchParams.get("targetDate");
   const targetMonthDate = searchParams.get("targetMonthDate");
+  const lastWorkout = searchParams.get("lastWorkout") === "true";
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
             },
           },
           {
-            $limit: 7,
+            $limit: lastWorkout ? 1 : 7,
           },
         ])
         .toArray();

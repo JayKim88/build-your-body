@@ -4,17 +4,18 @@ import { getServerSession } from "next-auth";
 import axios from "axios";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-import { MyStat } from "../types";
+import { HistoryChartData, MyStat } from "../types";
 
 type getStatsProps = {
   workoutId?: string;
   programId?: string;
   targetDate?: Date;
   targetMonthDate?: Date;
+  lastWorkout?: boolean;
 };
 
 async function getData(props: getStatsProps) {
-  const { workoutId, programId, targetDate } = props ?? {};
+  const { workoutId, programId, targetDate, lastWorkout } = props ?? {};
 
   const session = await getServerSession(authOptions);
 
@@ -30,18 +31,19 @@ async function getData(props: getStatsProps) {
           workoutId,
           programId,
           targetDate,
+          lastWorkout,
         },
       })
       .then((res) => res.data);
 
-    let formattedData: MyStat | MyStat[];
+    let formattedData: HistoryChartData | MyStat | MyStat[];
 
     if (Array.isArray(result.data)) {
       formattedData = (result.data as MyStat[])?.map(
         ({ _id, userId, ...rest }) => ({
           ...rest,
-          _id: _id.toString(),
-          userId: userId.toString(),
+          _id: _id?.toString(),
+          userId: userId?.toString(),
         })
       );
     } else {

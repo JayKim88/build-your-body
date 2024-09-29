@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { RegisteredProgram } from "@/app/api/types";
+import { HistoryChartData, RegisteredProgram } from "@/app/api/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
@@ -17,6 +17,7 @@ import { BreakTimeModal } from "./BreakTimeModal";
 
 type ProgressProps = {
   data: RegisteredProgram | undefined;
+  lastWorkoutData: HistoryChartData | undefined;
 };
 
 type UpdateExerciseSetRowValues = {
@@ -44,6 +45,7 @@ type ExerciseProgressCardProps = {
   isRunning: boolean;
   isInprogress: boolean;
   isLastExercise: boolean;
+  liftGap: number;
   onUpdate: (v: UpdateExerciseSetRowValues) => void;
   onAddDeleteSet: (id: string, isAdd: boolean) => void;
   onProceedToNextExercise: (index: number, id: string) => void;
@@ -167,6 +169,7 @@ const ExerciseProgressCard = ({
   isRunning,
   isInprogress,
   isLastExercise,
+  liftGap,
   onUpdate,
   onAddDeleteSet,
   onProceedToNextExercise,
@@ -183,6 +186,22 @@ const ExerciseProgressCard = ({
 
   return (
     <div className="relative">
+      {!isUnclickable && (
+        <div
+          className="absolute top-[300px] left-1/2 -translate-x-1/2 
+        z-10 opacity-100 rotate-[-20deg] flex flex-col w-[260px] items-end"
+        >
+          <div className="text-[28px]">Compare to last time</div>
+          <div
+            className={`${
+              liftGap >= 0 ? "text-realGreen" : "text-red"
+            } text-[48px]`}
+          >
+            {liftGap >= 0 ? "+" : ""}
+            {liftGap} kg
+          </div>
+        </div>
+      )}
       {isCompleted && !isLastExercise && (
         <div
           className="absolute top-1/2 -mt-4 left-1/2 -translate-x-1/2 
@@ -257,7 +276,7 @@ const ExerciseProgressCard = ({
   );
 };
 
-export const Progress = ({ data }: ProgressProps) => {
+export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
   const swiperRef = useRef<SwiperClass | null>(null);
   const router = useRouter();
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
@@ -486,6 +505,16 @@ export const Progress = ({ data }: ProgressProps) => {
             const isInprogressExercise = index === nextProgressExerciseIndex;
             const isLastExercise = index === exercisesStatus.length - 1;
 
+            const lastLift = lastWorkoutData?.find(
+              (v) => v.name === exerciseStatus.name
+            )?.items[0].lift;
+            const currentLift = exerciseStatus.exerciseSetValues
+              .filter((v) => v.checked)
+              .reduce((acc, cur) => {
+                return acc + (cur.repeat ?? 0) * (cur.weight ?? 0);
+              }, 0);
+            const liftGap = currentLift - (lastLift ?? 0);
+
             return (
               <SwiperSlide
                 key={exerciseStatus.id}
@@ -503,6 +532,7 @@ export const Progress = ({ data }: ProgressProps) => {
                   onUpdate={updateProgressStatus}
                   onAddDeleteSet={addDeleteExerciseSet}
                   onProceedToNextExercise={proceedToNextExercise}
+                  liftGap={liftGap}
                 />
               </SwiperSlide>
             );

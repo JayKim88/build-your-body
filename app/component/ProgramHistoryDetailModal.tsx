@@ -34,6 +34,7 @@ export const ProgramHistoryDetailModal = ({
   }, [data?.savedExercisesStatus]);
 
   const isPublic = !!data?.isPublic;
+  const isSaved = !!data?.completedAt;
 
   return (
     <>
@@ -41,57 +42,61 @@ export const ProgramHistoryDetailModal = ({
         isOpen={isOpen}
         onClose={onClose}
         Title={
-          <div className="text-4xl flex justify-between items-center leading-none gap-x-2 w-full pr-1">
-            <div className="flex gap-x-2">
-              <span>
-                {data?.completedAt ? format(data?.completedAt, "MM/dd") : ""}
-              </span>
-              <span>{data?.savedProgramName}</span>
-            </div>
-            {!isCommunitiesPage && (
-              <div className="flex gap-x-2 items-center">
-                {isPublic ? (
-                  <Public className="fill-lightGreen" />
-                ) : (
-                  <Private className="stroke-lightRed [&>circle]:fill-lightRed" />
-                )}
-                <span
-                  className={`${
-                    isPublic ? "text-lightGreen" : "text-lightRed"
-                  } pt-[2px]`}
-                >
-                  {isPublic ? "Public" : "Private"}
-                </span>
+          isSaved ? (
+            <div className="text-4xl flex justify-between items-center leading-none gap-x-2 w-full pr-1">
+              <div className="flex gap-x-2">
+                <span>{format(data.completedAt!, "MM/dd")}</span>
+                <span>{data.savedProgramName}</span>
               </div>
-            )}
-          </div>
+              {!isCommunitiesPage && (
+                <div className="flex gap-x-2 items-center">
+                  {isPublic ? (
+                    <Public className="fill-lightGreen" />
+                  ) : (
+                    <Private className="stroke-lightRed [&>circle]:fill-lightRed" />
+                  )}
+                  <span
+                    className={`${
+                      isPublic ? "text-lightGreen" : "text-lightRed"
+                    } pt-[2px]`}
+                  >
+                    {isPublic ? "Public" : "Private"}
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="text-4xl">Performed Workouts</span>
+          )
         }
         customClassName="w-fit overflow-auto"
       >
         <main className="flex gap-x-6 gap-y-6 flex-col">
-          <section className={`flex gap-x-6 ${cardsSectionWidth}`}>
-            <div className="flex flex-col items-start justify-start gap-y-6 flex-1">
-              <div className="flex items-center">
-                <h1 className="text-[32px]">
-                  {capitalizeFirstLetter(data?.title ?? "")}
-                </h1>
-                <SatisfictionIcon status={data?.satisfiedStatus} />
+          {isSaved && (
+            <section className={`flex gap-x-6 ${cardsSectionWidth}`}>
+              <div className="flex flex-col items-start justify-start gap-y-6 flex-1">
+                <div className="flex items-center">
+                  <h1 className="text-[32px]">
+                    {capitalizeFirstLetter(data?.title ?? "")}
+                  </h1>
+                  <SatisfictionIcon status={data?.satisfiedStatus} />
+                </div>
+                <div className="text-2xl">{data?.note ?? ""}</div>
               </div>
-              <div className="text-2xl">{data?.note ?? ""}</div>
-            </div>
-            {data?.imageUrl && (
-              <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden">
-                <Image
-                  src={data?.imageUrl}
-                  alt="name"
-                  fill
-                  style={{ objectFit: "cover" }}
-                  sizes="(max-width: 1200px) 100vw"
-                  priority
-                />
-              </div>
-            )}
-          </section>
+              {data?.imageUrl && (
+                <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden">
+                  <Image
+                    src={data?.imageUrl}
+                    alt="name"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    sizes="(max-width: 1200px) 100vw"
+                    priority
+                  />
+                </div>
+              )}
+            </section>
+          )}
           <section className="flex gap-x-6">
             {data?.savedExercisesStatus?.map((status) => (
               <ProgramHistoryDetailCard
