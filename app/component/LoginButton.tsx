@@ -44,8 +44,8 @@ export const LoginButton = () => {
     <button
       disabled={!!isLoading}
       className={`${
-        isIntroPage ? "top-10" : "top-[72px]"
-      } btn-basic bg-black border-4 absolute right-10 h-20 flex justify-center 
+        isIntroPage ? "top-10 absolute right-10" : ""
+      } btn-basic bg-black border-4 h-20 flex justify-center 
       items-center hover:bg-gray6 hover:border-black hover:text-black z-10`}
       onClick={handleLoggingAction}
     >

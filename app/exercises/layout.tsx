@@ -9,5 +9,5 @@ export default function ExercisesLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section className="flex justify-center">{children}</section>;
+  return <section className="flex">{children}</section>;
 }

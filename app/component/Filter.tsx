@@ -66,7 +66,8 @@ const Chip = ({
         onSelect(type);
       }}
       className={`${isSelected ? selectedBgColor : "bg-gray2"}
-       flex items-center justify-center gap-2 rounded-[32px] py-2 px-4 text-[20px] ${
+       h-fit flex items-center justify-center gap-2 rounded-[32px] 
+       py-2 px-4 text-[20px] ${
          isSelected ? "" : "hover:bg-gray6 hover:text-black"
        }  
       `}
@@ -84,7 +85,10 @@ export const Filter = ({
   onFilter: (v: ExerciseType) => void;
   selectedType: ExerciseType;
 }) => (
-  <section className="w-[1100px] flex overflow-auto gap-4 mt-8">
+  <section
+    className="w-[1100px] flex overflow-auto gap-4 bg-black fixed h-[120px] 
+  top-[130px] z-10 w-[calc(100vw-110px)] items-end pb-4"
+  >
     {exerciseTypes.map((v) => (
       <Chip
         key={v.type}

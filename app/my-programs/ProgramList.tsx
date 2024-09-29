@@ -169,7 +169,7 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
   }, [isUpdated]);
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div className="flex flex-col gap-y-8 overflow-auto max-w-[calc(100vw-110px)]">
       <SnackbarProvider>
         {programList?.map((v) => (
           <ProgramItem key={v._id} {...v} />

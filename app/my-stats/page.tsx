@@ -18,12 +18,9 @@ export default async function Page() {
   })) as MyStat[];
 
   return (
-    <div
-      className="h-fit relative bg-black flex flex-col gap-y-8 max-w-[1800px] 
-      overflow-auto"
-    >
+    <div className="page-wrapper">
       <Header />
-      <main className="flex gap-x-5 gap-y-5">
+      <main className="flex gap-x-5 gap-y-5 overflow-auto max-w-[calc(100vw-110px)]">
         <section className="flex flex-col gap-y-5">
           <TotalSummarySection data={totalSummary} />
           <HistoryByWeekSection data={programs} />

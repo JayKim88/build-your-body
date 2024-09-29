@@ -9,10 +9,9 @@ import { Header } from "../component/Header";
 
 export default async function Page() {
   const fetchedData = await getExercisesList();
-  // console.dir(fetchedData, { depth: null });
 
   return (
-    <div className="h-fit w-screen relative bg-black flex-col max-w-[1800px] overflow-auto">
+    <div className="page-wrapper">
       <Header />
       <FilteredList data={fetchedData.data} />
     </div>

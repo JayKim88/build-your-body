@@ -25,11 +25,11 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${inter.className} relative`}>
           <AuthContext>
-            <CartButton />
-            <LoginButton />
             <Menu />
             {/* <YoutubeModal /> */}
-            <main className="px-[50px] py-[50px] h-fit">{children}</main>
+            <main className="pl-[60px] pr-[50px] pt-[30px] pb-[50px] h-fit">
+              {children}
+            </main>
           </AuthContext>
         </body>
       </html>

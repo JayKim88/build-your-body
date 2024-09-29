@@ -93,7 +93,7 @@ const ProgressTimerButton = ({
       onClick={() => {
         handleStart();
       }}
-      className="border-2 px-[40px]"
+      className="border-2 px-[40px] h-16"
       fontSize={32}
     />
   );

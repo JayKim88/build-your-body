@@ -145,7 +145,7 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
 
   return (
     <>
-      <section className="flex gap-6 flex-wrap">
+      <section className="flex gap-6 flex-wrap mt-20">
         {exercisesData.length ? (
           exercisesData.map((data) => (
             <ExerciseCard

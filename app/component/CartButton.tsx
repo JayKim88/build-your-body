@@ -36,7 +36,7 @@ export const CartButton = () => {
     <>
       <SnackbarProvider>
         <div
-          className={`absolute top-[90px] right-60 z-10 hover:cursor-pointer ${
+          className={`relative hover:cursor-pointer ${
             !cartItems.length && "pointer-events-none"
           }`}
           onClick={() => {

@@ -3,5 +3,5 @@ export default function MyProgramLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section> {children}</section>;
+  return <section className="flex w-full"> {children}</section>;
 }

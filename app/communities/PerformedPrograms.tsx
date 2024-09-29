@@ -14,7 +14,6 @@ import { editCommunitiesList } from "../api/communities/editData";
 
 type PerformedProgramsProps = {
   data?: PerformedData[];
-  selectedType: ExerciseType;
   userId?: string;
 };
 
@@ -153,77 +152,40 @@ const PerformedProgramCard = (
   );
 };
 
-const PerformedPrograms = ({
-  data,
-  selectedType,
-  userId,
-}: PerformedProgramsProps) => {
+const PerformedPrograms = ({ data, userId }: PerformedProgramsProps) => {
   const { data: session } = useSession();
-  const [communitiesData, setCommunitiesData] = useState<PerformedData[]>([]);
+
   const [clickedProgram, setClickedProgram] = useState<PerformedData | null>(
     null
   );
   const [isOpen, setIsOpen] = useState(false);
-  const [showMyData, setShowMyData] = useState(false);
 
   const handleClickProgram = (id: string) => {
-    const data = communitiesData.find((v) => v._id === id) ?? null;
-    setClickedProgram(data);
+    const program = data?.find((v) => v._id === id) ?? null;
+    setClickedProgram(program);
     setIsOpen(true);
   };
-
-  useEffect(() => {
-    if (!data?.length) return;
-
-    const filteredData =
-      selectedType === "all"
-        ? data
-        : data.filter((v) =>
-            v.savedExercisesStatus.some(
-              (status) => status.type === selectedType
-            )
-          );
-
-    setCommunitiesData(
-      filteredData.filter((v) =>
-        showMyData ? v.userId === userId : v.userId !== userId
-      )
-    );
-  }, [data, selectedType, showMyData]);
 
   const isLoggedIn = !!session;
 
   return (
     <>
       <section className="flex gap-6 flex-wrap relative">
-        {isLoggedIn && (
-          <div
-            className={`${defaultRowStyles} items-center w-fit absolute -top-[72px] right-0`}
-          >
-            <div className="text-4xl">Show my list</div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                onChange={(e) => setShowMyData(e.target.checked)}
-                checked={showMyData}
+        <section className="flex gap-6 flex-wrap mt-20">
+          {data?.length ? (
+            data.map((program) => (
+              <PerformedProgramCard
+                key={program._id}
+                {...program}
+                onClick={handleClickProgram}
+                memberUserId={userId}
+                isLoggedIn={isLoggedIn}
               />
-              <span className="slider round"></span>
-            </label>
-          </div>
-        )}
-        {communitiesData.length ? (
-          communitiesData.map((data) => (
-            <PerformedProgramCard
-              key={data._id}
-              {...data}
-              onClick={handleClickProgram}
-              memberUserId={userId}
-              isLoggedIn={isLoggedIn}
-            />
-          ))
-        ) : (
-          <></>
-        )}
+            ))
+          ) : (
+            <></>
+          )}
+        </section>
       </section>
       <ProgramHistoryDetailModal
         isOpen={isOpen}
@@ -238,5 +200,3 @@ const PerformedPrograms = ({
 };
 
 export { PerformedPrograms };
-
-const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
