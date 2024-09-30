@@ -3,10 +3,8 @@ import { Anton } from "next/font/google";
 
 import "./globals.css";
 import AuthContext from "./context/AuthContext";
-import { LoginButton } from "./component/LoginButton";
 import { YoutubeModal } from "./component/YoutubeModal";
 import { Menu } from "./component/Menu";
-import { CartButton } from "./component/CartButton";
 
 const inter = Anton({ weight: "400", subsets: ["latin"] });
 
@@ -27,7 +25,7 @@ export default function RootLayout({
           <AuthContext>
             <Menu />
             {/* <YoutubeModal /> */}
-            <main className="pl-[60px] pr-[50px] pt-[30px] pb-[50px] h-fit">
+            <main className="pl-[60px] pr-[50px] pt-[30px] pb-[50px] h-full">
               {children}
             </main>
           </AuthContext>

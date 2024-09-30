@@ -24,6 +24,7 @@ import { editProgram } from "@/app/api/programs/edit";
 import Summary from "@/public/workout-complete-icon/summary.svg";
 import { ProgramHistoryDetailModal } from "@/app/component/ProgramHistoryDetailModal";
 import { MyStat } from "@/app/api/types";
+import Loading from "@/app/loading";
 
 export type SatisfiedStatus =
   | "terrible"
@@ -209,9 +210,9 @@ export const WorkoutSummary = () => {
   };
 
   const goToListAfterCleanup = () => {
-    router.replace("/my-programs");
     clearPerformanceAndSummary();
     setLoading(false);
+    router.replace("/my-programs");
   };
 
   const uploadImageAndGetImageUrl = async () => {
@@ -311,9 +312,7 @@ export const WorkoutSummary = () => {
     isConfirm ? goToListAfterCleanup() : setOpenConfirm(undefined);
   };
 
-  if (!completedAt) return <>완료된 프로그램이 없습니다.</>;
-
-  console.log("savedExercisesStatus", savedExercisesStatus);
+  if (!completedAt) return <Loading />;
 
   return (
     <div className="flex flex-col text-gray6">
@@ -462,7 +461,7 @@ export const WorkoutSummary = () => {
           </div>
         </section>
       </div>
-      <div className={`${defaultPageStyles} mt-10`}>
+      <div className={`${defaultPageStyles} mt-10 mb-6`}>
         <Button
           title="Exit"
           onClick={() => setOpenConfirm("exit")}

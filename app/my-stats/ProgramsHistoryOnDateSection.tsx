@@ -128,9 +128,9 @@ const ProgramHistorySummary = ({ data }: ProgramSummaryProps) => {
               return (
                 <li
                   key={v.exerciseName}
-                  className="min-h-[40px] rounded-3xl bg-gray1 flex justify-between px-4 py-2"
+                  className="rounded-3xl bg-gray1 flex justify-between px-4 py-2 items-center"
                 >
-                  <div className="text-[18px] flex items-center">
+                  <div className="text-[18px] flex items-center h-fit">
                     {exerciseName}
                   </div>
                   <div className="flex items-end gap-x-1">

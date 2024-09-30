@@ -168,7 +168,8 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
         labels: {
           usePointStyle: true,
           pointStyle: "circle",
-          padding: 20,
+          boxHeight: 10,
+          padding: 12,
           generateLabels: (chart: Chart<"line">) => {
             const datasets = chart.data.datasets;
 
