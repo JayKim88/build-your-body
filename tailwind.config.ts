@@ -31,11 +31,11 @@ const config: Config = {
   theme: {
     colors,
     extend: {
+      fontSize: {
+        fluid: "clamp(6rem, 7vw + 1rem, 7.4rem)",
+      },
       // fontFamily: {
       //   sans: ["Helvetica", "Arial", "sans-serif"],
-      // },
-      // backgroundImage: {
-      //   "custom-image": "url(/app/src/img/landing.jpg)",
       // },
     },
   },

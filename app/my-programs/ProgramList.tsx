@@ -19,6 +19,7 @@ import { useBodySnackbar } from "../hook/useSnackbar";
 import { ConfirmModal } from "../component/ConfirmModal";
 import { ExerciseSummaryCard } from "../component/ExerciseSummaryCard";
 import { PngIcon } from "./complete/WorkoutSummary";
+import LottiePlayer from "../component/LottiePlayer";
 
 export const Chip = ({ text }: { text: string }) => {
   return (
@@ -165,6 +166,7 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
   const [programList, setProgramList] = useState<RegisteredProgram[]>(
     data ?? []
   );
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleGetUpdatedPrograms = async () => {
     const fetchedData = (
@@ -187,13 +189,39 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
     // eslint-disable-next-line
   }, [isUpdated]);
 
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  const programRequired = programList.length === 0;
+
   return (
-    <div className="flex flex-col gap-y-8 overflow-auto max-w-[calc(100vw-110px)]">
-      <SnackbarProvider>
-        {programList?.map((v) => (
-          <ProgramItem key={v._id} {...v} />
-        ))}
-      </SnackbarProvider>
+    <div
+      className={`flex flex-col gap-y-8 overflow-auto max-w-[calc(100vw-110px)] 
+    transition-opacity duration-300
+    ${isLoaded ? "opacity-100" : "opacity-0"} 
+    ${programRequired ? "items-center justify-center h-full" : ""}`}
+    >
+      {programRequired ? (
+        <div
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+        w-[400px] flex flex-col items-center justify-center"
+        >
+          <LottiePlayer
+            type="cannotFind"
+            style={{
+              width: 300,
+            }}
+          />
+          <span className="text-3xl">프로그램을 생성해주세요.</span>
+        </div>
+      ) : (
+        <SnackbarProvider>
+          {programList?.map((v) => (
+            <ProgramItem key={v._id} {...v} />
+          ))}
+        </SnackbarProvider>
+      )}
     </div>
   );
 };

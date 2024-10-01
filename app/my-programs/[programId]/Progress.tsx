@@ -297,6 +297,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openBreakTimeModal, setOpenBreakTimeModal] = useState(false);
   const [programCompleted, setProgramCompleted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const setRunning = (isRunning: boolean) => {
     setIsRunning(isRunning);
@@ -475,9 +476,17 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
     swiperRef.current?.slideTo(nextProgressExerciseIndex);
   }, [nextProgressExerciseIndex]);
 
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   const MemoizedExerciseProgressCards = useMemo(() => {
     return (
-      <div className="flex gap-x-10">
+      <div
+        className={`flex gap-x-10 transition-opacity duration-300 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <Swiper
           noSwipingClass="exercise-input"
           onSwiper={(swiper) => (swiperRef.current = swiper)}

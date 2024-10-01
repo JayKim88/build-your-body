@@ -12,7 +12,7 @@ import { TotalSummaryByDateSection } from "./TotalSummaryByDateSection";
 import { ProgramsHistoryOnDateSection } from "./ProgramsHistoryOnDateSection";
 
 type HistoryByDateSectionProps = {
-  data: MyStat[] | null;
+  data: MyStat[];
 };
 
 export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {

@@ -40,7 +40,11 @@ export const ProgramHistoryDetailCard = ({
           const repeat = v.repeat;
 
           return (
-            <div className="flex justify-around items-center rounded-[32px] h-[50px] px-1 bg-black text-[18px]">
+            <div
+              key={v.order}
+              className="flex justify-around items-center rounded-[32px] 
+              h-[50px] px-1 bg-black text-[18px]"
+            >
               <span className="w-fit">{order} set</span>
               <span className="w-fit">{weight?.toLocaleString()} kg</span>
               <span className="w-fit">{repeat} times</span>

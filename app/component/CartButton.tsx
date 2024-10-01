@@ -21,7 +21,10 @@ export const CartButton = () => {
 
   const Count = () => {
     return (
-      <div className="absolute left-[16px] top-[-8px] w-6 h-6 rounded-[24px] bg-yellow flex items-center justify-center text-black pt-0.5">
+      <div
+        className="absolute left-[16px] top-[-8px] w-6 h-6 rounded-[24px] 
+      bg-yellow flex items-center justify-center text-black pt-0.5"
+      >
         {cartItems.length}
       </div>
     );

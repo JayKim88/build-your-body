@@ -37,7 +37,7 @@ const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => (
     <Icon
       className={`${
         isAleadyInCart ? "fill-gray6 cursor-default" : "fill-gray1"
-      } hover:fill-gray6 transition-all ease-in-out duration-300`}
+      } hover:fill-gray6 transition-all ease-in-out duration-400`}
     />
   </button>
 );

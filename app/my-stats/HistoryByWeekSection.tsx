@@ -10,11 +10,11 @@ import { HistoryChart } from "./HistoryChart";
 import { ProgramSummaryModal } from "../component/ProgramSummaryModal";
 
 type HistoryByWeekSectionProps = {
-  data?: RegisteredProgram[];
+  data: RegisteredProgram[];
 };
 
 type ProgramsProps = {
-  data?: RegisteredProgram[];
+  data: RegisteredProgram[] | null;
   selectedProgramId: string;
   onSelectProgramId: (v: string) => void;
   onClickDetailProgramId: (v: string) => void;

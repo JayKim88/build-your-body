@@ -3,7 +3,7 @@
 import axios from "axios";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Cropper } from "react-cropper";
@@ -123,6 +123,7 @@ export const WorkoutSummary = () => {
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const [satisfiedStatus, setSatisfiedStatus] =
     useState<SatisfiedStatus>("soso");
@@ -312,10 +313,18 @@ export const WorkoutSummary = () => {
     isConfirm ? goToListAfterCleanup() : setOpenConfirm(undefined);
   };
 
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   if (!completedAt) return <Loading />;
 
   return (
-    <div className="flex flex-col text-gray6">
+    <div
+      className={`lex flex-col text-gray6 transition-opacity duration-300 ${
+        isLoaded ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
       <div className={`${defaultPageStyles} mt-20 gap-x-[140px]`}>
         <section className="flex flex-col gap-y-[100px]">

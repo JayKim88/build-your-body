@@ -19,6 +19,7 @@ const FilteredList = ({ data, userId }: FilteredListProps) => {
   const [performedProgramsData, setPerformedProgramsData] = useState<
     PerformedProgramsData[]
   >([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleFilter = (v: ExerciseType) => setSelectedType(v);
 
@@ -41,10 +42,18 @@ const FilteredList = ({ data, userId }: FilteredListProps) => {
         showMyData ? v.userId === userId : v.userId !== userId
       )
     );
-  }, [data, selectedType, showMyData]);
+  }, [data, selectedType, showMyData, userId]);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div
+      className={`flex flex-col gap-y-8 transition-opacity duration-300 ${
+        isLoaded ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <Filter onFilter={handleFilter} selectedType={selectedType} />
       {isLoggedIn && (
         <div

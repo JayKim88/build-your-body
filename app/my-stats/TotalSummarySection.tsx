@@ -12,7 +12,7 @@ import { capitalizeFirstLetter } from "../utils";
 
 export type ColorKey = keyof typeof colors;
 type TotalSummarySectionProps = {
-  data: TotalWorkoutSummary | null;
+  data: TotalWorkoutSummary;
 };
 
 Chart.register(ArcElement, Tooltip, Legend);

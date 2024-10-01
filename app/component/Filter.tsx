@@ -67,9 +67,8 @@ const Chip = ({
       }}
       className={`${isSelected ? selectedBgColor : "bg-gray2"}
        h-fit flex items-center justify-center gap-2 rounded-[32px] 
-       py-2 px-4 text-[20px] ${
-         isSelected ? "" : "hover:bg-gray6 hover:text-black"
-       }  
+       py-2 px-4 text-[20px] transition-all ease-in-out duration-300
+       ${isSelected ? "" : "hover:bg-gray6 hover:text-black"}  
       `}
     >
       {src && <Image src={src} width={24} height={24} alt={type} />}

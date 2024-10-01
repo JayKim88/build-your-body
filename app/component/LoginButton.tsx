@@ -46,6 +46,7 @@ export const LoginButton = () => {
       className={`${
         isIntroPage ? "top-10 absolute right-10" : ""
       } btn-basic bg-black border-4 h-20 flex justify-center 
+      transition-all ease-in-out duration-300
       items-center hover:bg-gray6 hover:border-black hover:text-black z-10`}
       onClick={handleLoggingAction}
     >

@@ -119,7 +119,7 @@ const PerformedProgramCard = (
       <div className="border-2 rounded-2xl p-2 text-[20px]">
         {liftsByExercise.map((v) => {
           return (
-            <div className="flex justify-between">
+            <div key={v.name} className="flex justify-between">
               <span>{v.name}</span>
               <span>{`${v.lift.toLocaleString()} kg`}</span>
             </div>
