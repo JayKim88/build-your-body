@@ -10,7 +10,19 @@ const inter = Anton({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Build Your Body",
-  description: "Make your own exercise programs and do it",
+  description: "Make your own exercise programs and just do it",
+  creator: "Jay Kim",
+  keywords: [
+    "Training",
+    "Home Training",
+    "Discipline",
+    "Fitness",
+    "Workout",
+    "Strength Training",
+    "Muscle Building",
+    "Personal Training",
+    "Cardio",
+  ],
 };
 
 export default function RootLayout({
@@ -24,7 +36,6 @@ export default function RootLayout({
         <body className={`${inter.className} relative`}>
           <AuthContext>
             <Menu />
-            {/* <YoutubeModal /> */}
             <main className="pl-[60px] pr-[50px] pt-[30px] pb-[50px] h-full">
               {children}
             </main>

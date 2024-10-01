@@ -43,11 +43,6 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
-/* @todo change cursor image */
-.custom-cursor {
-  cursor: url('/public/cursor.png'), auto;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;

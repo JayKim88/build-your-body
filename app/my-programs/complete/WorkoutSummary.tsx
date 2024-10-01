@@ -203,13 +203,6 @@ export const WorkoutSummary = () => {
     resetCompletedAt();
   };
 
-  /**
-   * @todo goto my stats ?
-   */
-  const goToMyStat = () => {
-    clearPerformanceAndSummary();
-  };
-
   const goToListAfterCleanup = () => {
     clearPerformanceAndSummary();
     setLoading(false);
@@ -248,9 +241,6 @@ export const WorkoutSummary = () => {
   const saveWorkoutPerformance = async () => {
     setLoading(true);
     const imageUrl = !!imgFile ? await uploadImageAndGetImageUrl() : undefined;
-    /**
-     * @todo make save workout complete function
-     */
 
     const inputArgs = {
       savedProgramId,

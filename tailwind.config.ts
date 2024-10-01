@@ -34,9 +34,6 @@ const config: Config = {
       fontSize: {
         fluid: "clamp(6rem, 7vw + 1rem, 7.4rem)",
       },
-      // fontFamily: {
-      //   sans: ["Helvetica", "Arial", "sans-serif"],
-      // },
     },
   },
   plugins: [
