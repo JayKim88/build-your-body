@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 
 import { MyStat as PerformedData } from "../api/types";
-import { ExerciseType } from "../component/Filter";
 import { capitalizeFirstLetter } from "../utils";
 import { SatisfictionIcon } from "../component/SatisfactionIcon";
 import Like from "@/public/like.svg";
@@ -26,6 +25,7 @@ const PerformedProgramCard = (
 ) => {
   const [liked, setLiked] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const {
     _id,
@@ -64,6 +64,7 @@ const PerformedProgramCard = (
 
     setLikedCount((prev) => (liked ? prev - 1 : prev + 1));
     setLiked((prev) => !prev);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -132,9 +133,11 @@ const PerformedProgramCard = (
             className={`${
               isLoggedIn ? "pointer-events-auto" : "pointer-events-none"
             }`}
-            onClick={(e) => {
+            onClick={async (e) => {
+              setLoading(true);
               e.stopPropagation();
-              handleLike();
+              if (loading) return;
+              await handleLike();
             }}
           >
             <Like
