@@ -1,10 +1,12 @@
 const { Storage } = require("@google-cloud/storage");
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
 
 const storage = new Storage({
   projectId: "build-your-body-427422",
-  keyFilename: path.join(process.cwd(), "/service-account-key.json"),
+  credentials: {
+    client_email: process.env.GOOGLE_CLOUD_SERVICE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_CLOUD_SERVICE_PRIVATE_KEY,
+  },
 });
 
 const bucketName = "program-complete-image";
