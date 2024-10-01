@@ -31,6 +31,7 @@ interface ProgressState {
   workoutTime: number;
   savedExercisesStatus: ExercisesStatus;
   completedAt?: Date;
+  isRegistering: boolean;
   saveWorkoutTime: (v: number) => void;
   resetWorkoutTime: () => void;
   saveProgramInfo: (v: { id: string; name: string }) => void;
@@ -39,6 +40,7 @@ interface ProgressState {
   resetExercisesStatus: () => void;
   saveCompletedAt: (v: Date) => void;
   resetCompletedAt: () => void;
+  setIsRegistering: (v: boolean) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -105,6 +107,7 @@ export const useProgressStore = create<ProgressState>()(
       workoutTime: 0,
       savedExercisesStatus: [],
       completedAt: undefined,
+      isRegistering: false,
       saveWorkoutTime: (v: number) =>
         set(() => ({
           workoutTime: v,
@@ -138,6 +141,10 @@ export const useProgressStore = create<ProgressState>()(
       resetCompletedAt: () =>
         set(() => ({
           completedAt: undefined,
+        })),
+      setIsRegistering: (v: boolean) =>
+        set(() => ({
+          isRegistering: v,
         })),
     }),
     {

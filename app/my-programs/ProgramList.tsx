@@ -20,6 +20,12 @@ import { ConfirmModal } from "../component/ConfirmModal";
 import { ExerciseSummaryCard } from "../component/ExerciseSummaryCard";
 import { PngIcon } from "./complete/WorkoutSummary";
 import LottiePlayer from "../component/LottiePlayer";
+import Loading from "../loading";
+
+type ProgramItemsProp = {
+  data: RegisteredProgram[];
+  onEnterClick: (v: boolean) => void;
+}; 
 
 export const Chip = ({ text }: { text: string }) => {
   return (
@@ -29,7 +35,11 @@ export const Chip = ({ text }: { text: string }) => {
   );
 };
 
-const ProgramItem = (data: RegisteredProgram) => {
+const ProgramItem = (
+  data: RegisteredProgram & {
+    onEnterClick: (v: boolean) => void;
+  }
+) => {
   const savedProgramId = useProgressStore((state) => state.programId);
   const setUpdated = useCartStore((state) => state.setIsUpdated);
   const router = useRouter();
@@ -44,6 +54,7 @@ const ProgramItem = (data: RegisteredProgram) => {
     programName,
     _id,
     lastCompletedAt,
+    onEnterClick,
   } = data ?? {};
 
   const handleConfirm = async (v: boolean) => {
@@ -71,6 +82,13 @@ const ProgramItem = (data: RegisteredProgram) => {
   const isInprogress = !!savedProgramId;
   const isProgramInprogress = isInprogress && savedProgramId === _id;
 
+  const enterProgram = () => {
+    onEnterClick(true);
+    setTimeout(() => {
+      router.push(`/my-programs/${_id}`);
+    }, 500);
+  };
+
   return (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit">
       <header className="flex flex-col relative">
@@ -91,7 +109,7 @@ const ProgramItem = (data: RegisteredProgram) => {
               isProgramInprogress ? (
                 <Button
                   title="Continue"
-                  onClick={() => router.push(`/my-programs/${_id}`)}
+                  onClick={enterProgram}
                   className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
                   fontSize={40}
                 />
@@ -101,7 +119,7 @@ const ProgramItem = (data: RegisteredProgram) => {
             ) : (
               <Button
                 title="Enter"
-                onClick={() => router.push(`/my-programs/${_id}`)}
+                onClick={enterProgram}
                 className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
                 fontSize={40}
               />
@@ -159,6 +177,24 @@ const ProgramItem = (data: RegisteredProgram) => {
   );
 };
 
+const ProgramItems = ({ data, onEnterClick }: ProgramItemsProp) => {
+  const { bodySnackbar } = useBodySnackbar();
+  const isRegistering = useProgressStore((state) => state.isRegistering);
+  const setIsRegistering = useProgressStore((state) => state.setIsRegistering);
+
+  useEffect(() => {
+    if (!isRegistering) return;
+    bodySnackbar("성공적으로 등록되었습니다.", {
+      variant: "success",
+    });
+    setIsRegistering(false);
+  }, []);
+
+  return data?.map((v) => (
+    <ProgramItem key={v._id} onEnterClick={onEnterClick} {...v} />
+  ));
+};
+
 const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
   const { data: session } = useSession();
   const isUpdated = useCartStore((state) => state.isUpdated);
@@ -167,7 +203,9 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
     data ?? []
   );
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isEnterLoading, setIsEnterLoading] = useState(false);
 
+  const handleEnterLoading = (v: boolean) => setIsEnterLoading(v);
   const handleGetUpdatedPrograms = async () => {
     const fetchedData = (
       await axios
@@ -195,7 +233,9 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
 
   const programRequired = programList.length === 0;
 
-  return (
+  return isEnterLoading ? (
+    <Loading />
+  ) : (
     <div
       className={`flex flex-col gap-y-8 overflow-auto max-w-[calc(100vw-110px)] 
     transition-opacity duration-300
@@ -217,9 +257,7 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
         </div>
       ) : (
         <SnackbarProvider>
-          {programList?.map((v) => (
-            <ProgramItem key={v._id} {...v} />
-          ))}
+          <ProgramItems data={programList} onEnterClick={handleEnterLoading} />
         </SnackbarProvider>
       )}
     </div>

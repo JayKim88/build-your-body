@@ -113,6 +113,9 @@ export const WorkoutSummary = () => {
     (state) => state.resetExercisesStatus
   );
   const resetCompletedAt = useProgressStore((state) => state.resetCompletedAt);
+  const isRegistering = useProgressStore((state) => state.isRegistering);
+  const setIsRegistering = useProgressStore((state) => state.setIsRegistering);
+
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [cropper, setCropper] = useState<Cropper>();
@@ -204,9 +207,9 @@ export const WorkoutSummary = () => {
   };
 
   const goToListAfterCleanup = () => {
+    router.replace("/my-programs");
     clearPerformanceAndSummary();
     setLoading(false);
-    router.replace("/my-programs");
   };
 
   const uploadImageAndGetImageUrl = async () => {
@@ -239,6 +242,7 @@ export const WorkoutSummary = () => {
   };
 
   const saveWorkoutPerformance = async () => {
+    setIsRegistering(true);
     setLoading(true);
     const imageUrl = !!imgFile ? await uploadImageAndGetImageUrl() : undefined;
 
@@ -281,18 +285,15 @@ export const WorkoutSummary = () => {
 
         const isSuccess = await saveWorkoutPerformance();
 
-        bodySnackbar(
-          isSuccess
-            ? "운동 기록이 저장되었습니다!"
-            : "에러가 발생했습니다. 재시도 해주세요 :)",
-          {
-            variant: isSuccess ? "success" : "error",
-          }
-        );
+        if (!isSuccess) {
+          bodySnackbar("에러가 발생했습니다. 재시도 해주세요 :)", {
+            variant: "error",
+          });
+          return;
+        }
 
         if (isSuccess) {
           goToListAfterCleanup();
-
           return;
         }
       }
@@ -307,7 +308,7 @@ export const WorkoutSummary = () => {
     setIsLoaded(true);
   }, []);
 
-  if (!completedAt) return <Loading />;
+  if (isRegistering) return <Loading isComplete />;
 
   return (
     <div
