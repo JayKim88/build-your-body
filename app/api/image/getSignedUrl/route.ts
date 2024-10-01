@@ -5,7 +5,9 @@ const storage = new Storage({
   projectId: "build-your-body-427422",
   credentials: {
     client_email: process.env.GOOGLE_CLOUD_SERVICE_CLIENT_EMAIL,
-    private_key: process.env.GOOGLE_CLOUD_SERVICE_PRIVATE_KEY,
+    private_key: (process.env.GOOGLE_CLOUD_SERVICE_PRIVATE_KEY ?? "")
+      .split(String.raw`\n`)
+      .join("\n"),
   },
 });
 
