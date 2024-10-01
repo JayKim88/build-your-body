@@ -212,7 +212,7 @@ export const WorkoutSummary = () => {
   const uploadImageAndGetImageUrl = async () => {
     const imageName = `${session?.user?.name}-${savedProgramId}-${format(
       new Date(),
-      "yyyy-MM-dd-hh:mm-a"
+      "yyyy-MM-dd-hh-mm-a"
     )}`;
 
     try {
