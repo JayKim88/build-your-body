@@ -12,12 +12,6 @@ const storage = new Storage({
   },
 });
 
-console.log("check11111", process.env.GOOGLE_CLOUD_SERVICE_CLIENT_EMAIL);
-console.log(
-  "check2222",
-  (process.env.GOOGLE_CLOUD_SERVICE_PRIVATE_KEY ?? "").replace(/\\n/g, "\n")
-);
-
 const bucketName = "program-complete-image";
 
 export async function GET(req: NextRequest) {
@@ -43,14 +37,10 @@ export async function GET(req: NextRequest) {
       expires: Date.now() + 15 * 60 * 1000, // 15 minutes
     };
 
-    console.log("storage?", storage);
-
     const [signedUrl] = await storage
       .bucket(bucketName)
       .file(imageName)
       .getSignedUrl(options);
-
-    console.log("signedUrl?", signedUrl);
 
     const completedUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(
       imageName
