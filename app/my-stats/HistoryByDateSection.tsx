@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
-import { isSameDay } from "date-fns";
+import { isSameDay, setDate } from "date-fns";
 import axios from "axios";
 import "react-day-picker/style.css";
 
@@ -17,7 +17,7 @@ type HistoryByDateSectionProps = {
 
 export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const { data } = props ?? {};
-  const now = new Date();
+  const now = useMemo(() => new Date(), []);
   const defaultClassNames = getDefaultClassNames();
   const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<Date>(now);
@@ -26,9 +26,9 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const [targetDateData, setTargetDateData] = useState<MyStat[] | null>(data);
   const [isInitialRendering, setIsInitialRendering] = useState(true);
   const [dataAvailableDates, setDataAvailableDates] = useState<string[]>();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(setDate(now, 15));
 
-  const getTargetDateData = async () => {
+  const getTargetDateData = useCallback(async () => {
     try {
       const result = (
         await axios
@@ -45,9 +45,9 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
     } catch (error) {
       return null;
     }
-  };
+  }, [selectedDate, session?.user?.email]);
 
-  const getTargetMonthDataAvailableDates = async () => {
+  const getTargetMonthDataAvailableDates = useCallback(async () => {
     try {
       const result = (
         await axios
@@ -64,9 +64,9 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
     } catch (error) {
       return null;
     }
-  };
+  }, [currentMonth, session?.user?.email]);
 
-  const handleSetTotalLift = () => {
+  const handleSetTotalLift = useCallback(() => {
     let totalLift = 0;
 
     targetDateData?.forEach((v) => {
@@ -80,32 +80,32 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
     });
 
     setTotalLift(totalLift);
-  };
+  }, [targetDateData]);
 
-  const handleSetWorkoutTime = () => {
+  const handleSetWorkoutTime = useCallback(() => {
     const totalWorkoutTime =
       targetDateData?.reduce((acc, cur) => acc + cur.savedWorkoutTime, 0) ?? 0;
 
     setTotalWorkoutTime(totalWorkoutTime);
-  };
+  }, [targetDateData]);
 
   useEffect(() => {
     handleSetTotalLift();
     handleSetWorkoutTime();
-  }, [targetDateData]);
+  }, [targetDateData, handleSetTotalLift, handleSetWorkoutTime]);
 
   useEffect(() => {
     if (isSameDay(now, selectedDate) && isInitialRendering) return;
 
     getTargetDateData();
     setIsInitialRendering(false);
-  }, [selectedDate]);
+  }, [selectedDate, getTargetDateData, isInitialRendering, now]);
 
   useEffect(() => {
     if (!session?.user) return;
 
     getTargetMonthDataAvailableDates();
-  }, [currentMonth, session?.user]);
+  }, [currentMonth, session?.user, getTargetMonthDataAvailableDates]);
 
   function hasDataForDate(date: Date) {
     return !!dataAvailableDates?.some((d) => isSameDay(d, date));
@@ -125,7 +125,7 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
               modifiers={{
                 hasData: (date: Date) => hasDataForDate(date),
               }}
-              onMonthChange={(month) => setCurrentMonth(month)}
+              onMonthChange={(month) => setCurrentMonth(setDate(month, 15))}
               modifiersClassNames={{
                 hasData: dataAvailableDotStyles,
               }}
