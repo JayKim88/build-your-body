@@ -59,8 +59,8 @@ async function savePerformance(data: PerfomanceData) {
     };
 
     await Promise.all([
-      revalidatePath("/my-stats"),
       revalidatePath("/communities"),
+      revalidatePath("/my-stats"),
     ]);
 
     return plainResult;
