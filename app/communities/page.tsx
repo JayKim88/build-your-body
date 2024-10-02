@@ -1,5 +1,3 @@
-"use server";
-
 import { Header } from "../component/Header";
 import { getCommunitiesList } from "../api/communities/getData";
 import { MyStat as PerformedData } from "../api/types";
