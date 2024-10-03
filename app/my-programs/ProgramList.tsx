@@ -25,7 +25,7 @@ import Loading from "../loading";
 type ProgramItemsProp = {
   data: RegisteredProgram[];
   onEnterClick: (v: boolean) => void;
-}; 
+};
 
 export const Chip = ({ text }: { text: string }) => {
   return (
@@ -188,7 +188,7 @@ const ProgramItems = ({ data, onEnterClick }: ProgramItemsProp) => {
       variant: "success",
     });
     setIsRegistering(false);
-  }, []);
+  }, [bodySnackbar, isRegistering, setIsRegistering]);
 
   return data?.map((v) => (
     <ProgramItem key={v._id} onEnterClick={onEnterClick} {...v} />

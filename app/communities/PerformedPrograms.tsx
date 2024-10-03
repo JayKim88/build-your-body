@@ -71,7 +71,7 @@ const PerformedProgramCard = (
     const likeClicked = likedUserIds?.some((v) => v === memberUserId);
     setLiked(!!likeClicked);
     setLikedCount(likedUserIds?.length ?? 0);
-  }, []);
+  }, [likedUserIds, memberUserId]);
 
   return (
     <div

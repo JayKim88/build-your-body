@@ -167,7 +167,7 @@ export const ProgramsHistoryOnDateSection = ({
 
   const selectedProgram = useMemo(
     () => data?.find((v) => v._id === selectedProgramId) ?? null,
-    [selectedProgramId]
+    [selectedProgramId, data]
   );
 
   useEffect(() => {

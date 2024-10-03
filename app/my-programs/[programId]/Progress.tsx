@@ -556,6 +556,8 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
     nextProgressExerciseIndex,
     addDeleteExerciseSet,
     proceedToNextExercise,
+    isLoaded,
+    lastWorkoutData,
   ]);
 
   if (programCompleted) return <></>;

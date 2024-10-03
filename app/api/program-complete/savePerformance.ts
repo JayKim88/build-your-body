@@ -58,10 +58,8 @@ async function savePerformance(data: PerfomanceData) {
       itemId: result.insertedId.toString(),
     };
 
-    await Promise.all([
-      revalidatePath("/communities"),
-      revalidatePath("/my-stats"),
-    ]);
+    revalidatePath("/communities");
+    // revalidatePath("/my-stats");
 
     return plainResult;
   } catch (error) {
