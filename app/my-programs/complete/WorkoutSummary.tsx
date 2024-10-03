@@ -260,11 +260,13 @@ export const WorkoutSummary = () => {
       }),
     };
 
-    const savePerformanceResult = await savePerformance(inputArgs);
-    const lastCompletedAtResult = await editProgram({
-      programId: savedProgramId,
-      lastCompletedAt: new Date(completedAt!).toISOString(),
-    });
+    const [savePerformanceResult, lastCompletedAtResult] = await Promise.all([
+      savePerformance(inputArgs),
+      editProgram({
+        programId: savedProgramId,
+        lastCompletedAt: new Date(completedAt!).toISOString(),
+      }),
+    ]);
 
     return !!savePerformanceResult?.success && !!lastCompletedAtResult?.success;
   };

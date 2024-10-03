@@ -8,22 +8,23 @@ import { Header } from "../component/Header";
 import { StatSections } from "./Sections";
 
 export default async function Page() {
-  const totalSummary = (await getTotalSummary()) as TotalWorkoutSummary;
-  const programs = (await getPrograms({
-    includeDeleted: true,
-  })) as RegisteredProgram[];
-
-  const todayWorkoutsData = (await getStats({
-    targetDate: startOfDay(new Date()),
-  })) as MyStat[];
+  const [totalSummary, programs, todayWorkoutsData] = await Promise.all([
+    getTotalSummary(),
+    getPrograms({
+      includeDeleted: true,
+    }),
+    getStats({
+      targetDate: startOfDay(new Date()),
+    }),
+  ]);
 
   return (
     <div className="page-wrapper">
       <Header />
       <StatSections
-        totalSummary={totalSummary}
-        programs={programs}
-        todayWorkoutsData={todayWorkoutsData}
+        totalSummary={totalSummary as TotalWorkoutSummary}
+        programs={programs as RegisteredProgram[]}
+        todayWorkoutsData={todayWorkoutsData as MyStat[]}
       />
     </div>
   );
