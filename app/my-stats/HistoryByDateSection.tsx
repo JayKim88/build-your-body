@@ -28,6 +28,8 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const [dataAvailableDates, setDataAvailableDates] = useState<string[]>();
   const [currentMonth, setCurrentMonth] = useState(setDate(now, 15));
 
+  console.log("selectedDate", selectedDate);
+
   const getTargetDateData = useCallback(async () => {
     try {
       const result = (
@@ -120,7 +122,11 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
               required={false}
               mode="single"
               selected={selectedDate}
-              onSelect={(value) => value && setSelectedDate(value)}
+              onSelect={(value) => {
+                console.log("value??", new Date(value!), value);
+
+                value && setSelectedDate(value);
+              }}
               disabled={{ after: now }}
               modifiers={{
                 hasData: (date: Date) => hasDataForDate(date),

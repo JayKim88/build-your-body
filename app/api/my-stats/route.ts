@@ -247,31 +247,13 @@ export async function GET(req: NextRequest) {
     } else {
       // find all or specific date programs history
 
-      const startUTC = targetDate
-        ? new Date(
-            Date.UTC(
-              new Date(targetDate).getUTCFullYear(),
-              new Date(targetDate).getUTCMonth(),
-              new Date(targetDate).getUTCDate()
-            )
-          ).toISOString()
-        : now.toISOString();
-      const endUTC = targetDate
-        ? new Date(
-            Date.UTC(
-              new Date(targetDate).getUTCFullYear(),
-              new Date(targetDate).getUTCMonth(),
-              new Date(targetDate).getUTCDate(),
-              23,
-              59,
-              59,
-              999
-            )
-          ).toISOString()
-        : now.toISOString();
+      const startTest = new Date(targetDate!).toISOString();
+      const endTest = new Date(
+        new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1
+      ).toISOString();
 
-      console.log("startUTC", startUTC);
-      console.log("endUTC", endUTC);
+      console.log("startUTC", startTest);
+      console.log("endUTC", endTest);
 
       /**
        * @todo vercel 에서 데이터 못 찾아오고 있음. 수정필요. 로그찍어보기.
@@ -283,8 +265,8 @@ export async function GET(req: NextRequest) {
           userId: userId,
           ...(targetDate && {
             completedAt: {
-              $gte: startUTC,
-              $lte: endUTC,
+              $gte: startTest,
+              $lte: endTest,
             },
           }),
         })
