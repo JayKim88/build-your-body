@@ -16,7 +16,7 @@ async function addUserToDB(user: User | AdapterUser) {
     name: user.name,
     email: user.email,
     image: user.image,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
   });
   client.close();
 }
