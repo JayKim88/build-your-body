@@ -248,10 +248,26 @@ export async function GET(req: NextRequest) {
       // find all or specific date programs history
 
       const startUTC = targetDate
-        ? startOfDay(targetDate).toISOString()
+        ? new Date(
+            Date.UTC(
+              new Date(targetDate).getUTCFullYear(),
+              new Date(targetDate).getUTCMonth(),
+              new Date(targetDate).getUTCDate()
+            )
+          ).toISOString()
         : now.toISOString();
       const endUTC = targetDate
-        ? endOfDay(targetDate).toISOString()
+        ? new Date(
+            Date.UTC(
+              new Date(targetDate).getUTCFullYear(),
+              new Date(targetDate).getUTCMonth(),
+              new Date(targetDate).getUTCDate(),
+              23,
+              59,
+              59,
+              999
+            )
+          ).toISOString()
         : now.toISOString();
 
       console.log("startUTC", startUTC);
