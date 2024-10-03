@@ -1,12 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  endOfDay,
-  endOfMonth,
-  startOfDay,
-  startOfMonth,
-  subDays,
-} from "date-fns";
+import { endOfMonth, startOfMonth, subDays } from "date-fns";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
 
@@ -247,17 +241,10 @@ export async function GET(req: NextRequest) {
     } else {
       // find all or specific date programs history
 
-      const startTest = new Date(targetDate!).toISOString();
-      const endTest = new Date(
+      const startOfDayInUTC = new Date(targetDate!).toISOString();
+      const endOfdayInUTC = new Date(
         new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1
       ).toISOString();
-
-      console.log("startUTC", startTest);
-      console.log("endUTC", endTest);
-
-      /**
-       * @todo vercel 에서 데이터 못 찾아오고 있음. 수정필요. 로그찍어보기.
-       */
 
       data = await db
         ?.collection("workout-performance")
@@ -265,8 +252,8 @@ export async function GET(req: NextRequest) {
           userId: userId,
           ...(targetDate && {
             completedAt: {
-              $gte: startTest,
-              $lte: endTest,
+              $gte: startOfDayInUTC,
+              $lte: endOfdayInUTC,
             },
           }),
         })

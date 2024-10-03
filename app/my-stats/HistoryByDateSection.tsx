@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
-import { isSameDay, setDate } from "date-fns";
+import { isSameDay, setDate, startOfDay } from "date-fns";
 import axios from "axios";
 import "react-day-picker/style.css";
 
@@ -17,7 +17,7 @@ type HistoryByDateSectionProps = {
 
 export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const { data } = props ?? {};
-  const now = useMemo(() => new Date(), []);
+  const now = useMemo(() => startOfDay(new Date()), []);
   const defaultClassNames = getDefaultClassNames();
   const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<Date>(now);
@@ -27,8 +27,6 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const [isInitialRendering, setIsInitialRendering] = useState(true);
   const [dataAvailableDates, setDataAvailableDates] = useState<string[]>();
   const [currentMonth, setCurrentMonth] = useState(setDate(now, 15));
-
-  console.log("selectedDate", selectedDate);
 
   const getTargetDateData = useCallback(async () => {
     try {

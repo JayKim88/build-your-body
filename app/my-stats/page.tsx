@@ -1,3 +1,5 @@
+import { startOfDay } from "date-fns";
+
 import { getStats } from "../api/my-stats/getData";
 import { getTotalSummary } from "../api/my-stats/getTotalSummary";
 import { getPrograms } from "../api/programs/getData";
@@ -12,7 +14,7 @@ export default async function Page() {
   })) as RegisteredProgram[];
 
   const todayWorkoutsData = (await getStats({
-    targetDate: new Date(),
+    targetDate: startOfDay(new Date()),
   })) as MyStat[];
 
   return (
