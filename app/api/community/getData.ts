@@ -7,7 +7,7 @@ import { MyStat } from "../types";
 async function getData() {
   try {
     const result = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/communities`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/community`)
       .then((res) => res.data);
 
     const formattedData = (result.data as MyStat[])?.map(

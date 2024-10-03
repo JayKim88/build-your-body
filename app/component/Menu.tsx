@@ -59,8 +59,8 @@ const Menu = () => {
             </li>
           </>
         )}
-        <li className={isSelectedItem("/communities")}>
-          <Link href="/communities">Communities</Link>
+        <li className={isSelectedItem("/community")}>
+          <Link href="/community">Communities</Link>
         </li>
       </ul>
     </div>

@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from "../utils";
 import { SatisfictionIcon } from "../component/SatisfactionIcon";
 import Like from "@/public/like.svg";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
-import { editCommunitiesList } from "../api/communities/editData";
+import { editCommunitiesList } from "../api/community/editData";
 
 type PerformedProgramsProps = {
   data?: PerformedData[];

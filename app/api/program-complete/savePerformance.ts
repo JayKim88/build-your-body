@@ -58,8 +58,8 @@ async function savePerformance(data: PerfomanceData) {
       itemId: result.insertedId.toString(),
     };
 
-    revalidatePath("/communities");
-    // revalidatePath("/my-stats");
+    revalidatePath("/community");
+    revalidatePath("/my-stats");
 
     return plainResult;
   } catch (error) {
