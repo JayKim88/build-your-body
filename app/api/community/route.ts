@@ -20,6 +20,8 @@ export async function GET(req: NextRequest) {
       })
       .toArray();
 
+    console.log("datadata", data);
+
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     console.log("fetch failed", error);
