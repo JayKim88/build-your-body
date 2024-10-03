@@ -247,23 +247,19 @@ export async function GET(req: NextRequest) {
     } else {
       // find all or specific date programs history
 
-      const start = targetDate ? startOfDay(targetDate) : now;
-      const end = targetDate ? endOfDay(targetDate) : now;
+      const startUTC = targetDate
+        ? startOfDay(targetDate).toISOString()
+        : now.toISOString();
+      const endUTC = targetDate
+        ? endOfDay(targetDate).toISOString()
+        : now.toISOString();
 
-      const startUTC = new Date(
-        start.getUTCFullYear(),
-        start.getUTCMonth(),
-        start.getUTCDate()
-      ).toISOString();
-      const endUTC = new Date(
-        end.getUTCFullYear(),
-        end.getUTCMonth(),
-        end.getUTCDate(),
-        23,
-        59,
-        59,
-        999
-      ).toISOString();
+      console.log("startUTC", startUTC);
+      console.log("endUTC", endUTC);
+
+      /**
+       * @todo vercel 에서 데이터 못 찾아오고 있음. 수정필요. 로그찍어보기.
+       */
 
       data = await db
         ?.collection("workout-performance")
