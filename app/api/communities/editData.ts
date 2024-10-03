@@ -52,7 +52,7 @@ async function editCommunitiesList({
       success: result.acknowledged,
     };
 
-    plainResult.success && revalidatePath("/community");
+    plainResult.success && revalidatePath("/communities");
 
     return plainResult;
   } catch (error) {
