@@ -70,7 +70,9 @@ export async function GET(req: NextRequest) {
                   endDate ? new Date(endDate) : now,
                   6
                 ).toISOString(),
-                $lte: endDate ? new Date(endDate).toISOString() : now,
+                $lte: endDate
+                  ? new Date(endDate).toISOString()
+                  : now.toISOString(),
               },
             },
           },
@@ -244,14 +246,33 @@ export async function GET(req: NextRequest) {
         .toArray();
     } else {
       // find all or specific date programs history
+
+      const start = targetDate ? startOfDay(targetDate) : now;
+      const end = targetDate ? endOfDay(targetDate) : now;
+
+      const startUTC = new Date(
+        start.getUTCFullYear(),
+        start.getUTCMonth(),
+        start.getUTCDate()
+      ).toISOString();
+      const endUTC = new Date(
+        end.getUTCFullYear(),
+        end.getUTCMonth(),
+        end.getUTCDate(),
+        23,
+        59,
+        59,
+        999
+      ).toISOString();
+
       data = await db
         ?.collection("workout-performance")
         .find({
           userId: userId,
           ...(targetDate && {
             completedAt: {
-              $gte: startOfDay(targetDate).toISOString(),
-              $lte: endOfDay(targetDate).toISOString(),
+              $gte: startUTC,
+              $lte: endUTC,
             },
           }),
         })
