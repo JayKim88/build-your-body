@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
   const targetDate = searchParams.get("targetDate");
   const targetMonthDate = searchParams.get("targetMonthDate");
   const lastWorkout = searchParams.get("lastWorkout") === "true";
+  const isPublic = searchParams.get("isPublic") === "true";
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -32,15 +33,19 @@ export async function GET(req: NextRequest) {
   const timeZoneDifference = -now.getTimezoneOffset() / 60;
 
   try {
-    const user = await db?.collection("users").findOne({
-      email: email,
-    });
+    let userId;
 
-    if (!user) {
-      throw new Error("User not found");
+    if (!isPublic) {
+      const user = await db?.collection("users").findOne({
+        email: email,
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      userId = user?._id;
     }
-
-    const userId = user?._id;
 
     let data;
 
@@ -210,6 +215,16 @@ export async function GET(req: NextRequest) {
         .toArray();
 
       data = dataAvailableInTargetMonth.map((item) => item._id);
+    } else if (isPublic) {
+      data = await db
+        ?.collection("workout-performance")
+        .find({
+          isPublic: true,
+        })
+        .sort({
+          completedAt: -1,
+        })
+        .toArray();
     } else {
       // find all or specific date programs history
       data = await db
