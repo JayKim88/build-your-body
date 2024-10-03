@@ -122,7 +122,7 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
       <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 relative">
         <h1 className="text-2xl">Total Portion Ratio</h1>
         {!memoizedTotalLift && (
-          <div className="absolute top-1/2 right-1/2 translate-y-1/2 translate-x-1/2 text-2xl">
+          <div className="absolute top-1/2 right-1/2 translate-x-1/2 text-2xl">
             No Data
           </div>
         )}
