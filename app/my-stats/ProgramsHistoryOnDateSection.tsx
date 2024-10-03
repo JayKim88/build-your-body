@@ -5,7 +5,7 @@ import { MyStat } from "../api/types";
 import { formattedTime } from "../utils";
 import { PngIcon } from "../my-programs/complete/WorkoutSummary";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
-import { CircleLoader } from "../component/CircleLoader";
+import { SpinLoader } from "../component/SpinLoader";
 
 type ProgramsHistoryOnDateSectionProps = {
   data: MyStat[] | null;
@@ -37,7 +37,7 @@ const ProgramsHistoryOnDate = ({
 
   return (
     <div className="w-[360px] h-[340px] flex flex-col gap-y-4 rounded-[32px] p-5 bg-gray0 relative">
-      {loading && <CircleLoader />}
+      {loading && <SpinLoader />}
       <div className="flex justify-start align-center gap-x-2">
         <PngIcon name="calendar" className="w-[40px] h-[40px]" />
         <h1 className="text-2xl flex justify-center items-center leading-none">
@@ -119,7 +119,7 @@ const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
           },
         })}
       >
-        {loading && <CircleLoader />}
+        {loading && <SpinLoader />}
         <div className="flex flex-col items-start justify-center">
           <h1 className="text-2xl">History on Date</h1>
           <span className="text-2xl">

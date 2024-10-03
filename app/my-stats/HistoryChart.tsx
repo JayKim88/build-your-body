@@ -29,7 +29,7 @@ import { exerciseTypes } from "../component/Filter";
 import { ColorKey, getRGBColor } from "./TotalSummarySection";
 import { colors } from "@/tailwind.config";
 import CircleArrow from "@/public/circle-arrow.svg";
-import { CircleLoader } from "../component/CircleLoader";
+import { SpinLoader } from "../component/SpinLoader";
 
 Chart.register(
   Tooltip,
@@ -217,7 +217,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
       <h1 className="text-2xl">{`History by Week - ${programName}`}</h1>
       <div className="flex justify-center items-center h-full">
         <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">
-          {loading && <CircleLoader />}
+          {loading && <SpinLoader />}
           {noHistory && (
             <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2 text-2">
               No Data

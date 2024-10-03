@@ -205,6 +205,7 @@ export const CreateEditProgramModal = ({
   const storedProgramName = useCartStore((state) => state.programName);
   const storeProgramName = useCartStore((state) => state.setProgramName);
   const setUpdated = useCartStore((state) => state.setIsUpdated);
+  const [loading, setLoading] = useState(false);
 
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [programName, setProgramName] = useState("");
@@ -252,6 +253,7 @@ export const CreateEditProgramModal = ({
   };
 
   const handleCreateEdit = async () => {
+    setLoading(true);
     if (!exerciseSettings.length) return;
 
     const programArgs = {
@@ -279,9 +281,10 @@ export const CreateEditProgramModal = ({
 
     if (!success) return;
 
-    setUpdated(true);
     handleClose();
+    setUpdated(true);
     setTimeout(() => handleCleanUpCart(), OVERLAY_OPEN_DELAY);
+    setLoading(false);
   };
 
   const handleDeleteProgram = async () => {
@@ -409,9 +412,13 @@ export const CreateEditProgramModal = ({
           onClick={() => setOpenConfirm(isEdit ? "deleteProgram" : "deleteAll")}
           className={"w-[220px] h-[60px] bg-red"}
           fontSize={32}
+          disabled={loading}
+          loading={loading}
         />
         <Button
           title={isEdit ? "Confirm" : "Register"}
+          disabled={loading}
+          loading={loading}
           onClick={() => {
             if (!isEdit && cartItems.length < 2) {
               bodySnackbar(

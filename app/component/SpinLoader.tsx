@@ -1,6 +1,6 @@
 import LottiePlayer from "./LottiePlayer";
 
-export const CircleLoader = () => (
+export const SpinLoader = () => (
   <div className="absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2">
     <LottiePlayer
       type="spinLoading"

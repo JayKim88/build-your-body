@@ -1,3 +1,5 @@
+import { SpinLoader } from "./SpinLoader";
+
 type ButtonProps = {
   title: string;
   onClick: () => void;
@@ -7,6 +9,7 @@ type ButtonProps = {
   fontSize?: number;
   disabled?: boolean;
   letterSpacing?: number;
+  loading?: boolean;
 };
 
 export const Button = ({
@@ -16,6 +19,7 @@ export const Button = ({
   fontSize = 20,
   letterSpacing = 2,
   disabled,
+  loading,
 }: ButtonProps) => {
   return (
     <button
@@ -23,11 +27,12 @@ export const Button = ({
       className={`${
         !disabled && "hover:text-black hover:bg-gray6"
       } flex items-center justify-center gap-1 py-2 px-4 rounded-3xl 
-      width-[110px] transition-all duration-300 ease-in-out
+      width-[110px] transition-all duration-300 ease-in-out relative
          ${className}
         `}
       disabled={disabled}
     >
+      {loading && <SpinLoader />}
       <span
         style={{
           fontSize,
