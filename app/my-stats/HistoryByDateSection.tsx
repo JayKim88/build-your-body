@@ -27,6 +27,7 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const [isInitialRendering, setIsInitialRendering] = useState(true);
   const [dataAvailableDates, setDataAvailableDates] = useState<string[]>();
   const [currentMonth, setCurrentMonth] = useState(setDate(now, 15));
+  const [loading, setLoading] = useState(false);
 
   const getTargetDateData = useCallback(async () => {
     try {
@@ -44,6 +45,8 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
       setTargetDateData(result);
     } catch (error) {
       return null;
+    } finally {
+      setLoading(false);
     }
   }, [selectedDate, session?.user?.email]);
 
@@ -97,6 +100,7 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   useEffect(() => {
     if (isSameDay(now, selectedDate) && isInitialRendering) return;
 
+    setLoading(true);
     getTargetDateData();
     setIsInitialRendering(false);
   }, [selectedDate, getTargetDateData, isInitialRendering, now]);
@@ -141,11 +145,13 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
             selectedDate={selectedDate}
             totalLift={totalLift}
             totalWorkoutTime={totalWorkoutTime}
+            loading={loading}
           />
         </div>
         <ProgramsHistoryOnDateSection
           data={targetDateData}
           date={selectedDate}
+          loading={loading}
         />
       </section>
     </section>

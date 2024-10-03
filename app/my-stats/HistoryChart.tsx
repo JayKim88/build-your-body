@@ -29,6 +29,7 @@ import { exerciseTypes } from "../component/Filter";
 import { ColorKey, getRGBColor } from "./TotalSummarySection";
 import { colors } from "@/tailwind.config";
 import CircleArrow from "@/public/circle-arrow.svg";
+import { CircleLoader } from "../component/CircleLoader";
 
 Chart.register(
   Tooltip,
@@ -58,6 +59,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
   const [history, setHistory] = useState<HistoryChartData>();
   const [endDate, setEndDate] = useState(new Date());
   const [labels, setLabels] = useState<string[] | undefined>();
+  const [loading, setLoading] = useState(false);
 
   const getWorkoutHistory = useCallback(async () => {
     const labels = getRecent7Days(endDate);
@@ -94,10 +96,13 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
 
     setLabels(labels);
     setHistory(formatted7DaysHistory);
+    setLoading(false);
   }, [email, programId, endDate]);
 
   useEffect(() => {
     if (!programId || !email) return;
+
+    setLoading(true);
     getWorkoutHistory();
   }, [programId, email, endDate, getWorkoutHistory]);
 
@@ -212,6 +217,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
       <h1 className="text-2xl">{`History by Week - ${programName}`}</h1>
       <div className="flex justify-center items-center h-full">
         <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">
+          {loading && <CircleLoader />}
           {noHistory && (
             <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2 text-2">
               No Data

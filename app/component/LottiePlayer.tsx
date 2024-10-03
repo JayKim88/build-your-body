@@ -7,6 +7,7 @@ import pageNotFoundLottie from "@/public/lottie-animation/not-found.json";
 import loadingLottie from "@/public/lottie-animation/loading.json";
 import cannotFindDataLottie from "@/public/lottie-animation/cannot-find.json";
 import completeLottie from "@/public/lottie-animation/complete.json";
+import spinLoadingLottie from "@/public/lottie-animation/spin-loading.json";
 
 const animations = {
   error: errorLottie,
@@ -14,6 +15,7 @@ const animations = {
   loading: loadingLottie,
   cannotFind: cannotFindDataLottie,
   complete: completeLottie,
+  spinLoading: spinLoadingLottie,
 };
 
 export type AnimationTypes = keyof typeof animations;

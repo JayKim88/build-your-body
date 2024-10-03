@@ -1,0 +1,13 @@
+import LottiePlayer from "./LottiePlayer";
+
+export const CircleLoader = () => (
+  <div className="absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2">
+    <LottiePlayer
+      type="spinLoading"
+      style={{
+        width: 40,
+        height: 40,
+      }}
+    />
+  </div>
+);

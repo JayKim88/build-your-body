@@ -5,10 +5,12 @@ import { MyStat } from "../api/types";
 import { formattedTime } from "../utils";
 import { PngIcon } from "../my-programs/complete/WorkoutSummary";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
+import { CircleLoader } from "../component/CircleLoader";
 
 type ProgramsHistoryOnDateSectionProps = {
   data: MyStat[] | null;
   date: Date;
+  loading: boolean;
 };
 
 type ProgramsHistoryOnDateProps = {
@@ -16,10 +18,12 @@ type ProgramsHistoryOnDateProps = {
   date: Date;
   selectedProgramId: string;
   onSelectProgramId: (v: string) => void;
+  loading: boolean;
 };
 
 type ProgramSummaryProps = {
   data: MyStat | null;
+  loading: boolean;
 };
 
 const ProgramsHistoryOnDate = ({
@@ -27,11 +31,13 @@ const ProgramsHistoryOnDate = ({
   date,
   selectedProgramId,
   onSelectProgramId,
+  loading,
 }: ProgramsHistoryOnDateProps) => {
   const isDataAvailable = !!data?.length;
 
   return (
     <div className="w-[360px] h-[340px] flex flex-col gap-y-4 rounded-[32px] p-5 bg-gray0 relative">
+      {loading && <CircleLoader />}
       <div className="flex justify-start align-center gap-x-2">
         <PngIcon name="calendar" className="w-[40px] h-[40px]" />
         <h1 className="text-2xl flex justify-center items-center leading-none">
@@ -86,7 +92,7 @@ const ProgramsHistoryOnDate = ({
   );
 };
 
-const ProgramHistorySummary = ({ data }: ProgramSummaryProps) => {
+const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const formattedData = data?.savedExercisesStatus.map((v) => {
     const exerciseName = v.name;
@@ -113,6 +119,7 @@ const ProgramHistorySummary = ({ data }: ProgramSummaryProps) => {
           },
         })}
       >
+        {loading && <CircleLoader />}
         <div className="flex flex-col items-start justify-center">
           <h1 className="text-2xl">History on Date</h1>
           <span className="text-2xl">
@@ -120,7 +127,7 @@ const ProgramHistorySummary = ({ data }: ProgramSummaryProps) => {
           </span>
         </div>
         {isDataAvailable ? (
-          <ul className="flex flex-col gap-y-4 overflow-auto">
+          <ul className="flex flex-col gap-y-4 overflow-auto relative">
             {formattedData?.map((v) => {
               const exerciseName = v.exerciseName;
               const lift = v.lift;
@@ -162,6 +169,7 @@ const ProgramHistorySummary = ({ data }: ProgramSummaryProps) => {
 export const ProgramsHistoryOnDateSection = ({
   data,
   date,
+  loading,
 }: ProgramsHistoryOnDateSectionProps) => {
   const [selectedProgramId, setSelectedWorkoutId] = useState("");
 
@@ -186,8 +194,9 @@ export const ProgramsHistoryOnDateSection = ({
         date={date}
         selectedProgramId={selectedProgramId}
         onSelectProgramId={(v) => setSelectedWorkoutId(v)}
+        loading={loading}
       />
-      <ProgramHistorySummary data={selectedProgram} />
+      <ProgramHistorySummary data={selectedProgram} loading={loading} />
     </section>
   );
 };
