@@ -11,7 +11,7 @@ const uri = process.env.MONGODB_URI ?? "";
 
 async function editProgram(data: {
   programId: string;
-  lastCompletedAt?: Date;
+  lastCompletedAt?: string;
   exercises?: CartProps[];
 }) {
   const session = await getServerSession(authOptions);

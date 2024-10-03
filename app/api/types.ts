@@ -22,7 +22,7 @@ export type RegisteredProgram = {
   userId: string;
   programName: string;
   exercises: CartProps[];
-  lastCompletedAt?: Date;
+  lastCompletedAt?: string;
 };
 
 export type MyStat = {

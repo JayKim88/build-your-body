@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   const db = client?.db();
 
   const now = new Date();
-  const timeZoneDifference = -now.getTimezoneOffset() / 60;
+  const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
   try {
     let userId;
@@ -66,25 +66,35 @@ export async function GET(req: NextRequest) {
               userId,
               savedProgramId: programId,
               completedAt: {
-                $gte: subDays(endDate ? new Date(endDate) : now, 6),
-                $lte: endDate ? new Date(endDate) : now,
+                $gte: subDays(
+                  endDate ? new Date(endDate) : now,
+                  6
+                ).toISOString(),
+                $lte: endDate ? new Date(endDate).toISOString() : now,
               },
             },
           },
           {
-            $sort: {
-              completedAt: -1,
+            $addFields: {
+              completedAtDate: {
+                $dateFromString: { dateString: "$completedAt" },
+              },
             },
           },
           {
             $addFields: {
               completedAtLocalTime: {
                 $dateAdd: {
-                  startDate: "$completedAt",
+                  startDate: "$completedAtDate",
                   unit: "hour",
-                  amount: timeZoneDifference, // Convert UTC to Local time by timeZoneDifference
+                  amount: timeZoneDifference, // Adjust completedAtDate to local time
                 },
               },
+            },
+          },
+          {
+            $sort: {
+              completedAtLocalTime: -1, // Sort by localized time
             },
           },
           {
@@ -167,8 +177,8 @@ export async function GET(req: NextRequest) {
       data = groupedByExercise;
     } else if (targetMonthDate) {
       // get dates having program history for a specific month
-      const startofMonth = startOfMonth(targetMonthDate);
-      const endofMonth = endOfMonth(targetMonthDate);
+      const startofMonth = startOfMonth(targetMonthDate).toISOString();
+      const endofMonth = endOfMonth(targetMonthDate).toISOString();
 
       const dataAvailableInTargetMonth = await db
         ?.collection("workout-performance")
@@ -184,9 +194,16 @@ export async function GET(req: NextRequest) {
           },
           {
             $addFields: {
+              completedAtDate: {
+                $dateFromString: { dateString: "$completedAt" },
+              },
+            },
+          },
+          {
+            $addFields: {
               completedAtLocalTime: {
                 $dateAdd: {
-                  startDate: "$completedAt",
+                  startDate: "$completedAtDate",
                   unit: "hour",
                   amount: timeZoneDifference,
                 },
@@ -233,8 +250,8 @@ export async function GET(req: NextRequest) {
           userId: userId,
           ...(targetDate && {
             completedAt: {
-              $gte: startOfDay(targetDate), // Greater than or equal to the start of the day
-              $lte: endOfDay(targetDate), // Less than or equal to the end of the day
+              $gte: startOfDay(targetDate).toISOString(),
+              $lte: endOfDay(targetDate).toISOString(),
             },
           }),
         })

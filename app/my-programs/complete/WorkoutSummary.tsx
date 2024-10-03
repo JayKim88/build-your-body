@@ -213,10 +213,9 @@ export const WorkoutSummary = () => {
   };
 
   const uploadImageAndGetImageUrl = async () => {
-    const imageName = `${session?.user?.name}-${savedProgramId}-${format(
-      new Date(),
-      "yyyy-MM-dd-hh-mm-a"
-    )}`;
+    const imageName = `${
+      session?.user?.name
+    }-${savedProgramId}-${new Date().toISOString()}`;
 
     try {
       const {
@@ -251,7 +250,7 @@ export const WorkoutSummary = () => {
       savedProgramName,
       savedExercisesStatus,
       savedWorkoutTime,
-      completedAt,
+      completedAt: new Date(completedAt!).toISOString(),
       satisfiedStatus,
       title,
       note,
@@ -264,7 +263,7 @@ export const WorkoutSummary = () => {
     const savePerformanceResult = await savePerformance(inputArgs);
     const lastCompletedAtResult = await editProgram({
       programId: savedProgramId,
-      lastCompletedAt: completedAt,
+      lastCompletedAt: new Date(completedAt!).toISOString(),
     });
 
     return !!savePerformanceResult?.success && !!lastCompletedAtResult?.success;
@@ -275,14 +274,6 @@ export const WorkoutSummary = () => {
 
     if (isSave) {
       if (isConfirm) {
-        if (!title.trim().length) {
-          bodySnackbar("제목을 입력해주세요.", {
-            variant: "warning",
-          });
-          setOpenConfirm(undefined);
-          return;
-        }
-
         const isSuccess = await saveWorkoutPerformance();
 
         if (!isSuccess) {
@@ -470,7 +461,23 @@ export const WorkoutSummary = () => {
         />
         <Button
           title="SAVE"
-          onClick={() => setOpenConfirm("save")}
+          onClick={() => {
+            if (!title.trim().length) {
+              bodySnackbar("제목을 입력해주세요.", {
+                variant: "warning",
+              });
+              return;
+            }
+
+            if (previewUrl && !croppedImg) {
+              bodySnackbar("사진 편집을 완료해주세요.", {
+                variant: "warning",
+              });
+              return;
+            }
+
+            setOpenConfirm("save");
+          }}
           className="text-gray1 bg-softGreen hover:bg-softGreen hover:text-gray1 w-[400px]"
           fontSize={40}
         />

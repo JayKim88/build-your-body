@@ -16,7 +16,7 @@ export type PerfomanceData = {
   savedProgramName: string;
   savedExercisesStatus: ExercisesStatus;
   savedWorkoutTime: number;
-  completedAt: Date | undefined;
+  completedAt: string | undefined;
   satisfiedStatus: SatisfiedStatus;
   title: string;
   note: string;
