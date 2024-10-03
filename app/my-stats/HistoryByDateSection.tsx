@@ -120,11 +120,7 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
               required={false}
               mode="single"
               selected={selectedDate}
-              onSelect={(value) => {
-                console.log("value??", new Date(value!), value);
-
-                value && setSelectedDate(value);
-              }}
+              onSelect={(value) => value && setSelectedDate(value)}
               disabled={{ after: now }}
               modifiers={{
                 hasData: (date: Date) => hasDataForDate(date),
