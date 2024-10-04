@@ -74,7 +74,10 @@ const ExerciseInput = ({
           const value = e.target.value;
           const isEmpty = value === "";
 
-          onChange(title, isEmpty ? undefined : Number(value));
+          onChange(
+            title,
+            isEmpty ? undefined : Number(Number(value).toFixed(2))
+          );
         }}
         {...(decimalAvailable && {
           placeholder: "kg",

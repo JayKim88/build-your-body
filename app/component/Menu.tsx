@@ -2,17 +2,44 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { SpinLoader } from "./SpinLoader";
+
+const pathNames = {
+  exercises: "/exercises",
+  myPrograms: "/my-programs",
+  myStats: "/my-stats",
+  communities: "/communities",
+};
 
 const Menu = () => {
   const currentPath = usePathname();
   const { data: session, status } = useSession();
   const isLoggedIn = !!session;
   const isLoading = status === "loading";
+  const [pageChange, setPageChange] = useState(false);
 
   const isSelectedItem = (target: string) =>
     currentPath === target ? "text-yellow" : "text-inherit";
+
+  useEffect(() => {
+    setPageChange(false);
+  }, [currentPath]);
+
+  const handlePageChange = (pathName: string) => {
+    if (currentPath === pathName) return;
+    setPageChange(true);
+  };
+
+  const linkProps = (pathName: string) => ({
+    href: pathName,
+    onClick: () => handlePageChange(pathName),
+  });
+
+  const { exercises, myPrograms, myStats, communities } = pathNames;
 
   return isLoading ? (
     <></>
@@ -37,30 +64,32 @@ const Menu = () => {
         className="w-[0px] invisible peer-hover:visible peer-hover:w-[200px] 
       pl-2 flex overflow-hidden flex-col justify-evenly text-2xl hover:visible 
       hover:w-[200px] transition-all duration-500 ease-in-out [&>li]:w-[200px] 
-      [&>li]:h-[77.5px] [&>li]:flex [&>li]:items-center [&>li:hover]:text-yellow"
+      [&>li]:h-[77.5px] [&>li]:flex [&>li]:items-center [&>li:hover]:text-yellow 
+      relative"
       >
+        {pageChange && <SpinLoader />}
         <li
-          className={isSelectedItem("/exercises")}
+          className={isSelectedItem(exercises)}
           style={{
             verticalAlign: "center",
             display: "flex",
             alignItems: "center",
           }}
         >
-          <Link href="/exercises">Exercises</Link>
+          <Link {...linkProps(exercises)}>Exercises</Link>
         </li>
         {isLoggedIn && (
           <>
-            <li className={isSelectedItem("/my-programs")}>
-              <Link href="/my-programs">My Programs</Link>
+            <li className={isSelectedItem(myPrograms)}>
+              <Link {...linkProps(myPrograms)}>My Programs</Link>
             </li>
-            <li className={isSelectedItem("/my-stats")}>
-              <Link href="/my-stats">My Stats</Link>
+            <li className={isSelectedItem(myStats)}>
+              <Link {...linkProps(myStats)}>My Stats</Link>
             </li>
           </>
         )}
         <li className={isSelectedItem("/communities")}>
-          <Link href="/communities">Communities</Link>
+          <Link {...linkProps(communities)}>Communities</Link>
         </li>
       </ul>
     </div>

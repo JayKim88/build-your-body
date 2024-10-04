@@ -45,7 +45,7 @@ async function registerProgram(data: {
       itemId: result.insertedId.toString(), // Convert ObjectId to string
     };
 
-    revalidatePath("/programs");
+    setTimeout(() => revalidatePath("/programs"), 1000);
 
     return plainResult;
   } catch (error) {
