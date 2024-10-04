@@ -189,6 +189,9 @@ export async function GET(req: NextRequest) {
       const startofMonth = startOfMonth(targetMonthDate).toISOString();
       const endofMonth = endOfMonth(targetMonthDate).toISOString();
 
+      console.log("startofMonth", startofMonth);
+      console.log("endofMonth", endofMonth);
+
       const dataAvailableInTargetMonth = await db
         ?.collection("workout-performance")
         .aggregate([
@@ -239,6 +242,8 @@ export async function GET(req: NextRequest) {
           },
         ])
         .toArray();
+
+      console.log("dataAvailableInTargetMonth", dataAvailableInTargetMonth);
 
       data = dataAvailableInTargetMonth.map((item) => item._id);
     } else if (isPublic) {
