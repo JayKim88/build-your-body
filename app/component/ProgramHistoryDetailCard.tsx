@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { ExercisesStatus } from "../my-programs/[programId]/Progress";
+import { SpinLoader } from "./SpinLoader";
 
 type ProgramHistoryDetailCardProps = {
   data: ExercisesStatus[0];
@@ -12,16 +14,27 @@ export const ProgramHistoryDetailCard = ({
   data,
   onClick,
 }: ProgramHistoryDetailCardProps) => {
+  const [loading, setLoading] = useState(false);
   const { id, img_url, name, type, exerciseSetValues } = data ?? {};
-
   const bgColor = getBgColor(type);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, [loading]);
 
   return (
     <div
       key={id}
-      className={`${bgColor} w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
-      onClick={() => onClick(id)}
+      className={`${bgColor} w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col 
+      cursor-pointer relative`}
+      onClick={() => {
+        setLoading(true);
+        onClick(id);
+      }}
     >
+      {loading && <SpinLoader />}
       <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
       <div className="relative w-full h-[260px] rounded-2xl overflow-hidden">
         <Image
