@@ -112,7 +112,11 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
   return (
     <section className="flex gap-x-5">
       <div className="flex flex-col gap-y-5">
-        <TotalWidget title="Total Lift" data={memoizedTotalLift} unit="kg" />
+        <TotalWidget
+          title="Total Lift"
+          data={Math.floor(memoizedTotalLift)}
+          unit="kg"
+        />
         <TotalWidget
           title="Total Workout"
           data={memoizedTotalWorkout}

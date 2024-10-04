@@ -1,8 +1,18 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { endOfMonth, startOfMonth, subDays } from "date-fns";
+import {
+  endOfDay,
+  endOfMonth,
+  startOfDay,
+  startOfMonth,
+  subDays,
+} from "date-fns";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
+
+/**
+ * @description Date format is converted to UTC time in Server-Side (Node.js or Vercel)
+ */
 
 const uri = process.env.MONGODB_URI ?? "";
 
@@ -52,6 +62,14 @@ export async function GET(req: NextRequest) {
     } else if (programId) {
       // get available programs history within a specific week
 
+      const dateFrom = subDays(
+        endDate ? startOfDay(endDate) : startOfDay(now),
+        6
+      ).toISOString();
+      const dateTo = endDate
+        ? endOfDay(endDate).toISOString()
+        : endOfDay(now).toISOString();
+
       const dataFromDB = await db
         ?.collection("workout-performance")
         .aggregate([
@@ -60,13 +78,8 @@ export async function GET(req: NextRequest) {
               userId,
               savedProgramId: programId,
               completedAt: {
-                $gte: subDays(
-                  endDate ? new Date(endDate) : now,
-                  6
-                ).toISOString(),
-                $lte: endDate
-                  ? new Date(endDate).toISOString()
-                  : now.toISOString(),
+                $gte: dateFrom,
+                $lte: dateTo,
               },
             },
           },
@@ -240,9 +253,9 @@ export async function GET(req: NextRequest) {
         .toArray();
     } else {
       // find all or specific date programs history
-
-      const startOfDayInUTC = new Date(targetDate!).toISOString();
-      const endOfdayInUTC = new Date(
+      // targetDate is start of day
+      const startOfDayInUTC = targetDate;
+      const endOfDayInUTC = new Date(
         new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1
       ).toISOString();
 
@@ -253,7 +266,7 @@ export async function GET(req: NextRequest) {
           ...(targetDate && {
             completedAt: {
               $gte: startOfDayInUTC,
-              $lte: endOfdayInUTC,
+              $lte: endOfDayInUTC,
             },
           }),
         })

@@ -18,7 +18,7 @@ export const TotalSummaryByDateSection = ({
   <div className="flex flex-col gap-y-5">
     <TotalWidget
       title={`${format(selectedDate, "MM/dd")} Lift`}
-      data={totalLift}
+      data={Math.floor(totalLift)}
       unit="kg"
       loading={loading}
     />
