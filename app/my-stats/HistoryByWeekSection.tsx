@@ -43,7 +43,7 @@ const Programs = ({
       <div className={`${defaultRowStyles} items-center`}>
         <h1 className="text-2xl">Programs</h1>
         <div className="flex items-center text-[18px] gap-x-2">
-          진행중
+          In progress
           <label className="switch-small width-[40px]">
             <input
               type="checkbox"
