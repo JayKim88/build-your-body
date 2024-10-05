@@ -7,6 +7,8 @@ import { MyStat, RegisteredProgram, TotalWorkoutSummary } from "../api/types";
 import { Header } from "../component/Header";
 import { StatSections } from "./Sections";
 
+const targetDate = startOfDay(new Date());
+
 export default async function Page() {
   const [totalSummary, programs, todayWorkoutsData] = await Promise.all([
     getTotalSummary(),
@@ -14,7 +16,7 @@ export default async function Page() {
       includeDeleted: true,
     }),
     getStats({
-      targetDate: startOfDay(new Date()),
+      targetDate: targetDate,
     }),
   ]);
   // const today = new Date(); //
