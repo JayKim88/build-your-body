@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   endOfDay,
   endOfMonth,
+  format,
   startOfDay,
   startOfMonth,
   subDays,
@@ -204,37 +205,37 @@ export async function GET(req: NextRequest) {
               },
             },
           },
-          {
-            $addFields: {
-              completedAtDate: {
-                $dateFromString: { dateString: "$completedAt" },
-              },
-            },
-          },
-          {
-            $addFields: {
-              completedAtLocalTime: {
-                $dateAdd: {
-                  startDate: "$completedAtDate",
-                  unit: "hour",
-                  amount: timeZoneDifference,
-                },
-              },
-            },
-          },
-          {
-            $group: {
-              _id: {
-                $dateToString: {
-                  format: "%Y-%m-%d",
-                  date: "$completedAtLocalTime",
-                },
-              },
-              items: {
-                $push: "$$ROOT",
-              },
-            },
-          },
+          // {
+          //   $addFields: {
+          //     completedAtDate: {
+          //       $dateFromString: { dateString: "$completedAt" },
+          //     },
+          //   },
+          // },
+          // {
+          //   $addFields: {
+          //     completedAtLocalTime: {
+          //       $dateAdd: {
+          //         startDate: "$completedAtDate",
+          //         unit: "hour",
+          //         amount: timeZoneDifference,
+          //       },
+          //     },
+          //   },
+          // },
+          // {
+          //   $group: {
+          //     _id: {
+          //       $dateToString: {
+          //         format: "%Y-%m-%d",
+          //         date: "$completedAtLocalTime",
+          //       },
+          //     },
+          //     items: {
+          //       $push: "$$ROOT",
+          //     },
+          //   },
+          // },
           {
             $sort: {
               _id: 1,
@@ -245,7 +246,19 @@ export async function GET(req: NextRequest) {
 
       console.log("dataAvailableInTargetMonth", dataAvailableInTargetMonth);
 
-      data = dataAvailableInTargetMonth.map((item) => item._id);
+      const resultDates: string[] = [];
+
+      dataAvailableInTargetMonth.forEach((v) => {
+        const formatted = format(v.completedAt, "yyyy-MM-dd");
+
+        if (resultDates.includes(formatted)) return;
+
+        resultDates.push(formatted);
+      });
+
+      console.log("resultDates", resultDates);
+
+      data = resultDates;
     } else if (isPublic) {
       data = await db
         ?.collection("workout-performance")

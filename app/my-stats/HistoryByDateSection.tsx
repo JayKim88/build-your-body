@@ -63,6 +63,8 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
           .then((res) => res.data)
       ).data as string[];
 
+      console.log("result??", result);
+
       setDataAvailableDates(result);
     } catch (error) {
       return null;
