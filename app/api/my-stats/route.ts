@@ -3,12 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   endOfDay,
   endOfMonth,
-  format,
   startOfDay,
   startOfMonth,
   subDays,
 } from "date-fns";
-import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
 
