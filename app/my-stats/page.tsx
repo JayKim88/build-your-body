@@ -7,29 +7,21 @@ import { MyStat, RegisteredProgram, TotalWorkoutSummary } from "../api/types";
 import { Header } from "../component/Header";
 import { StatSections } from "./Sections";
 
-const targetDate = startOfDay(new Date());
+const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
 export default async function Page() {
+  const startOfDayInLocalTime =
+    startOfDay(new Date()).getTime() + timeZoneDifference * 60 * 60 * 1000;
+
   const [totalSummary, programs, todayWorkoutsData] = await Promise.all([
     getTotalSummary(),
     getPrograms({
       includeDeleted: true,
     }),
     getStats({
-      targetDate: targetDate,
+      targetDate: new Date(startOfDayInLocalTime),
     }),
   ]);
-  // const today = new Date(); //
-  // const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
-
-  console.log("??????", startOfDay(new Date()));
-
-  // console.log(
-  //   "todayWorkoutsData",
-  //   new Date(
-  //     startOfDay(new Date()).getTime() + timeZoneDifference * 60 * 60 * 1000
-  //   )
-  // );
 
   return (
     <div className="page-wrapper">
