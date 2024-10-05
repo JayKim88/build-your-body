@@ -27,7 +27,10 @@ export async function GET(req: NextRequest) {
   const endDate = searchParams.get("endDate");
   const targetDate = searchParams.get("targetDate");
   const targetMonthDate = searchParams.get("targetMonthDate");
-  const timeZoneDifference = Number(searchParams.get("timeZoneDifference"));
+  const timeZoneDifference = searchParams.get("timeZoneDifference");
+  const numberTimeZoneDifference = timeZoneDifference
+    ? Number(timeZoneDifference)
+    : 0;
   const lastWorkout = searchParams.get("lastWorkout") === "true";
   const isPublic = searchParams.get("isPublic") === "true";
 
@@ -35,7 +38,6 @@ export async function GET(req: NextRequest) {
   const db = client?.db();
 
   const now = new Date();
-  // const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
   try {
     let userId;
@@ -97,7 +99,7 @@ export async function GET(req: NextRequest) {
                 $dateAdd: {
                   startDate: "$completedAtDate",
                   unit: "hour",
-                  amount: timeZoneDifference, // Adjust completedAtDate to local time
+                  amount: numberTimeZoneDifference, // Adjust completedAtDate to local time
                 },
               },
             },
@@ -215,7 +217,7 @@ export async function GET(req: NextRequest) {
                 $dateAdd: {
                   startDate: "$completedAtDate",
                   unit: "hour",
-                  amount: timeZoneDifference,
+                  amount: numberTimeZoneDifference,
                 },
               },
             },

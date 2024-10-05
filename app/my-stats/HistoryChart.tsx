@@ -63,6 +63,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
 
   const getWorkoutHistory = useCallback(async () => {
     const labels = getRecent7Days(endDate);
+    const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
     const fetchedData = (
       await axios
@@ -71,6 +72,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
             email: email,
             programId: programId,
             endDate: endDate,
+            timeZoneDifference,
           },
         })
         .then((res) => res.data)
