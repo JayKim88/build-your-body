@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
@@ -38,10 +38,8 @@ const PerformedProgramCard = (
     isLoggedIn,
   } = props;
 
-  const likeClicked = likedUserIds?.some((v) => v === memberUserId);
-
-  const [liked, setLiked] = useState(likeClicked);
-  const [likedCount, setLikedCount] = useState(likedUserIds?.length ?? 0);
+  const [liked, setLiked] = useState(false);
+  const [likedCount, setLikedCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const liftsByExercise = savedExercisesStatus.map((v) => {
@@ -54,6 +52,12 @@ const PerformedProgramCard = (
       lift,
     };
   });
+
+  useEffect(() => {
+    const likeClicked = likedUserIds?.some((v) => v === memberUserId);
+    setLiked(!!likeClicked);
+    setLikedCount(likedUserIds?.length ?? 0);
+  }, [likedUserIds]);
 
   const handleLike = async () => {
     setLikedCount((prev) => (liked ? prev - 1 : prev + 1));
