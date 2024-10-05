@@ -256,7 +256,7 @@ export async function GET(req: NextRequest) {
         .toArray();
     } else {
       // find all or specific date programs history
-      // targetDate is start of day
+      // targetDate is start of day in local time
       const startOfDayInUTC = targetDate;
       const endOfDayInUTC = new Date(
         new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1

@@ -18,6 +18,8 @@ export default async function Page() {
     }),
   ]);
 
+  console.log("todayWorkoutsData", todayWorkoutsData);
+
   return (
     <div className="page-wrapper">
       <Header />
