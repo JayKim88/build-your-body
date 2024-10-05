@@ -30,6 +30,8 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   const [loading, setLoading] = useState(false);
 
   const getTargetDateData = useCallback(async () => {
+    console.log("selectedDate!!", selectedDate);
+
     try {
       const result = (
         await axios

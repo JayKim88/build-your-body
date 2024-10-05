@@ -17,8 +17,17 @@ export default async function Page() {
       targetDate: startOfDay(new Date()),
     }),
   ]);
+  // const today = new Date(); //
+  // const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
-  console.log("todayWorkoutsData", todayWorkoutsData);
+  console.log("??????", startOfDay(new Date()));
+
+  // console.log(
+  //   "todayWorkoutsData",
+  //   new Date(
+  //     startOfDay(new Date()).getTime() + timeZoneDifference * 60 * 60 * 1000
+  //   )
+  // );
 
   return (
     <div className="page-wrapper">

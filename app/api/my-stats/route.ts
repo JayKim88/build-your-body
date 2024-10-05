@@ -262,6 +262,8 @@ export async function GET(req: NextRequest) {
         new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1
       ).toISOString();
 
+      console.log("start, end", startOfDayInUTC, endOfDayInUTC);
+
       data = await db
         ?.collection("workout-performance")
         .find({
