@@ -2,9 +2,9 @@
 
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { MongoClient, ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-import { MongoClient, ObjectId } from "mongodb";
 
 type EditCommunitiesListProps = {
   userId: string;

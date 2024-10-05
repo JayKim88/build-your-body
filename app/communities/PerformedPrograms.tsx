@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
@@ -23,10 +23,6 @@ const PerformedProgramCard = (
     isLoggedIn: boolean;
   }
 ) => {
-  const [liked, setLiked] = useState(false);
-  const [likedCount, setLikedCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
   const {
     _id,
     imageUrl,
@@ -42,6 +38,12 @@ const PerformedProgramCard = (
     isLoggedIn,
   } = props;
 
+  const likeClicked = likedUserIds?.some((v) => v === memberUserId);
+
+  const [liked, setLiked] = useState(likeClicked);
+  const [likedCount, setLikedCount] = useState(likedUserIds?.length ?? 0);
+  const [loading, setLoading] = useState(false);
+
   const liftsByExercise = savedExercisesStatus.map((v) => {
     const lift = v.exerciseSetValues.reduce((acc, cur) => {
       return acc + (cur.repeat ?? 0) * (cur.weight ?? 0);
@@ -54,24 +56,23 @@ const PerformedProgramCard = (
   });
 
   const handleLike = async () => {
+    setLikedCount((prev) => (liked ? prev - 1 : prev + 1));
+    setLiked((prev) => !prev);
+
     const result = await editCommunitiesList({
       userId: memberUserId!,
       performedProgramId: _id!,
       isLike: !liked,
     });
 
-    if (!result?.success) return;
+    if (!result?.success) {
+      setLikedCount((prev) => (liked ? prev - 1 : prev + 1));
+      setLiked((prev) => !prev);
+      return;
+    }
 
-    setLikedCount((prev) => (liked ? prev - 1 : prev + 1));
-    setLiked((prev) => !prev);
     setLoading(false);
   };
-
-  useEffect(() => {
-    const likeClicked = likedUserIds?.some((v) => v === memberUserId);
-    setLiked(!!likeClicked);
-    setLikedCount(likedUserIds?.length ?? 0);
-  }, [likedUserIds, memberUserId]);
 
   return (
     <div
