@@ -273,6 +273,9 @@ export async function GET(req: NextRequest) {
             },
           }),
         })
+        .sort({
+          completedAt: -1,
+        })
         .toArray();
     }
 

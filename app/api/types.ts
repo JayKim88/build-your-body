@@ -23,6 +23,7 @@ export type RegisteredProgram = {
   programName: string;
   exercises: CartProps[];
   lastCompletedAt?: string;
+  deleted?: boolean;
 };
 
 export type MyStat = {

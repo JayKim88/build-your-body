@@ -32,20 +32,40 @@ async function registerProgram(data: {
     }
 
     const userId = user?._id;
+    const { programName, exercises } = data;
 
-    const newUserProgram = {
+    const isSameNamedProgramExisting = await db
+      ?.collection("programs")
+      .findOne({
+        userId,
+        programName,
+        deleted: { $ne: true },
+      });
+
+    if (!!isSameNamedProgramExisting) {
+      const plainResult = {
+        success: false,
+        message: "동일한 이름의 프로그램이 있어요.",
+      };
+
+      return plainResult;
+    }
+
+    const result = await db?.collection("programs").insertOne({
       userId,
-      ...data,
-    };
-
-    const result = await db?.collection("programs").insertOne(newUserProgram);
+      programName,
+      exercises,
+    });
 
     const plainResult = {
       success: result.acknowledged,
       itemId: result.insertedId.toString(), // Convert ObjectId to string
+      message: result.acknowledged
+        ? "프로그램이 성공적으로 등록되었어요."
+        : "에러가 발생했어요. 재시도 해주세요.",
     };
 
-    setTimeout(() => revalidatePath("/programs"), 1000);
+    plainResult.success && setTimeout(() => revalidatePath("/programs"), 1000);
 
     return plainResult;
   } catch (error) {

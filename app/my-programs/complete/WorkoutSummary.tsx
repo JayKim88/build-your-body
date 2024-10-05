@@ -122,7 +122,7 @@ export const WorkoutSummary = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [croppedImg, setCroppedImg] = useState("");
   const [imgFile, setImgFile] = useState<Blob>();
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(false);
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);

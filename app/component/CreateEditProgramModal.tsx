@@ -266,23 +266,21 @@ export const CreateEditProgramModal = ({
       })),
     };
 
-    const { success } = isEdit
+    const { success, message } = isEdit
       ? (await editProgram({
           ...programArgs,
           programId: data._id,
         })) ?? {}
       : (await registerProgram(programArgs)) ?? {};
 
-    bodySnackbar(
-      success
-        ? `프로그램이 성공적으로 ${isEdit ? "수정" : "등록"}되었어요.`
-        : "에러가 발생했어요.",
-      {
-        variant: success ? "success" : "error",
-      }
-    );
+    bodySnackbar(message ?? "", {
+      variant: !!success ? "success" : "error",
+    });
 
-    if (!success) return;
+    if (!success) {
+      setLoading(false);
+      return;
+    }
 
     handleClose();
     setUpdated(true);

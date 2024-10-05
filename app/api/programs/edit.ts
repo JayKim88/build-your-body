@@ -58,6 +58,7 @@ async function editProgram(data: {
     const plainResult = {
       success: result.acknowledged,
       itemId: result.modifiedCount.toString(), // Convert ObjectId to string
+      message: "프로그램이 성공적으로 수정되었어요.",
     };
 
     revalidatePath("/programs");
