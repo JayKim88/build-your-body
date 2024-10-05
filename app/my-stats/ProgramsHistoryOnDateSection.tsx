@@ -93,6 +93,7 @@ const ProgramsHistoryOnDate = ({
 };
 
 const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
+  const [lastData, setLastData] = useState<MyStat | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const formattedData = data?.savedExercisesStatus.map((v) => {
     const exerciseName = v.name;
@@ -107,6 +108,10 @@ const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
   });
 
   const isDataAvailable = !!data;
+
+  useEffect(() => {
+    setLastData(data);
+  }, [data]);
 
   return (
     <>
@@ -151,6 +156,8 @@ const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
               );
             })}
           </ul>
+        ) : !!lastData || !!data ? (
+          <></>
         ) : (
           <div className="absolute top-1/2 right-1/2 translate-x-1/2 text-2xl">
             No Data

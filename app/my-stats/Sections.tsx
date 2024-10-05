@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { MyStat, RegisteredProgram, TotalWorkoutSummary } from "../api/types";
+import { RegisteredProgram, TotalWorkoutSummary } from "../api/types";
 import { HistoryByDateSection } from "./HistoryByDateSection";
 import { HistoryByWeekSection } from "./HistoryByWeekSection";
 import { TotalSummarySection } from "./TotalSummarySection";
@@ -10,14 +10,9 @@ import { TotalSummarySection } from "./TotalSummarySection";
 type StatSectionsProps = {
   totalSummary: TotalWorkoutSummary;
   programs: RegisteredProgram[];
-  todayWorkoutsData: MyStat[];
 };
 
-export const StatSections = ({
-  totalSummary,
-  programs,
-  todayWorkoutsData,
-}: StatSectionsProps) => {
+export const StatSections = ({ totalSummary, programs }: StatSectionsProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -33,7 +28,7 @@ export const StatSections = ({
         <TotalSummarySection data={totalSummary} />
         <HistoryByWeekSection data={programs} />
       </section>
-      <HistoryByDateSection data={todayWorkoutsData} />
+      <HistoryByDateSection />
     </main>
   );
 };

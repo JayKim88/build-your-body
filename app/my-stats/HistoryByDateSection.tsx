@@ -11,26 +11,21 @@ import { MyStat } from "../api/types";
 import { TotalSummaryByDateSection } from "./TotalSummaryByDateSection";
 import { ProgramsHistoryOnDateSection } from "./ProgramsHistoryOnDateSection";
 
-type HistoryByDateSectionProps = {
-  data: MyStat[];
-};
-
-export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
-  const { data } = props ?? {};
+export const HistoryByDateSection = () => {
   const now = useMemo(() => startOfDay(new Date()), []);
   const defaultClassNames = getDefaultClassNames();
   const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<Date>(now);
   const [totalLift, setTotalLift] = useState(0);
   const [totalWorkoutTime, setTotalWorkoutTime] = useState(0);
-  const [targetDateData, setTargetDateData] = useState<MyStat[] | null>(data);
+  const [targetDateData, setTargetDateData] = useState<MyStat[] | null>(null);
   const [isInitialRendering, setIsInitialRendering] = useState(true);
   const [dataAvailableDates, setDataAvailableDates] = useState<string[]>();
   const [currentMonth, setCurrentMonth] = useState(setDate(now, 15));
   const [loading, setLoading] = useState(false);
 
   const getTargetDateData = useCallback(async () => {
-    console.log("selectedDate!!", selectedDate);
+    setLoading(true);
 
     try {
       const result = (
@@ -105,10 +100,14 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
   useEffect(() => {
     if (isSameDay(now, selectedDate) && isInitialRendering) return;
 
-    setLoading(true);
     getTargetDateData();
     setIsInitialRendering(false);
   }, [selectedDate, getTargetDateData, isInitialRendering, now]);
+
+  useEffect(() => {
+    if (!session?.user?.email) return;
+    getTargetDateData();
+  }, []);
 
   useEffect(() => {
     if (!session?.user) return;
