@@ -10,8 +10,7 @@ import { StatSections } from "./Sections";
 const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
 export default async function Page() {
-  const startOfDayInLocalTime =
-    startOfDay(new Date()).getTime() + timeZoneDifference * 60 * 60 * 1000;
+  const startOfDayInLocalTime = startOfDay(new Date());
 
   const [totalSummary, programs, todayWorkoutsData] = await Promise.all([
     getTotalSummary(),
