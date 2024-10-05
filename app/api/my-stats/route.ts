@@ -8,6 +8,7 @@ import {
   startOfMonth,
   subDays,
 } from "date-fns";
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 import { HistoryChartData, WorkoutHistory } from "../types";
 
@@ -28,6 +29,7 @@ export async function GET(req: NextRequest) {
   const endDate = searchParams.get("endDate");
   const targetDate = searchParams.get("targetDate");
   const targetMonthDate = searchParams.get("targetMonthDate");
+  const timeZoneDifference = Number(searchParams.get("timeZoneDifference"));
   const lastWorkout = searchParams.get("lastWorkout") === "true";
   const isPublic = searchParams.get("isPublic") === "true";
 
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
   const db = client?.db();
 
   const now = new Date();
-  const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
+  // const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
 
   try {
     let userId;
@@ -190,9 +192,6 @@ export async function GET(req: NextRequest) {
       const startofMonth = startOfMonth(targetMonthDate).toISOString();
       const endofMonth = endOfMonth(targetMonthDate).toISOString();
 
-      console.log("startofMonth", startofMonth);
-      console.log("endofMonth", endofMonth);
-
       const dataAvailableInTargetMonth = await db
         ?.collection("workout-performance")
         .aggregate([
@@ -205,37 +204,37 @@ export async function GET(req: NextRequest) {
               },
             },
           },
-          // {
-          //   $addFields: {
-          //     completedAtDate: {
-          //       $dateFromString: { dateString: "$completedAt" },
-          //     },
-          //   },
-          // },
-          // {
-          //   $addFields: {
-          //     completedAtLocalTime: {
-          //       $dateAdd: {
-          //         startDate: "$completedAtDate",
-          //         unit: "hour",
-          //         amount: timeZoneDifference,
-          //       },
-          //     },
-          //   },
-          // },
-          // {
-          //   $group: {
-          //     _id: {
-          //       $dateToString: {
-          //         format: "%Y-%m-%d",
-          //         date: "$completedAtLocalTime",
-          //       },
-          //     },
-          //     items: {
-          //       $push: "$$ROOT",
-          //     },
-          //   },
-          // },
+          {
+            $addFields: {
+              completedAtDate: {
+                $dateFromString: { dateString: "$completedAt" },
+              },
+            },
+          },
+          {
+            $addFields: {
+              completedAtLocalTime: {
+                $dateAdd: {
+                  startDate: "$completedAtDate",
+                  unit: "hour",
+                  amount: timeZoneDifference,
+                },
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$completedAtLocalTime",
+                },
+              },
+              items: {
+                $push: "$$ROOT",
+              },
+            },
+          },
           {
             $sort: {
               _id: 1,
@@ -244,21 +243,7 @@ export async function GET(req: NextRequest) {
         ])
         .toArray();
 
-      console.log("dataAvailableInTargetMonth", dataAvailableInTargetMonth);
-
-      const resultDates: string[] = [];
-
-      dataAvailableInTargetMonth.forEach((v) => {
-        const formatted = format(v.completedAt, "yyyy-MM-dd");
-
-        if (resultDates.includes(formatted)) return;
-
-        resultDates.push(formatted);
-      });
-
-      console.log("resultDates", resultDates);
-
-      data = resultDates;
+      data = dataAvailableInTargetMonth.map((item) => item._id);
     } else if (isPublic) {
       data = await db
         ?.collection("workout-performance")

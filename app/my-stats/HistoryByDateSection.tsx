@@ -52,12 +52,15 @@ export const HistoryByDateSection = (props: HistoryByDateSectionProps) => {
 
   const getTargetMonthDataAvailableDates = useCallback(async () => {
     try {
+      const timeZoneDifference = -new Date().getTimezoneOffset() / 60;
+
       const result = (
         await axios
           .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
             params: {
               email: session?.user?.email,
               targetMonthDate: currentMonth,
+              timeZoneDifference,
             },
           })
           .then((res) => res.data)
