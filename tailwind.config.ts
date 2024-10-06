@@ -34,6 +34,19 @@ const config: Config = {
       fontSize: {
         fluid: "clamp(6rem, 7vw + 1rem, 7.4rem)",
       },
+      keyframes: {
+        heartBeat: {
+          "0%, 100%": {
+            transform: "scale(1.0)",
+          },
+          "50%": {
+            transform: "scale(1.4)",
+          },
+        },
+      },
+      animation: {
+        heartBeat: "heartBeat 1s infinite",
+      },
     },
   },
   plugins: [

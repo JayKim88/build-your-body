@@ -102,10 +102,12 @@ const ExerciseSetRow = ({
   exerciseSetValues,
   checked,
   isInprogress,
+  onUpdateNewSetLift,
 }: ExerciseSetValues & {
   onUpdateExerciseSetRow: (v: UpdateExerciseSetRowValues) => void;
   exerciseSetValues: ExerciseSetValues[];
   isInprogress: boolean;
+  onUpdateNewSetLift: (v: number) => void;
 }) => {
   const updateExerciseSetValue = (title: string, value?: number | boolean) => {
     onUpdateExerciseSetRow({
@@ -135,6 +137,12 @@ const ExerciseSetRow = ({
   const checkedStyles = checked
     ? "after:content-['✔'] text-[24px] flex items-center justify-center h-6"
     : "";
+
+  useEffect(() => {
+    if (!isInProgessSet) return;
+
+    onUpdateNewSetLift((repeat ?? 0) * (weight ?? 0));
+  }, [isInProgessSet, weight, repeat]);
 
   return (
     <div
@@ -177,7 +185,9 @@ const ExerciseProgressCard = ({
   onAddDeleteSet,
   onProceedToNextExercise,
 }: ExerciseProgressCardProps) => {
+  const [newSetLift, setNewSetLift] = useState(0);
   const updateExerciseSetRow = (v: UpdateExerciseSetRowValues) => onUpdate(v);
+  const updateNewSetLift = (v: number) => setNewSetLift(v);
 
   const isCompleted = data.isCompleted;
   const isUnclickable = !isRunning || !isInprogress;
@@ -186,23 +196,34 @@ const ExerciseProgressCard = ({
     data.exerciseSetValues.every((v) => v.checked);
   const isNextButtonAvailable =
     isInprogress && !isCompleted && isRestAllChecked;
+  const isSetsEmpty = !data.exerciseSetValues.length;
 
   return (
     <div className="relative">
       {!isUnclickable && (
         <div
-          className="absolute top-[300px] left-1/2 -translate-x-1/2 
+          className="absolute top-[230px] left-1/2 -translate-x-1/2 
         z-10 opacity-100 rotate-[-20deg] flex flex-col w-[260px] items-end"
         >
           <div className="text-[28px]">Compare to last time</div>
           <div
             className={`${
-              liftGap >= 0 ? "text-realGreen" : "text-red"
+              liftGap > 0
+                ? "text-realGreen"
+                : liftGap === 0
+                ? "text-gray4"
+                : "text-red"
             } text-[48px]`}
           >
             {liftGap >= 0 ? "+" : ""}
             {liftGap} kg
           </div>
+          <div className="text-[28px]">This set adds</div>
+          <div
+            className={`text-[48px] ${
+              isSetsEmpty || !newSetLift ? "text-gray4" : "text-realGreen"
+            }`}
+          >{`+${isSetsEmpty ? 0 : newSetLift} kg`}</div>
         </div>
       )}
       {isCompleted && !isLastExercise && (
@@ -238,6 +259,7 @@ const ExerciseProgressCard = ({
               {...v}
               isInprogress={isInprogress}
               exerciseSetValues={data.exerciseSetValues}
+              onUpdateNewSetLift={updateNewSetLift}
               onUpdateExerciseSetRow={(v) =>
                 updateExerciseSetRow({
                   ...v,
