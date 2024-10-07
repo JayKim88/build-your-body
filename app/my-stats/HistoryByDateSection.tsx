@@ -107,7 +107,7 @@ export const HistoryByDateSection = () => {
   useEffect(() => {
     if (!session?.user?.email) return;
     getTargetDateData();
-  }, []);
+  }, [getTargetDateData, session?.user?.email]);
 
   useEffect(() => {
     if (!session?.user) return;

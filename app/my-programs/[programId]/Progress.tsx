@@ -142,7 +142,7 @@ const ExerciseSetRow = ({
     if (!isInProgessSet) return;
 
     onUpdateNewSetLift((repeat ?? 0) * (weight ?? 0));
-  }, [isInProgessSet, weight, repeat]);
+  }, [isInProgessSet, weight, repeat, onUpdateNewSetLift]);
 
   return (
     <div

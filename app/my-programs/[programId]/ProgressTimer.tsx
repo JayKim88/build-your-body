@@ -73,6 +73,7 @@ const ProgressTimerButton = ({
             alt="pause program"
             fill
             onClick={handlePause}
+            sizes="32px"
           />
         </div>
       ) : (
@@ -83,6 +84,7 @@ const ProgressTimerButton = ({
             alt="resume program"
             fill
             onClick={handleStart}
+            sizes="32px"
           />
         </div>
       )}

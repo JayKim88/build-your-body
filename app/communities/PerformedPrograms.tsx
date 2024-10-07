@@ -57,7 +57,7 @@ const PerformedProgramCard = (
     const likeClicked = likedUserIds?.some((v) => v === memberUserId);
     setLiked(!!likeClicked);
     setLikedCount(likedUserIds?.length ?? 0);
-  }, [likedUserIds]);
+  }, [likedUserIds, memberUserId]);
 
   const handleLike = async () => {
     setLikedCount((prev) => (liked ? prev - 1 : prev + 1));

@@ -35,7 +35,7 @@ const Programs = ({
       data?.filter((v) => {
         return programsInprogress ? !v.deleted : v.deleted;
       }),
-    [programsInprogress]
+    [programsInprogress, data]
   );
 
   return (

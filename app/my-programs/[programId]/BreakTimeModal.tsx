@@ -88,6 +88,7 @@ const TimerAnimation = ({ breakTime, onClose }: TimerAnimationProps) => {
                   src="/pause.png"
                   alt="pause program"
                   fill
+                  sizes="32px"
                 />
               </div>
             ) : (
@@ -97,6 +98,7 @@ const TimerAnimation = ({ breakTime, onClose }: TimerAnimationProps) => {
                   src="/resume.png"
                   alt="resume program"
                   fill
+                  sizes="32px"
                 />
               </div>
             )}
