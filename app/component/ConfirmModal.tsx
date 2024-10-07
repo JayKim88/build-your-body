@@ -38,6 +38,7 @@ export const ConfirmModal = ({
             src="/confirm.png"
             alt="confirm"
             fill
+            sizes="172px"
             style={{ objectFit: "contain" }}
             priority
           />

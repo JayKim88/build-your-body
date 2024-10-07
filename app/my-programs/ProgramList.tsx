@@ -85,7 +85,7 @@ const ProgramItem = (
   const enterProgram = () => {
     onEnterClick(true);
     setTimeout(() => {
-      router.push(`/my-programs/${_id}`);
+      router.push(`/my-programs/${_id}`, { scroll: false });
     }, 500);
   };
 
@@ -94,7 +94,7 @@ const ProgramItem = (
       <header className="flex flex-col relative">
         {lastCompletedAt && (
           <span className="flex justify-start items-center gap-x-1 border-2 w-fit p-2 rounded-[32px]">
-            <PngIcon name="calendar" className="w-[24px] h-[24px]" />
+            <PngIcon name="calendar" width={24} height={24} />
             last performed on: {format(lastCompletedAt, "yyyy.MM.dd")}
           </span>
         )}

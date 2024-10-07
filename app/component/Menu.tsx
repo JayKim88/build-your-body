@@ -37,6 +37,7 @@ const Menu = () => {
   const linkProps = (pathName: string) => ({
     href: pathName,
     onClick: () => handlePageChange(pathName),
+    scroll: false,
   });
 
   const { exercises, myPrograms, myStats, communities } = pathNames;

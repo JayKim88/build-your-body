@@ -39,7 +39,7 @@ const ProgramsHistoryOnDate = ({
     <div className="w-[360px] h-[340px] flex flex-col gap-y-4 rounded-[32px] p-5 bg-gray0 relative">
       {loading && <SpinLoader />}
       <div className="flex justify-start align-center gap-x-2">
-        <PngIcon name="calendar" className="w-[40px] h-[40px]" />
+        <PngIcon name="calendar" width={40} height={40} />
         <h1 className="text-2xl flex justify-center items-center leading-none">
           {format(date, "MM/dd")}
         </h1>
@@ -66,14 +66,14 @@ const ProgramsHistoryOnDate = ({
                 <div className="flex flex-col justify-around">
                   {completedAt && (
                     <div className="flex gap-x-0.5 items-center">
-                      <PngIcon name="time" className="w-5 h-5" />
+                      <PngIcon name="time" width={20} height={20} />
                       <span className="leading-none">
                         {format(completedAt, "hh:mm a")}
                       </span>
                     </div>
                   )}
                   <div className="flex gap-x-0.5 items-center">
-                    <PngIcon name="duration" className="w-5 h-5" />
+                    <PngIcon name="duration" width={20} height={20} />
                     <span className="leading-none">
                       {formattedTime(workoutTime)}
                     </span>

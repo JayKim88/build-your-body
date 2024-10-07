@@ -6,7 +6,9 @@ export default function NotFound() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <LottiePlayer type="notFound" />
-      <Link href="/">Return Home</Link>
+      <Link href="/" scroll={false}>
+        Return Home
+      </Link>
     </div>
   );
 }

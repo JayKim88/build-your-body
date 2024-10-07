@@ -25,25 +25,41 @@ type CartIconProps = {
   isAleadyInCart?: boolean;
 };
 
-const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => (
-  <button
-    aria-label={title}
-    onClick={(e) => {
-      e.stopPropagation();
-      onClick();
-    }}
-    className="flex items-center justify-center"
-  >
-    <Icon
-      className={`${
-        isAleadyInCart ? "fill-gray6 cursor-default" : "fill-gray1"
-      } hover:fill-gray6 transition-all ease-in-out duration-400`}
-    />
-  </button>
-);
+const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => {
+  const isAdd = title === "add to cart";
+
+  const iconStyles = isAdd
+    ? isAleadyInCart
+      ? "fill-gray6"
+      : "fill-gray1 hover:fill-gray6"
+    : "fill-gray1 hover:fill-gray6 ";
+
+  const btnStyles = isAdd
+    ? isAleadyInCart
+      ? "pointer-events-none"
+      : ""
+    : isAleadyInCart
+    ? ""
+    : "pointer-events-none";
+
+  return (
+    <button
+      aria-label={title}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      className={`${btnStyles} flex items-center justify-center`}
+    >
+      <Icon
+        className={`${iconStyles} transition-all ease-in-out duration-400`}
+      />
+    </button>
+  );
+};
 
 const ExerciseCard = (
-  props: Exercise & {
+  props: Omit<Exercise, "ref"> & {
     onClick: (v: string) => void;
   }
 ) => {
@@ -71,12 +87,24 @@ const ExerciseCard = (
       return;
     }
 
+    bodySnackbar("운동이 장바구니에 추가되었어요.", {
+      variant: "success",
+    });
+
     addToCart({
       id: _id,
       name: name,
       img_url: thumbnail_img_url,
       type: type,
     });
+  };
+
+  const handleRemoveFromCart = () => {
+    bodySnackbar("운동이 장바구니에서 제거되었어요.", {
+      variant: "error",
+    });
+
+    removeFromCart(_id);
   };
 
   return (
@@ -107,8 +135,9 @@ const ExerciseCard = (
           />
           <CartIcon
             title="remove from cart"
-            onClick={() => removeFromCart(_id)}
+            onClick={handleRemoveFromCart}
             Icon={RemoveFromCart}
+            isAleadyInCart={isAleadyInCart}
           />
         </div>
       )}
@@ -147,10 +176,10 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
     <>
       <section className="flex gap-6 flex-wrap mt-20">
         {exercisesData.length ? (
-          exercisesData.map((data) => (
+          exercisesData.map(({ ref, ...rest }) => (
             <ExerciseCard
-              key={data._id}
-              {...data}
+              key={rest._id}
+              {...rest}
               onClick={handleClickExercise}
             />
           ))

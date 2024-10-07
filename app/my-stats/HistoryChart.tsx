@@ -7,6 +7,7 @@ import {
   CategoryScale,
   Chart,
   Color,
+  Filler,
   Legend,
   LinearScale,
   LineElement,
@@ -27,7 +28,7 @@ import {
 import { HistoryChartData } from "../api/types";
 import { exerciseTypes } from "../component/Filter";
 import { ColorKey, getRGBColor } from "./TotalSummarySection";
-import { colors } from "@/tailwind.config";
+import { colors as configColors } from "@/tailwind.config";
 import CircleArrow from "@/public/circle-arrow.svg";
 import { SpinLoader } from "../component/SpinLoader";
 
@@ -37,7 +38,8 @@ Chart.register(
   CategoryScale,
   LinearScale,
   PointElement,
-  LineElement
+  LineElement,
+  Filler
 );
 
 type HistoryChartProps = {
@@ -126,9 +128,9 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
             label,
             data,
             borderColor: colors[index],
-            fill: true,
-            tension: 0.4,
             pointBackgroundColor: colors[index],
+            fill: false,
+            tension: 0.4,
           };
         }),
       [history]
@@ -147,10 +149,10 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
           color: "transparent",
         },
         ticks: {
-          color: colors.gray6,
+          color: configColors.gray6,
         },
         border: {
-          color: colors.gray6,
+          color: configColors.gray6,
           width: 1,
         },
       },
@@ -159,10 +161,10 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
           color: "transparent",
         },
         ticks: {
-          color: colors.gray6,
+          color: configColors.gray6,
         },
         border: {
-          color: colors.gray6,
+          color: configColors.gray6,
           width: 1,
         },
       },
@@ -185,7 +187,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
               fillStyle: data.borderColor as Color,
               strokeStyle: data.borderColor as Color,
               index: i,
-              fontColor: colors.gray6,
+              fontColor: configColors.gray6,
             }));
           },
           font: {

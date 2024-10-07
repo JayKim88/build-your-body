@@ -35,7 +35,8 @@ export type SatisfiedStatus =
 type ConfirmTypes = "exit" | "save";
 type PngIconProps = {
   name: string;
-  className?: string;
+  width?: number;
+  height?: number;
 };
 
 const validImageTypes = ["jpeg", "png", "jpg"];
@@ -50,15 +51,14 @@ const formattedDuration = (value: number) => {
   }`;
 };
 
-export const PngIcon = ({ name, className }: PngIconProps) => (
-  <div className={`relative w-12 h-12 ${className}`}>
-    <Image
-      className="object-contain"
-      src={`/workout-complete-icon/${name}.png`}
-      alt={name}
-      fill
-    />
-  </div>
+export const PngIcon = ({ name, width, height }: PngIconProps) => (
+  <Image
+    className="object-contain"
+    src={`/workout-complete-icon/${name}.png`}
+    alt={name}
+    width={width ?? 48}
+    height={height ?? 48}
+  />
 );
 
 const SatisfiedStatusList = ({
@@ -411,13 +411,12 @@ export const WorkoutSummary = () => {
                   rounded-2xl flex items-center justify-center cursor-pointer"
                   {...getRootProps()}
                 >
-                  <div className="relative w-14 h-14">
-                    <Image
-                      src="/workout-complete-icon/add.png"
-                      alt="add photo"
-                      fill
-                    />
-                  </div>
+                  <Image
+                    src="/workout-complete-icon/add.png"
+                    alt="add photo"
+                    width={48}
+                    height={48}
+                  />
                   <input {...getInputProps()} />
                 </div>
               )}

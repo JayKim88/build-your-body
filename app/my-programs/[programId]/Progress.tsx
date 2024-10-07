@@ -444,7 +444,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
   const moveToCompletedPage = useCallback(() => {
     setProgramCompleted(true);
     saveCompletedAt(new Date());
-    router.push("/my-programs/complete");
+    router.push("/my-programs/complete", { scroll: false });
   }, [router, saveCompletedAt]);
 
   useEffect(() => {
