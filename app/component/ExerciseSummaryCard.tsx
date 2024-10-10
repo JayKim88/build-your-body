@@ -29,7 +29,7 @@ export const ExerciseSummaryCard = ({
   return (
     <div
       key={id}
-      className={`${bgColor} w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col 
+      className={`${bgColor} w-[300px] min-w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col 
       cursor-pointer relative`}
       onClick={() => {
         setLoading(true);

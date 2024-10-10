@@ -90,7 +90,7 @@ const ProgramItem = (
   };
 
   return (
-    <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit">
+    <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit max-w-full">
       <header className="flex flex-col relative">
         {lastCompletedAt && (
           <span className="flex justify-start items-center gap-x-1 border-2 w-fit p-2 rounded-[32px]">
@@ -148,7 +148,7 @@ const ProgramItem = (
           )}
         </div>
       </header>
-      <main className="flex gap-x-6">
+      <main className="flex gap-x-6 overflow-x-auto">
         {initialExercises?.map((exercise) => (
           <ExerciseSummaryCard
             key={exercise.id}
@@ -237,7 +237,7 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
     <Loading />
   ) : (
     <div
-      className={`flex flex-col gap-y-8 overflow-auto max-w-[calc(100vw-110px)] 
+      className={`flex flex-col gap-y-8 overflow-y-auto max-w-[calc(100vw-110px)] 
     transition-opacity duration-300
     ${isLoaded ? "opacity-100" : "opacity-0"} 
     ${programRequired ? "items-center justify-center h-full" : ""}`}
