@@ -97,7 +97,7 @@ export const ProgramHistoryDetailModal = ({
               )}
             </section>
           )}
-          <section className="flex gap-x-6">
+          <section className="flex gap-x-6 overflow-x-auto">
             {data?.savedExercisesStatus?.map((status) => (
               <ProgramHistoryDetailCard
                 key={status.id}

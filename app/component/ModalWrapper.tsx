@@ -85,7 +85,10 @@ export const ModalWrapper = ({
             </div>
           </button>
         </header>
-        <div ref={childrenRef} className="overflow-auto overscroll-none">
+        <div
+          ref={childrenRef}
+          className="overflow-x-hidden overflow-y-auto overscroll-none"
+        >
           {children}
         </div>
       </div>

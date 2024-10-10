@@ -26,7 +26,7 @@ export const ProgramSummaryModal = ({
         Title={<h1 className="text-4xl">{data?.programName}</h1>}
         customClassName="w-fit overflow-auto"
       >
-        <main className="flex gap-x-6">
+        <main className="flex gap-x-6 overflow-x-auto">
           {data?.exercises?.map((exercise) => (
             <ExerciseSummaryCard
               key={exercise.id}
