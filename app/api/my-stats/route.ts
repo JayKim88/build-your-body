@@ -80,10 +80,12 @@ export async function GET(req: NextRequest) {
             $match: {
               userId,
               savedProgramId: programId,
-              completedAt: {
-                $gte: dateFrom,
-                $lte: dateTo,
-              },
+              ...(!lastWorkout && {
+                completedAt: {
+                  $gte: dateFrom,
+                  $lte: dateTo,
+                },
+              }),
             },
           },
           {
