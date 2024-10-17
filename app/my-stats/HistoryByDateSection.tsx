@@ -142,6 +142,7 @@ export const HistoryByDateSection = () => {
                 selected: `bg-yellow rounded-full !text-black`,
                 root: `${defaultClassNames.root} p-0 bg-gray0 scale-95 absolute -top-1 left-[22px] w-[322px]`,
                 chevron: `${defaultClassNames.chevron} !fill-gray6`,
+                day_button: `${loading ? "pointer-events-none" : ""}`,
               }}
             />
           </div>

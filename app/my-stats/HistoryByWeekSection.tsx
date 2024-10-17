@@ -19,6 +19,7 @@ type ProgramsProps = {
   onSelectProgramId: (v: string) => void;
   onClickDetailProgramId: (v: string) => void;
   onSetIsOpen: (v: boolean) => void;
+  loading: boolean;
 };
 
 const Programs = ({
@@ -27,6 +28,7 @@ const Programs = ({
   onSelectProgramId,
   onClickDetailProgramId,
   onSetIsOpen,
+  loading,
 }: ProgramsProps) => {
   const [programsInprogress, setProgramsInprogress] = useState(true);
 
@@ -68,7 +70,7 @@ const Programs = ({
               key={v._id}
               className={`m-1 h-10 rounded-3xl bg-gray1 flex justify-between px-4 py-2 cursor-pointer ${
                 isSelected ? "outline outline-2 outline-yellow" : ""
-              }`}
+              } ${loading ? "pointer-events-none" : ""}`}
               onClick={() => onSelectProgramId(v._id)}
             >
               <div>{v.programName}</div>
@@ -100,6 +102,9 @@ export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
   );
   const [clickedDetailProgramId, setClickedDetailProgramId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleLoading = (v: boolean) => setLoading(v);
 
   const clickedProgramDetail = useMemo(
     () => data?.find((v) => v._id === clickedDetailProgramId),
@@ -115,9 +120,17 @@ export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
         selectedProgramId={selectedProgramId}
         onSetIsOpen={(v) => setIsOpen(v)}
         onClickDetailProgramId={(v) => setClickedDetailProgramId(v)}
-        onSelectProgramId={(v) => setSelectedProgramId(v)}
+        onSelectProgramId={(v) => {
+          setLoading(true);
+          setSelectedProgramId(v);
+        }}
+        loading={loading}
       />
-      <HistoryChart programId={selectedProgramId} programName={programName} />
+      <HistoryChart
+        programId={selectedProgramId}
+        programName={programName}
+        onSetLoading={handleLoading}
+      />
       <ProgramSummaryModal
         isOpen={isOpen}
         data={clickedProgramDetail}

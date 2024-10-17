@@ -45,6 +45,7 @@ Chart.register(
 type HistoryChartProps = {
   programId: string;
   programName: string;
+  onSetLoading: (v: boolean) => void;
 };
 
 function getRecent7Days(target: Date) {
@@ -55,13 +56,17 @@ function getRecent7Days(target: Date) {
   return daysArray.map((date) => format(date, "yyyy-MM-dd"));
 }
 
-export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
+export const HistoryChart = ({
+  programId,
+  programName,
+  onSetLoading,
+}: HistoryChartProps) => {
   const { data: session } = useSession();
   const email = session?.user?.email;
   const [history, setHistory] = useState<HistoryChartData>();
   const [endDate, setEndDate] = useState(new Date());
   const [labels, setLabels] = useState<string[] | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const getWorkoutHistory = useCallback(async () => {
     const labels = getRecent7Days(endDate);
@@ -100,13 +105,14 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
 
     setLabels(labels);
     setHistory(formatted7DaysHistory);
-    setLoading(false);
-  }, [email, programId, endDate]);
+    setHistoryLoading(false);
+    onSetLoading(false);
+  }, [email, programId, endDate, onSetLoading]);
 
   useEffect(() => {
     if (!programId || !email) return;
 
-    setLoading(true);
+    setHistoryLoading(true);
     getWorkoutHistory();
   }, [programId, email, endDate, getWorkoutHistory]);
 
@@ -221,7 +227,7 @@ export const HistoryChart = ({ programId, programName }: HistoryChartProps) => {
       <h1 className="text-2xl">{`History by Week - ${programName}`}</h1>
       <div className="flex justify-center items-center h-full">
         <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">
-          {loading && <SpinLoader />}
+          {historyLoading && <SpinLoader />}
           {noHistory && (
             <div className="absolute top-1/2 right-1/2 -translate-y-[38px] translate-x-1/2 text-2">
               No Data
