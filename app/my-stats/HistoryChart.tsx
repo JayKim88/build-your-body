@@ -105,8 +105,10 @@ export const HistoryChart = ({
 
     setLabels(labels);
     setHistory(formatted7DaysHistory);
-    setHistoryLoading(false);
-    onSetLoading(false);
+    setTimeout(() => {
+      setHistoryLoading(false);
+      onSetLoading(false);
+    }, 1000);
   }, [email, programId, endDate, onSetLoading]);
 
   useEffect(() => {
