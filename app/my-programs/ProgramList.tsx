@@ -22,6 +22,7 @@ import { PngIcon } from "./complete/WorkoutSummary";
 import LottiePlayer from "../component/LottiePlayer";
 import Loading from "../loading";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
+import { SpinLoader } from "../component/SpinLoader";
 
 type ProgramItemsProps = {
   data: RegisteredProgram[];
@@ -51,6 +52,7 @@ const ProgramItem = (
     isEditing: boolean;
   }
 ) => {
+  const [loading, setLoading] = useState(false);
   const savedProgramId = useProgressStore((state) => state.programId);
   const router = useRouter();
 
@@ -78,22 +80,30 @@ const ProgramItem = (
     }, 500);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, [loading]);
+
   return (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit max-w-full">
       <header className="flex flex-col relative">
         {lastCompletedAt && (
           <span
             className="flex justify-start items-center gap-x-1 border-2 w-fit p-2
-            rounded-[32px] cursor-pointer"
-            onClick={() =>
+            rounded-[32px] cursor-pointer relative"
+            onClick={() => {
+              setLoading(true);
               onGetLastHistory({
                 id: _id,
                 lastCompletedAt,
-              })
-            }
+              });
+            }}
           >
             <PngIcon name="calendar" width={24} height={24} />
             last performed history on: {format(lastCompletedAt, "yyyy.MM.dd")}
+            {loading && <SpinLoader />}
           </span>
         )}
         <div className="flex justify-between h-20">
