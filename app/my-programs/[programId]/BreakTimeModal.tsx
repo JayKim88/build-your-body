@@ -169,8 +169,8 @@ export const BreakTimeModal = ({ isOpen, onClose }: BreakTimeModalProps) => {
       }`}
     >
       <div
-        className={`transition-all duration-500 ${
-          visible ? "translate-y-0" : "-translate-y-full mb-[840px]"
+        className={`transition-all duration-500 left-1/2 translate-x-[400px] ${
+          visible ? "translate-y-[100px]" : "-translate-y-full mb-[840px]"
         } w-[300px] h-fit rounded-3xl p-5 
           bg-gray1 flex flex-col items-center justify-between`}
       >

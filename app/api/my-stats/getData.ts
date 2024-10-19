@@ -7,7 +7,6 @@ import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { HistoryChartData, MyStat } from "../types";
 
 type getStatsProps = {
-  workoutId?: string;
   programId?: string;
   targetDate?: Date;
   targetMonthDate?: Date;
@@ -15,7 +14,7 @@ type getStatsProps = {
 };
 
 async function getData(props: getStatsProps) {
-  const { workoutId, programId, targetDate, lastWorkout } = props ?? {};
+  const { programId, targetDate, lastWorkout } = props ?? {};
 
   const session = await getServerSession(authOptions);
 
@@ -28,7 +27,6 @@ async function getData(props: getStatsProps) {
       .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
         params: {
           email: session.user?.email,
-          workoutId,
           programId,
           targetDate,
           lastWorkout,

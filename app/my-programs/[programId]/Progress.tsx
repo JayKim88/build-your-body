@@ -56,6 +56,7 @@ type ExerciseInputProps = {
   value?: number;
   onChange: (title: string, value?: number) => void;
   isInProgess: boolean;
+  isChecked: boolean;
 };
 
 const ExerciseInput = ({
@@ -63,14 +64,32 @@ const ExerciseInput = ({
   value,
   onChange,
   isInProgess,
+  isChecked,
 }: ExerciseInputProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const isWeight = title === "Weight";
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+    inputRef.current?.addEventListener(
+      "wheel",
+      function (event) {
+        event.stopPropagation();
+      },
+      { passive: false }
+    );
+  }, [inputRef]);
 
   return (
     <div className="flex relative items-center">
       <input
+        ref={inputRef}
         className={`exercise-input ${
-          isInProgess ? "border-2 border-yellow bg-gray2" : "bg-gray0"
+          isInProgess
+            ? "border-2 border-yellow bg-gray2"
+            : isChecked
+            ? "bg-gray0 pointer-events-none"
+            : "bg-gray0 border-2"
         } w-[72px] h-[34px] rounded-lg outline-none text-2xl pl-2 pr-2 text-end mr-1`}
         value={value ?? ""}
         onChange={(e) => {
@@ -128,12 +147,14 @@ const ExerciseSetRow = ({
   const checkboxBorderColor = isInProgessSet
     ? "border-yellow"
     : isNextSet
-    ? "border-transparent"
+    ? "hidden"
     : "border-gray6";
   const progressStyles = isInProgessSet
     ? "border-2 border-yellow bg-gray2"
-    : "pointer-events-none bg-gray0";
-  const valuesRequiredStyles = !repeat || !weight ? "pointer-events-none" : "";
+    : "bg-gray0";
+
+  const valuesRequiredStyles =
+    !repeat || !weight || checked ? "pointer-events-none" : "";
   const checkedStyles = checked
     ? "after:content-['✔'] text-[24px] flex items-center justify-center h-6"
     : "";
@@ -146,7 +167,8 @@ const ExerciseSetRow = ({
 
   return (
     <div
-      className={`flex justify-around items-center rounded-[32px] h-[50px] px-1 ${progressStyles}`}
+      className={`flex justify-around items-center rounded-[32px] h-[50px] px-1
+        ${progressStyles} ${isNextSet ? "pr-[58px]" : ""}`}
     >
       <span className="w-fit">{order} set</span>
       <ExerciseInput
@@ -154,17 +176,20 @@ const ExerciseSetRow = ({
         onChange={updateExerciseSetValue}
         value={weight}
         isInProgess={isInProgessSet}
+        isChecked={checked}
       />
       <ExerciseInput
         title="Repeat"
         onChange={updateExerciseSetValue}
         value={repeat}
         isInProgess={isInProgessSet}
+        isChecked={checked}
       />
       <input
         type="checkbox"
-        className={`appearance-none outline-none w-8 h-8 border-2 rounded-lg text-gray6 cursor-pointer 
-          ${checkboxBorderColor} ${valuesRequiredStyles} ${checkedStyles}         
+        className={`appearance-none outline-none w-8 h-8 border-2 rounded-lg 
+          text-gray6 cursor-pointer ${checkboxBorderColor} ${valuesRequiredStyles} 
+          ${checkedStyles}         
         `}
         onChange={(e) => {
           updateExerciseSetValue("checked", e.target.checked);

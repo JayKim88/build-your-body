@@ -119,6 +119,10 @@ export const HistoryByDateSection = () => {
     return !!dataAvailableDates?.some((d) => isSameDay(d, date));
   }
 
+  function noDataForDate(date: Date) {
+    return !dataAvailableDates?.some((d) => isSameDay(d, date));
+  }
+
   return (
     <section className="flex flex-col gap-y-5">
       <section className="flex flex-col gap-y-5">
@@ -132,10 +136,12 @@ export const HistoryByDateSection = () => {
               disabled={{ after: now }}
               modifiers={{
                 hasData: (date: Date) => hasDataForDate(date),
+                noData: (date: Date) => noDataForDate(date),
               }}
               onMonthChange={(month) => setCurrentMonth(setDate(month, 15))}
               modifiersClassNames={{
                 hasData: dataAvailableDotStyles,
+                noData: noDataStyles,
               }}
               classNames={{
                 today: `text-yellow`,
@@ -165,3 +171,5 @@ export const HistoryByDateSection = () => {
 
 const dataAvailableDotStyles =
   "relative [&::after]:content-['•'] [&::after]:absolute [&::after]:-bottom-[4px] [&::after]:left-[20px] [&::after]:pointer-events-none text-[24px]";
+
+const noDataStyles = "pointer-events-none";

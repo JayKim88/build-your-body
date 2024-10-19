@@ -8,7 +8,7 @@ import Image from "next/image";
 import axios from "axios";
 import { format } from "date-fns";
 
-import { RegisteredProgram } from "../api/types";
+import { MyStat, RegisteredProgram } from "../api/types";
 import { Button } from "../component/Button";
 import { useCartStore, useProgressStore } from "../store";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
@@ -21,10 +21,16 @@ import { ExerciseSummaryCard } from "../component/ExerciseSummaryCard";
 import { PngIcon } from "./complete/WorkoutSummary";
 import LottiePlayer from "../component/LottiePlayer";
 import Loading from "../loading";
+import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
 
-type ProgramItemsProp = {
+type ProgramItemsProps = {
   data: RegisteredProgram[];
   onEnterClick: (v: boolean) => void;
+};
+
+type GetLastHistoryProps = {
+  id: string;
+  lastCompletedAt: string;
 };
 
 export const Chip = ({ text }: { text: string }) => {
@@ -36,48 +42,31 @@ export const Chip = ({ text }: { text: string }) => {
 };
 
 const ProgramItem = (
-  data: RegisteredProgram & {
+  props: RegisteredProgram & {
     onEnterClick: (v: boolean) => void;
+    onGetLastHistory: ({ id, lastCompletedAt }: GetLastHistoryProps) => void;
+    onSetDeleteTargetId: (v: string) => void;
+    onSetEditProgram: (v: RegisteredProgram) => void;
+    onSetClickedId: (v: string) => void;
+    isEditing: boolean;
   }
 ) => {
   const savedProgramId = useProgressStore((state) => state.programId);
-  const setUpdated = useCartStore((state) => state.setIsUpdated);
   const router = useRouter();
-  const { bodySnackbar } = useBodySnackbar();
-  const [editOpen, setEditOpen] = useState(false);
-  const [editProgram, setEditProgram] = useState<RegisteredProgram>();
-  const [clicked, setClicked] = useState<string>();
-  const [openConfirm, setOpenConfirm] = useState(false);
 
   const {
-    exercises: initialExercises,
-    programName,
     _id,
+    userId,
+    programName,
     lastCompletedAt,
+    exercises: initialExercises,
+    isEditing,
     onEnterClick,
-  } = data ?? {};
-
-  const handleConfirm = async (v: boolean) => {
-    if (v) {
-      const { success } = (await deleteProgram(_id)) ?? {};
-
-      bodySnackbar(
-        success
-          ? "프로그램이 성공적으로 삭제되었습니다."
-          : "에러가 발생했어요.",
-        {
-          variant: success ? "success" : "error",
-        }
-      );
-
-      if (!success) return;
-      setOpenConfirm(false);
-      setUpdated(true);
-      return;
-    }
-
-    setOpenConfirm(false);
-  };
+    onGetLastHistory,
+    onSetDeleteTargetId,
+    onSetEditProgram,
+    onSetClickedId,
+  } = props ?? {};
 
   const isInprogress = !!savedProgramId;
   const isProgramInprogress = isInprogress && savedProgramId === _id;
@@ -93,9 +82,18 @@ const ProgramItem = (
     <div className="bg-gray1 rounded-[32px] p-5 gap-y-6 flex flex-col w-fit max-w-full">
       <header className="flex flex-col relative">
         {lastCompletedAt && (
-          <span className="flex justify-start items-center gap-x-1 border-2 w-fit p-2 rounded-[32px]">
+          <span
+            className="flex justify-start items-center gap-x-1 border-2 w-fit p-2
+            rounded-[32px] cursor-pointer"
+            onClick={() =>
+              onGetLastHistory({
+                id: _id,
+                lastCompletedAt,
+              })
+            }
+          >
             <PngIcon name="calendar" width={24} height={24} />
-            last performed on: {format(lastCompletedAt, "yyyy.MM.dd")}
+            last performed history on: {format(lastCompletedAt, "yyyy.MM.dd")}
           </span>
         )}
         <div className="flex justify-between h-20">
@@ -126,23 +124,32 @@ const ProgramItem = (
             )}
           </div>
           {!isProgramInprogress && (
-            <div className="flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]">
+            <div
+              className={`${
+                isEditing ? "pointer-events-none" : ""
+              } flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]`}
+            >
               <Image
                 src="/edit.png"
                 alt="edit"
                 width={48}
                 height={48}
-                onClick={() => {
-                  setEditOpen(true);
-                  setEditProgram(data);
-                }}
+                onClick={() =>
+                  onSetEditProgram({
+                    _id,
+                    userId,
+                    programName,
+                    lastCompletedAt,
+                    exercises: initialExercises,
+                  })
+                }
               />
               <Image
                 src="/delete_bin.png"
                 alt="delete"
                 width={48}
                 height={48}
-                onClick={() => setOpenConfirm(true)}
+                onClick={() => onSetDeleteTargetId(_id)}
               />
             </div>
           )}
@@ -153,14 +160,118 @@ const ProgramItem = (
           <ExerciseSummaryCard
             key={exercise.id}
             data={exercise}
-            onClick={(v) => setClicked(v)}
+            onClick={(v) => onSetClickedId(v)}
           />
         ))}
       </main>
+    </div>
+  );
+};
+
+const ProgramItems = ({ data, onEnterClick }: ProgramItemsProps) => {
+  const { data: session } = useSession();
+  const { bodySnackbar } = useBodySnackbar();
+  const isRegistering = useProgressStore((state) => state.isRegistering);
+  const setIsRegistering = useProgressStore((state) => state.setIsRegistering);
+  const setUpdated = useCartStore((state) => state.setIsUpdated);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editProgram, setEditProgram] = useState<RegisteredProgram>();
+  const [clickedId, setClickedId] = useState<string>();
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+  const [lastHistory, setLastHistory] = useState<MyStat | null>(null);
+  const [lastHistoryModalOpen, setLastHistoryModalOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState("");
+
+  const handleSetDeleteTargetId = (v: string) => setDeleteTargetId(v);
+  const handleSetEditProgram = (v: RegisteredProgram) => setEditProgram(v);
+  const handleSetClickedId = (v: string) => setClickedId(v);
+
+  const cleanUpDelete = () => {
+    setOpenDeleteConfirm(false);
+    setDeleteTargetId("");
+  };
+
+  const handleDeleteConfirm = async (isConfirmed: boolean) => {
+    if (isConfirmed) {
+      const { success } = (await deleteProgram(deleteTargetId)) ?? {};
+
+      bodySnackbar(
+        success
+          ? "프로그램이 성공적으로 삭제되었습니다."
+          : "에러가 발생했어요.",
+        {
+          variant: success ? "success" : "error",
+        }
+      );
+
+      if (!success) return;
+      cleanUpDelete();
+      setUpdated(true);
+      return;
+    }
+
+    cleanUpDelete();
+  };
+
+  const getLastHistory = async ({
+    id,
+    lastCompletedAt,
+  }: GetLastHistoryProps) => {
+    const result = await axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
+        params: {
+          email: session?.user?.email,
+          programId: id,
+          lastCompletedAt,
+        },
+      })
+      .then((res) => res.data);
+
+    setLastHistory(result.data as MyStat);
+  };
+
+  useEffect(() => {
+    if (!lastHistory) return;
+    setLastHistoryModalOpen(true);
+  }, [lastHistory]);
+
+  useEffect(() => {
+    if (!editProgram) return;
+    setEditOpen(true);
+  }, [editProgram]);
+
+  useEffect(() => {
+    if (!deleteTargetId) return;
+    setOpenDeleteConfirm(true);
+  }, [deleteTargetId]);
+
+  useEffect(() => {
+    if (!isRegistering) return;
+    bodySnackbar("성공적으로 등록되었습니다.", {
+      variant: "success",
+    });
+    setIsRegistering(false);
+  }, [bodySnackbar, isRegistering, setIsRegistering]);
+
+  return (
+    <>
+      {data?.map((v) => (
+        <ProgramItem
+          key={v._id}
+          onEnterClick={onEnterClick}
+          onGetLastHistory={getLastHistory}
+          onSetDeleteTargetId={handleSetDeleteTargetId}
+          onSetEditProgram={handleSetEditProgram}
+          onSetClickedId={handleSetClickedId}
+          isEditing={!!editProgram}
+          {...v}
+        />
+      ))}
       <ExerciseDetailModal
-        isOpen={!!clicked}
-        onClose={() => setClicked(undefined)}
-        exerciseId={clicked}
+        isOpen={!!clickedId}
+        onClose={() => setClickedId(undefined)}
+        exerciseId={clickedId}
       />
       <CreateEditProgramModal
         isOpen={editOpen}
@@ -172,27 +283,17 @@ const ProgramItem = (
         }}
         data={editProgram}
       />
-      <ConfirmModal isOpen={!!openConfirm} onClick={handleConfirm} />
-    </div>
+      <ConfirmModal
+        isOpen={!!openDeleteConfirm}
+        onClick={handleDeleteConfirm}
+      />
+      <ProgramHistoryDetailModal
+        isOpen={lastHistoryModalOpen}
+        data={lastHistory}
+        onClose={() => setLastHistoryModalOpen(false)}
+      />
+    </>
   );
-};
-
-const ProgramItems = ({ data, onEnterClick }: ProgramItemsProp) => {
-  const { bodySnackbar } = useBodySnackbar();
-  const isRegistering = useProgressStore((state) => state.isRegistering);
-  const setIsRegistering = useProgressStore((state) => state.setIsRegistering);
-
-  useEffect(() => {
-    if (!isRegistering) return;
-    bodySnackbar("성공적으로 등록되었습니다.", {
-      variant: "success",
-    });
-    setIsRegistering(false);
-  }, [bodySnackbar, isRegistering, setIsRegistering]);
-
-  return data?.map((v) => (
-    <ProgramItem key={v._id} onEnterClick={onEnterClick} {...v} />
-  ));
 };
 
 const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {

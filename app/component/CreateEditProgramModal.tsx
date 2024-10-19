@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
@@ -62,12 +62,25 @@ const ExerciseInput = ({
   value?: number;
   onChange: (title: string, value?: number) => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const decimalAvailable = title === "Weight";
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+    inputRef.current?.addEventListener(
+      "wheel",
+      function (event) {
+        event.stopPropagation();
+      },
+      { passive: false }
+    );
+  }, [inputRef]);
 
   return (
     <div className="flex relative items-center w-full">
       <span className="absolute top-[-24px]">{title}</span>
       <input
+        ref={inputRef}
         className="w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4 text-end"
         value={value ?? ""}
         onChange={(e) => {

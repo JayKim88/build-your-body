@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const email = searchParams.get("email");
-  const workoutId = searchParams.get("workoutId");
   const programId = searchParams.get("programId");
   const endDate = searchParams.get("endDate");
   const targetDate = searchParams.get("targetDate");
@@ -33,6 +32,7 @@ export async function GET(req: NextRequest) {
     : 0;
   const lastWorkout = searchParams.get("lastWorkout") === "true";
   const isPublic = searchParams.get("isPublic") === "true";
+  const lastCompletedAt = searchParams.get("lastCompletedAt");
 
   const client = new MongoClient(uri);
   const db = client?.db();
@@ -56,11 +56,12 @@ export async function GET(req: NextRequest) {
 
     let data;
 
-    if (workoutId) {
-      // get specific program history data
+    if (programId && lastCompletedAt) {
+      // get a program history at a last completed time
       data = await db?.collection("workout-performance").findOne({
         userId,
-        _id: new ObjectId(workoutId),
+        savedProgramId: programId,
+        completedAt: lastCompletedAt,
       });
     } else if (programId) {
       // get available programs history within a specific week
@@ -267,7 +268,7 @@ export async function GET(req: NextRequest) {
       data = await db
         ?.collection("workout-performance")
         .find({
-          userId: userId,
+          userId,
           ...(targetDate && {
             completedAt: {
               $gte: startOfDayInUTC,
