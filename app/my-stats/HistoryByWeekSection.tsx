@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RegisteredProgram } from "../api/types";
@@ -104,7 +104,7 @@ export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLoading = (v: boolean) => setLoading(v);
+  const handleLoading = useCallback((v: boolean) => setLoading(v), []);
 
   const clickedProgramDetail = useMemo(
     () => data?.find((v) => v._id === clickedDetailProgramId),

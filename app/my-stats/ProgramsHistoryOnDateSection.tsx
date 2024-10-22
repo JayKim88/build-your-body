@@ -63,7 +63,7 @@ const ProgramsHistoryOnDate = ({
                 <div className="text-[22px] flex items-center">
                   {programName}
                 </div>
-                <div className="flex flex-col justify-around">
+                <div className="flex flex-col justify-around min-w-20">
                   {completedAt && (
                     <div className="flex gap-x-0.5 items-center">
                       <PngIcon name="time" width={20} height={20} />
