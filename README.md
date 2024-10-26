@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Build Your Body
 
-## Getting Started
+Personal Home Training Service 💪💪
+Make your own workout programs and just do it!
 
-First, run the development server:
+## Main Functions
+- Select exerscises referring to detail modal and make your own program
+- Proceed with your program by checking in set-checkboxs on every exercise
+- Save workout perfomance, title, satisfaction, note and image. you can make it public as well
+- Track your workout history using dashboard having visualised charts
+- Check workout performances of other users, give like and get inspired
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Pages and compositions
+- Landing 
+    - Google Login/Logout
+- Exercises
+    - Items list by body parts
+    - Exercise program registration modal
+    - Exercise Detail Info Modal
+- My Programs
+    - Enter-button to start a program
+    - Program Edit Modal
+    - Last performed history modal
+    - Delete program function
+- Program process
+    - Proceed by checking performed set on every exersise modal
+    - Exercise setting editable such as weight, times and sets count
+    - Break-time modal once a set completed
+- Complete summary
+    - Save performance history, title, note, photo, etc
+    - Performed History Modal
+- My Stats
+    - Track my workout history by week and month in visualised charts
+    - Workout Date Selectable Calendar
+    - History Detail Modal
+- Communities - Share workout performance with others with like function
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Overview UI and Manual
+<details>
+<summary>Landing and Login</summary>
+</details>
+<details>
+<summary>Exercises</summary>
+</details>
+<details>
+<summary>My Programs</summary>
+</details>
+<details>
+<summary>Program process</summary>
+</details>
+<details>
+<summary>Complete summary</summary>
+</details>
+<details>
+<summary>My Stats</summary>
+</details>
+<details>
+<summary>Communities</summary>
+</details>
