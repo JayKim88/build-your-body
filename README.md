@@ -62,7 +62,7 @@ After login, you can use my programs and my stats page.
 ![Screenshot 2024-10-26 at 7 17 23 pm](https://github.com/user-attachments/assets/8fd48267-ff73-4411-aeb1-8c93536c0183)
 
 📺 Video Instruction 📺
-- [Google login](https://drive.google.com/file/d/11ci7YsvkTHxtliLR4bc5TK7uav9rTJUP/view?usp=drive_link)
+- [Google login](https://drive.google.com/file/d/11ci7YsvkTHxtliLR4bc5TK7uav9rTJUP/view?usp=drive_link){:target="_blank"} 
 
 <br/>
 <br/>
