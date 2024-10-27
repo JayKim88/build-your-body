@@ -33,10 +33,10 @@ Create your own workout programs and just do it! 🔥🔥🔥🔥🔥
 - Exercises
   - Items list by body parts
   - Exercise program registration modal
-  - Exercise Detail Info Modal
+  - Exercise detail info modal
 - My Programs
   - Enter-button to start a program
-  - Program Edit Modal
+  - Program Edit modal
   - Last performed history modal
   - Delete program function
 - Program process
@@ -45,11 +45,11 @@ Create your own workout programs and just do it! 🔥🔥🔥🔥🔥
   - Break-time modal once a set completed
 - Complete summary
   - Save performance history, title, note, photo, etc
-  - Performed History Modal
+  - Performed history modal
 - My Stats
   - Track my workout history by week and month in visualised charts
   - Workout Date Selectable Calendar
-  - History Detail Modal
+  - History detail modal
 - Communities - Share workout performance with others with like function
 
 <br/>
