@@ -1,4 +1,5 @@
 import { LoginButton } from "./component/LoginButton";
+import { ManualButton } from "./component/ManualButton";
 
 export default function Page() {
   return (
@@ -18,12 +19,13 @@ export default function Page() {
         Your browser does not support the video tag.
       </video>
       <h1
-        className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2       
+        className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 
         -translate-y-[100px] text-stroke-4 text-stroke-black font-semibold
         text-fluid whitespace-nowrap"
       >
         Build Your Body
       </h1>
+      <ManualButton />
       <LoginButton />
     </div>
   );
