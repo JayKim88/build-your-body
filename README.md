@@ -75,7 +75,7 @@ You can join it using google account.
 
 ![Screenshot 2024-10-26 at 7 17 15 pm](https://github.com/user-attachments/assets/2385deb8-b62a-4bde-9356-b3970fdec058)
 
-After login, you can use my programs and my stats page.
+After logging in, you can use my-programs and my-stats page.
 
 ![Screenshot 2024-10-26 at 7 17 23 pm](https://github.com/user-attachments/assets/8fd48267-ff73-4411-aeb1-8c93536c0183)
 
@@ -88,7 +88,7 @@ After login, you can use my programs and my stats page.
   
 ### 2. Exercises page
 
-You can check exercises by filtering it up to body parts.
+You can check exercises by filtering it based on body parts.
 
 ![Screenshot 2024-10-26 at 7 17 32 pm](https://github.com/user-attachments/assets/984e97eb-b5d3-4acb-9e39-9c21063dccc8)
 
@@ -96,9 +96,9 @@ Click an exercise to see detailed information.
 
 ![Screenshot 2024-10-26 at 7 18 24 pm](https://github.com/user-attachments/assets/8edd99e3-c0ce-41e6-adc8-42d231ea3ef6)
 
-- Make your new program setting weight, repeat and set.
-- Reorder it dragging if you want.
-- After confirming, you can see this in my program page.
+- Set up your new program conditions such as weight, repeat and set.
+- Reorder it by dragging items if you want.
+- After registration, you can see this program in my-program page.
 
 ![Screenshot 2024-10-26 at 7 18 10 pm](https://github.com/user-attachments/assets/d16f3c70-3d64-4bdf-93d5-cf2116d64ef5)
 
@@ -134,11 +134,11 @@ Here, you can edit or delete your program.
 - Once you finish a set of an exercise, click the checkbox.
 - You can change weight and repeat as well.
 - Add or Remove set considering your condition.
-- Once last set is checked, it moves to next exercise automatically.
+- Once last set of an exercise is marked, it moves to next exercise automatically.
 
 ![Screenshot 2024-10-26 at 7 19 47 pm](https://github.com/user-attachments/assets/20d4ffc7-5775-4483-b2f0-e0a31668e6e3)
 
-After checking a set, break-time modal helps you take a rest in a regular manner.
+After finishing a set, break-time modal helps you take a rest in a regular manner.
 
 ![Screenshot 2024-10-26 at 7 19 28 pm](https://github.com/user-attachments/assets/2518efa0-0f02-4d70-8c9d-b7648b34c210)
 
@@ -153,7 +153,7 @@ After checking a set, break-time modal helps you take a rest in a regular manner
 
 - You can check the just-completed-workout by detail modal.
 - Type title, note, upload photo and decide whether to make it public or not(Note and Photo is not required).
-- Save it or Exit. Mind that workout data will be cleared if you exit.
+- Save or exit it. Mind that workout data will be cleared if you exit.
 
 ![Screenshot 2024-10-26 at 7 20 22 pm](https://github.com/user-attachments/assets/1f62890d-2fc4-485c-aa17-eb45ad706a76)
 
@@ -166,13 +166,13 @@ After checking a set, break-time modal helps you take a rest in a regular manner
 
 ### 6. My Stats page
 
-- Check out your Total Performance or Program History by week
+- Check out your Total performance or program history by week.
 - Click a date on calendar to see performance history.
-- The calendar displays dots on workout days to track performance history.
+- The calendar displays dots on workout days for tracking performance history.
 
 ![Screenshot 2024-10-27 at 12 36 55 pm](https://github.com/user-attachments/assets/7eb2e7ff-4d95-45df-973b-48e4f1724363)
 
-Detail modal opens as well if you click History on Date.
+Detail modal opens as well if you click history on date.
 
 ![Screenshot 2024-10-26 at 7 21 19 pm](https://github.com/user-attachments/assets/c1afedff-f329-48c3-864b-9c1921506806)
 
