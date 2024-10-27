@@ -147,7 +147,7 @@ After checking a set, break-time modal helps you take a rest in a regular manner
 - Click a date on calendar to see performance history.
 - The Calendar shows dots letting you know the workout performed dates.
 
-![Screenshot 2024-10-26 at 7 21 02 pm](https://github.com/user-attachments/assets/cf359f77-299a-45e4-8fab-3cc2657e7aea)
+![Screenshot 2024-10-27 at 12 36 55 pm](https://github.com/user-attachments/assets/7eb2e7ff-4d95-45df-973b-48e4f1724363)
 
 Detail modal opens as well if you click History on Date.
 
