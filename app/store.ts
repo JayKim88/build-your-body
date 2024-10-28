@@ -149,7 +149,6 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: "progressStore",
-      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );
