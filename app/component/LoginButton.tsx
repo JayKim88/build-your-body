@@ -8,17 +8,30 @@ import {
 } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
-import { useCartStore } from "../store";
+import { useCartStore, useProgressStore } from "../store";
 
 export const LoginButton = () => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const removeAllFromCart = useCartStore((state) => state.removeAll);
   const storeProgramName = useCartStore((state) => state.setProgramName);
+  const resetProgramInfo = useProgressStore((state) => state.resetProgramInfo);
+  const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
+  const resetExercisesStatus = useProgressStore(
+    (state) => state.resetExercisesStatus
+  );
+  const resetCompletedAt = useProgressStore((state) => state.resetCompletedAt);
 
-  const cleanUp = () => {
+  const clearStorages = () => {
+    // cart
     removeAllFromCart();
     storeProgramName("");
+
+    // performance and summary
+    resetProgramInfo();
+    resetWorkoutTime();
+    resetExercisesStatus();
+    resetCompletedAt();
   };
 
   const isLoggedIn = !!session;
@@ -28,7 +41,7 @@ export const LoginButton = () => {
     "use client";
 
     if (isLoggedIn) {
-      cleanUp();
+      clearStorages();
       logOut({
         callbackUrl: "/",
       });
