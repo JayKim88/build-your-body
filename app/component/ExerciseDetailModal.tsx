@@ -73,7 +73,7 @@ export const ExerciseDetailModal = ({
       const enabledToAdd =
         !isAleadyInCart && _id && name && thumbnail_img_url && type;
 
-      enabledToAdd &&
+      if (enabledToAdd) {
         addToCart({
           id: _id,
           name: name,
@@ -81,10 +81,20 @@ export const ExerciseDetailModal = ({
           type: type,
         });
 
+        bodySnackbar("운동이 장바구니에 추가되었어요.", {
+          variant: "success",
+        });
+      }
+
       return;
     }
 
-    _id && removeFromCart(_id);
+    if (isAleadyInCart && _id) {
+      removeFromCart(_id);
+      bodySnackbar("운동이 장바구니에서 제거되었어요.", {
+        variant: "error",
+      });
+    }
   };
 
   useEffect(() => {
@@ -145,6 +155,11 @@ export const ExerciseDetailModal = ({
           <CartTitleButton
             title="Delete"
             onClick={() => handleCartButtonClick("Delete")}
+            className={`${
+              isAleadyInCart
+                ? ""
+                : "hover:bg-red hover:text-gray6 cursor-auto pointer-events-none"
+            }`}
           />
         </footer>
       )}
