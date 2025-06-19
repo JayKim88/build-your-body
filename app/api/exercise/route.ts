@@ -1,8 +1,6 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import { getMongoClient } from "@/app/utils/mongoClient";
-
-const uri = process.env.MONGODB_URI ?? "";
 
 export async function GET(req: NextRequest) {
   if (req.method !== "GET") return;

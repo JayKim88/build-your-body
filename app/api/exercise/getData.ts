@@ -1,13 +1,11 @@
 "use server";
 
-import { MongoClient, ObjectId } from "mongodb";
+import { getMongoClient } from "@/app/utils/mongoClient";
+import { ObjectId } from "mongodb";
 import { Exercise } from "../types";
 
-const uri = process.env.MONGODB_URI ?? "";
-
 async function getData(id: string) {
-  // TODO: Use a shared MongoClient utility if available
-  const client = new MongoClient(uri);
+  const client = await getMongoClient();
   const db = client.db();
   try {
     const data = await db.collection("exercises").findOne({
@@ -18,8 +16,6 @@ async function getData(id: string) {
   } catch (error) {
     console.log("fetch failed", error);
     return null;
-  } finally {
-    await client.close();
   }
 }
 

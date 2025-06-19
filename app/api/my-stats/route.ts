@@ -61,8 +61,11 @@ export async function GET(req: NextRequest) {
         completedAt: lastCompletedAt,
       });
       if (data) {
-        data._id = data._id.toString();
-        data.userId = data.userId.toString();
+        data = {
+          ...data,
+          _id: data._id.toString(),
+          userId: data.userId.toString(),
+        };
       }
     } else if (programId) {
       const dateFrom = subDays(

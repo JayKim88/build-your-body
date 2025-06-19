@@ -1,12 +1,10 @@
-import { MongoClient } from "mongodb";
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { AuthOptions, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 
-const uri = process.env.MONGODB_URI ?? "";
-
 async function addUserToDB(user: User | AdapterUser) {
-  const client = new MongoClient(uri);
+  const client = await getMongoClient();
   const db = client.db();
   const usersCollection = db.collection("users");
 
@@ -18,7 +16,6 @@ async function addUserToDB(user: User | AdapterUser) {
     image: user.image,
     createdAt: new Date().toISOString(),
   });
-  client.close();
 }
 
 export const authOptions = {
