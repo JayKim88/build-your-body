@@ -1,11 +1,8 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { MongoClient } from "mongodb";
-
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-
-const uri = process.env.MONGODB_URI ?? "";
 
 async function getData() {
   const session = await getServerSession(authOptions);
@@ -14,8 +11,8 @@ async function getData() {
     return null;
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   try {
     const user = await db?.collection("users").findOne({
@@ -27,7 +24,7 @@ async function getData() {
     }
 
     const userId = user?._id;
-    return userId;
+    return userId.toString();
   } catch (error) {
     console.log("fetch failed", error);
     return null;

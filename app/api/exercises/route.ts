@@ -1,18 +1,15 @@
-import { MongoClient } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-
-const uri = process.env.MONGODB_URI ?? "";
+import { getMongoClient } from "@/app/utils/mongoClient";
 
 export async function GET(req: NextRequest) {
   if (req.method !== "GET") return;
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
   try {
-    const data = await db?.collection("exercises").find({}).toArray();
+    const result = await db.collection("exercises").find({}).toArray();
+    const data = result.map((item) => ({ ...item, _id: item._id.toString() }));
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     console.log("error occurs!", error);
-  } finally {
-    client?.close();
   }
 }

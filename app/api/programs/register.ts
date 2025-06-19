@@ -1,13 +1,10 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { MongoClient } from "mongodb";
 import { revalidatePath } from "next/cache";
-
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { CartProps } from "@/app/store";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-
-const uri = process.env.MONGODB_URI ?? "";
 
 async function registerProgram(data: {
   programName: string;
@@ -19,8 +16,8 @@ async function registerProgram(data: {
     throw new Error("Unauthorized");
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   try {
     const user = await db?.collection("users").findOne({
@@ -71,8 +68,6 @@ async function registerProgram(data: {
   } catch (error) {
     console.log("fetch failed", error);
     // return { data: [] }; // maybe error occurs in the future.
-  } finally {
-    client?.close();
   }
 }
 

@@ -2,12 +2,11 @@
 
 import { CartProps } from "@/app/store";
 import { getServerSession } from "next-auth";
-import { MatchKeysAndValues, MongoClient, ObjectId } from "mongodb";
+import { MatchKeysAndValues, ObjectId } from "mongodb";
 import { revalidatePath } from "next/cache";
+import { getMongoClient } from "@/app/utils/mongoClient";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-
-const uri = process.env.MONGODB_URI ?? "";
 
 async function editProgram(data: {
   programId: string;
@@ -20,8 +19,8 @@ async function editProgram(data: {
     throw new Error("Unauthorized");
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   try {
     const user = await db?.collection("users").findOne({
@@ -66,8 +65,6 @@ async function editProgram(data: {
     return plainResult;
   } catch (error) {
     console.log("fetch failed", error);
-  } finally {
-    client?.close();
   }
 }
 

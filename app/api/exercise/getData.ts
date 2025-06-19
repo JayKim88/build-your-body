@@ -1,23 +1,25 @@
 "use server";
 
-import axios from "axios";
-
+import { MongoClient, ObjectId } from "mongodb";
 import { Exercise } from "../types";
 
-async function getData(id: string) {
-  try {
-    const result = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/exercise`, {
-        params: {
-          exerciseId: id,
-        },
-      })
-      .then((res) => res.data);
+const uri = process.env.MONGODB_URI ?? "";
 
-    return result.data as Exercise;
+async function getData(id: string) {
+  // TODO: Use a shared MongoClient utility if available
+  const client = new MongoClient(uri);
+  const db = client.db();
+  try {
+    const data = await db.collection("exercises").findOne({
+      _id: new ObjectId(id),
+    });
+    if (!data) return null;
+    return { ...data, _id: data._id.toString() } as Exercise;
   } catch (error) {
     console.log("fetch failed", error);
     return null;
+  } finally {
+    await client.close();
   }
 }
 

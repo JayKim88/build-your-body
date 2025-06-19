@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
+import { getMongoClient } from "@/app/utils/mongoClient";
 
 const uri = process.env.MONGODB_URI ?? "";
 
@@ -10,11 +11,9 @@ export async function GET(req: NextRequest) {
 
   const exerciseId = searchParams.get("exerciseId");
 
-  let client: MongoClient;
-
   if (exerciseId) {
-    client = new MongoClient(uri);
-    const db = client?.db();
+    const client = await getMongoClient();
+    const db = client.db();
     try {
       const data = await db?.collection("exercises").findOne({
         _id: new ObjectId(exerciseId),
@@ -23,8 +22,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data }, { status: 200 });
     } catch (error) {
       console.log("error occurs!", error);
-    } finally {
-      client?.close();
     }
   } else {
     return NextResponse.json(

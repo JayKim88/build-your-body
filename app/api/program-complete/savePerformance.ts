@@ -1,14 +1,12 @@
 "use server";
 
-import { MongoClient } from "mongodb";
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { ExercisesStatus } from "@/app/my-programs/[programId]/Progress";
 import { SatisfiedStatus } from "@/app/my-programs/complete/WorkoutSummary";
 import { revalidatePath } from "next/cache";
-
-const uri = process.env.MONGODB_URI ?? "";
 
 export type PerfomanceData = {
   imageUrl?: string | undefined;
@@ -30,8 +28,8 @@ async function savePerformance(data: PerfomanceData) {
     throw new Error("Unauthorized");
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   try {
     const user = await db?.collection("users").findOne({
@@ -64,8 +62,6 @@ async function savePerformance(data: PerfomanceData) {
     return plainResult;
   } catch (error) {
     console.log("fetch failed", error);
-  } finally {
-    client?.close();
   }
 }
 

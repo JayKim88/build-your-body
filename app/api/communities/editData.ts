@@ -2,7 +2,8 @@
 
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
+import { getMongoClient } from "@/app/utils/mongoClient";
 
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 
@@ -11,8 +12,6 @@ type EditCommunitiesListProps = {
   performedProgramId: string;
   isLike: boolean;
 };
-
-const uri = process.env.MONGODB_URI ?? "";
 
 async function editCommunitiesList({
   userId,
@@ -25,8 +24,8 @@ async function editCommunitiesList({
     throw new Error("Unauthorized");
   }
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   const editCondition = isLike
     ? {
@@ -57,8 +56,6 @@ async function editCommunitiesList({
     return plainResult;
   } catch (error) {
     console.log("edit failed", error);
-  } finally {
-    client?.close();
   }
 }
 

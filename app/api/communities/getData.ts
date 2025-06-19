@@ -1,20 +1,20 @@
 "use server";
 
-import axios from "axios";
-
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { MyStat } from "../types";
 
 async function getData() {
-  try {
-    const result = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/my-stats`, {
-        params: {
-          isPublic: true,
-        },
-      })
-      .then((res) => res.data);
+  const client = await getMongoClient();
+  const db = client.db();
 
-    const formattedData = (result.data as MyStat[])?.map(
+  try {
+    const result = await db
+      .collection("workout-performance")
+      .find({ isPublic: true })
+      .sort({ completedAt: -1 })
+      .toArray();
+
+    const formattedData = (result as unknown as MyStat[])?.map(
       ({ _id, ...rest }) => ({
         ...rest,
         _id: _id.toString(),

@@ -1,18 +1,21 @@
 "use server";
 
-import axios from "axios";
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { Exercise } from "../types";
 
 async function getData() {
   try {
-    const data = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/exercises`)
-      .then((res) => res.data);
-
-    return data as { data: Exercise[] };
+    const client = await getMongoClient();
+    const db = client.db();
+    const result = await db.collection("exercises").find({}).toArray();
+    // TODO: Improve typing if needed
+    const data = (result as any[]).map((item) => ({
+      ...item,
+      _id: item._id.toString(),
+    })) as Exercise[];
+    return { data };
   } catch (error) {
     console.log("fetch failed", error);
-
     return { data: [] };
   }
 }

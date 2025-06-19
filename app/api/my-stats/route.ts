@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import {
   endOfDay,
@@ -7,14 +7,12 @@ import {
   startOfMonth,
   subDays,
 } from "date-fns";
-
+import { getMongoClient } from "@/app/utils/mongoClient";
 import { HistoryChartData, WorkoutHistory } from "../types";
 
 /**
  * @description Date format is converted to UTC time in Server-Side (Node.js or Vercel)
  */
-
-const uri = process.env.MONGODB_URI ?? "";
 
 export async function GET(req: NextRequest) {
   if (req.method !== "GET") return;
@@ -34,8 +32,8 @@ export async function GET(req: NextRequest) {
   const isPublic = searchParams.get("isPublic") === "true";
   const lastCompletedAt = searchParams.get("lastCompletedAt");
 
-  const client = new MongoClient(uri);
-  const db = client?.db();
+  const client = await getMongoClient();
+  const db = client.db();
 
   const now = new Date();
 
@@ -57,15 +55,16 @@ export async function GET(req: NextRequest) {
     let data;
 
     if (programId && lastCompletedAt) {
-      // get a program history at a last completed time
       data = await db?.collection("workout-performance").findOne({
         userId,
         savedProgramId: programId,
         completedAt: lastCompletedAt,
       });
+      if (data) {
+        data._id = data._id.toString();
+        data.userId = data.userId.toString();
+      }
     } else if (programId) {
-      // get available programs history within a specific week
-
       const dateFrom = subDays(
         endDate ? startOfDay(endDate) : startOfDay(now),
         6
@@ -191,7 +190,6 @@ export async function GET(req: NextRequest) {
 
       data = groupedByExercise;
     } else if (targetMonthDate) {
-      // get dates having program history for a specific month
       const startofMonth = startOfMonth(targetMonthDate).toISOString();
       const endofMonth = endOfMonth(targetMonthDate).toISOString();
 
@@ -257,9 +255,12 @@ export async function GET(req: NextRequest) {
           completedAt: -1,
         })
         .toArray();
+      data = data.map((item) => ({
+        ...item,
+        _id: item._id.toString(),
+        userId: item.userId?.toString?.(),
+      }));
     } else {
-      // find all or specific date programs history
-      // targetDate is start of day in local time
       const startOfDayInUTC = targetDate;
       const endOfDayInUTC = new Date(
         new Date(targetDate!).getTime() + 24 * 60 * 60 * 1000 - 1
@@ -280,12 +281,15 @@ export async function GET(req: NextRequest) {
           completedAt: -1,
         })
         .toArray();
+      data = data.map((item) => ({
+        ...item,
+        _id: item._id.toString(),
+        userId: item.userId?.toString?.(),
+      }));
     }
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     console.log("fetch failed", error);
-  } finally {
-    client?.close();
   }
 }
