@@ -47,6 +47,7 @@ export const ModalWrapper = ({
     <div
       ref={modalWrapperRef}
       data-testid="modal-overlay"
+      role="dialog"
       className={`${
         open
           ? "flex fixed inset-0 items-center justify-end z-20 pr-4"

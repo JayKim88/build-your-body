@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -22,15 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-    "types": [
-      "./types/next-auth.d.ts",
-      "jest",
-      "node"
-    ]
+    "types": ["./types/next-auth.d.ts", "jest", "node", "msw"]
   },
   "include": [
     "next-env.d.ts",
@@ -38,9 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/api/auth/[...nextauth]/route.ts",
-    "jest.config.js"
+    "jest.config.js",
+    "tests/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

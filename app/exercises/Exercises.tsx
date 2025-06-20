@@ -150,8 +150,6 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
   const [clickedExercise, setClickedExercise] = useState<Exercise>();
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("clickedExercise", clickedExercise);
-
   const handleClickExercise = (id: string) => {
     const data = exercisesData.find((v) => v._id === id);
     setClickedExercise(data);

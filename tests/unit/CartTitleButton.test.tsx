@@ -38,3 +38,4 @@ describe("CartTitleButton", () => {
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 });
+ 

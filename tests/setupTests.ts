@@ -2,6 +2,19 @@ require("dotenv").config({ path: ".env.local" });
 import "@testing-library/jest-dom";
 import React from "react";
 import { TextEncoder, TextDecoder } from "util";
+import "whatwg-fetch";
+
+// MSW setup
+import { server } from "./msw/server";
+
+// Establish API mocking before all tests.
+beforeAll(() => server.listen());
+
+// Reset any request handlers that are declared as a part of our tests (i.e. for testing one-time error scenarios).
+afterEach(() => server.resetHandlers());
+
+// Clean up after the tests are finished.
+afterAll(() => server.close());
 
 // Polyfill for Jest jsdom environment
 if (typeof global.TextEncoder === "undefined") {

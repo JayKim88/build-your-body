@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/swiper-bundle.css";
+import isEqual from "lodash.isequal";
 
 import { Button } from "@/app/component/Button";
 import { ConfirmModal } from "@/app/component/ConfirmModal";
@@ -122,11 +123,13 @@ const ExerciseSetRow = ({
   checked,
   isInprogress,
   onUpdateNewSetLift,
+  exerciseName,
 }: ExerciseSetValues & {
   onUpdateExerciseSetRow: (v: UpdateExerciseSetRowValues) => void;
   exerciseSetValues: ExerciseSetValues[];
   isInprogress: boolean;
   onUpdateNewSetLift: (v: number) => void;
+  exerciseName: string;
 }) => {
   const updateExerciseSetValue = (title: string, value?: number | boolean) => {
     onUpdateExerciseSetRow({
@@ -187,6 +190,7 @@ const ExerciseSetRow = ({
       />
       <input
         type="checkbox"
+        aria-label={`${exerciseName} set-${order}`}
         className={`appearance-none outline-none w-8 h-8 border-2 rounded-lg 
           text-gray6 cursor-pointer ${checkboxBorderColor} ${valuesRequiredStyles} 
           ${checkedStyles}         
@@ -224,7 +228,7 @@ const ExerciseProgressCard = ({
   const isSetsEmpty = !data.exerciseSetValues.length;
 
   return (
-    <div className="relative">
+    <div className="relative" aria-label={`exercise-card-${data.name}`}>
       {!isUnclickable && (
         <div
           className="absolute top-[230px] left-1/2 -translate-x-1/2 
@@ -284,6 +288,7 @@ const ExerciseProgressCard = ({
               {...v}
               isInprogress={isInprogress}
               exerciseSetValues={data.exerciseSetValues}
+              exerciseName={data.name}
               onUpdateNewSetLift={updateNewSetLift}
               onUpdateExerciseSetRow={(v) =>
                 updateExerciseSetRow({
@@ -491,9 +496,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
 
     const formattedExercises = data.exercises.map((v) => {
       const exerciseSetValues = [] as ExerciseSetValues[];
-
       const setCount = v.set ?? 0;
-
       for (let i = 0; i < setCount; i++) {
         exerciseSetValues.push({
           order: i + 1,
@@ -502,15 +505,16 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
           checked: false,
         });
       }
-
       return {
         ...v,
         exerciseSetValues,
       };
     });
 
-    setExercisesStatus(formattedExercises);
-  }, [data, savedExercisesStatus, moveToCompletedPage]);
+    if (!isEqual(formattedExercises, exercisesStatus)) {
+      setExercisesStatus(formattedExercises);
+    }
+  }, [data, savedExercisesStatus, moveToCompletedPage, exercisesStatus]);
 
   const nextProgressExerciseIndex = useMemo(
     () => exercisesStatus?.findIndex((v) => !v.isCompleted),

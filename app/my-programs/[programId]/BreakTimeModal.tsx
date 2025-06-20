@@ -160,6 +160,7 @@ export const BreakTimeModal = ({ isOpen, onClose }: BreakTimeModalProps) => {
 
   return (
     <div
+      aria-label="break-time"
       className={`${
         open
           ? "flex fixed inset-0 items-center justify-center z-20 pr-4"
