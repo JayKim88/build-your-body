@@ -170,6 +170,6 @@ export const HistoryByDateSection = () => {
 };
 
 const dataAvailableDotStyles =
-  "relative [&::after]:content-['•'] [&::after]:absolute [&::after]:-bottom-[4px] [&::after]:left-[20px] [&::after]:pointer-events-none text-[24px]";
+  "relative [&::after]:content-['•'] [&::after]:absolute [&::after]:-bottom-[4px] [&::after]:left-[20px] [&::after]:pointer-events-none";
 
 const noDataStyles = "pointer-events-none";

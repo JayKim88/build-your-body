@@ -5,7 +5,7 @@ import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { ExercisesStatus } from "../my-programs/[programId]/Progress";
 import { SpinLoader } from "./SpinLoader";
 
-type ProgramHistoryDetailCardProps = {
+export type ProgramHistoryDetailCardProps = {
   data: ExercisesStatus[0];
   onClick: (v: string) => void;
 };

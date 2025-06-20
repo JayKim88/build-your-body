@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { MODAL_VISIBLE_DELAY } from "./ModalWrapper";
 import { Button } from "./Button";
 
-type ConfirmModalProps = {
+export type ConfirmModalProps = {
   isOpen: boolean;
   onClick: (v: boolean) => void;
   content?: string;
@@ -24,6 +24,7 @@ export const ConfirmModal = ({
 
   return (
     <div
+      data-testid="confirm-modal"
       className={`${
         open
           ? "flex fixed inset-0 items-center justify-center z-20 pr-4"

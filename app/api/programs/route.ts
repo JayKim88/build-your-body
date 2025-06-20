@@ -28,8 +28,8 @@ export async function GET(req: NextRequest) {
     let data;
     if (id) {
       data = await db?.collection("programs").findOne({
-        userId,
-        _id: new ObjectId(id),
+          userId,
+          _id: new ObjectId(id),
       });
       if (data) {
         data = {
@@ -40,17 +40,17 @@ export async function GET(req: NextRequest) {
       }
     } else {
       const result = await db
-        ?.collection("programs")
-        .find({
-          userId: userId,
-          ...(!includeDeleted && {
-            deleted: { $ne: true },
-          }),
-        })
-        .sort({
-          lastCompletedAt: -1,
-        })
-        .toArray();
+          ?.collection("programs")
+          .find({
+            userId: userId,
+            ...(!includeDeleted && {
+              deleted: { $ne: true },
+            }),
+          })
+          .sort({
+            lastCompletedAt: -1,
+          })
+          .toArray();
       data = result.map((item) => ({
         ...item,
         _id: item._id.toString(),

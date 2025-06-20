@@ -12,7 +12,7 @@ import { useBodySnackbar } from "../hook/useSnackbar";
 import { getExerciseData } from "../api/exercise/getData";
 import { capitalizeFirstLetter } from "../utils";
 
-type ExerciseDetailModalProps = {
+export type ExerciseDetailModalProps = {
   isOpen: boolean;
   data?: Exercise;
   onClose: () => void;

@@ -57,7 +57,7 @@ const FilteredList = ({ data, userId }: FilteredListProps) => {
       <Filter onFilter={handleFilter} selectedType={selectedType} />
       {isLoggedIn && (
         <div
-          className={`${defaultRowStyles} fixed items-center w-fit fixed
+          className={`${defaultRowStyles} fixed w-fit 
             top-[190px] z-10 right-[50px] items-end`}
         >
           <div className="text-4xl">Show my list</div>

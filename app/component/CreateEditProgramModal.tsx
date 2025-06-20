@@ -378,12 +378,12 @@ export const CreateEditProgramModal = ({
             <span className="text-4xl">{programName}</span>
           ) : (
             <input
+              className="w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6
+ pb-0.5"
               value={programName}
-              onChange={(e) => {
-                const value = e.target.value;
-                setProgramName(value);
-              }}
-              className="w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6 pb-0.5"
+              onChange={(e) => setProgramName(e.target.value)}
+              placeholder="Program name"
+              data-testid="program-name-input"
             />
           )}
         </div>

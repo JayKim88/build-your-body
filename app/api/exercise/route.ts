@@ -5,7 +5,7 @@ import { getMongoClient } from "@/app/utils/mongoClient";
 export async function GET(req: NextRequest) {
   if (req.method !== "GET") return;
 
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url, "http://localhost");
 
   const exerciseId = searchParams.get("exerciseId");
 
@@ -20,6 +20,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data }, { status: 200 });
     } catch (error) {
       console.log("error occurs!", error);
+      return NextResponse.json(
+        { error: "Invalid exerciseId format" },
+        { status: 400 }
+      );
     }
   } else {
     return NextResponse.json(

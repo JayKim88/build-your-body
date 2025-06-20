@@ -9,7 +9,7 @@ import cannotFindDataLottie from "@/public/lottie-animation/cannot-find.json";
 import completeLottie from "@/public/lottie-animation/complete.json";
 import spinLoadingLottie from "@/public/lottie-animation/spin-loading.json";
 
-const animations = {
+export const animations = {
   error: errorLottie,
   notFound: pageNotFoundLottie,
   loading: loadingLottie,

@@ -1,3 +1,4 @@
+import React from "react";
 import { SatisfiedStatus } from "../my-programs/complete/WorkoutSummary";
 import Terrible from "@/public/workout-complete-icon/terrible.svg";
 import NotSatisfied from "@/public/workout-complete-icon/not-satisfied.svg";
@@ -5,7 +6,11 @@ import Soso from "@/public/workout-complete-icon/soso.svg";
 import Happy from "@/public/workout-complete-icon/happy.svg";
 import Lol from "@/public/workout-complete-icon/lol.svg";
 
-export const SatisfictionIcon = ({ status }: { status?: SatisfiedStatus }) => {
+export type SatisfactionIconProps = {
+  status?: SatisfiedStatus;
+};
+
+export const SatisfictionIcon = ({ status }: SatisfactionIconProps) => {
   let result;
   switch (status) {
     case "terrible":

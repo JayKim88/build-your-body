@@ -1,3 +1,4 @@
+import React from "react";
 import { LoginButton } from "./component/LoginButton";
 import { ManualButton } from "./component/ManualButton";
 

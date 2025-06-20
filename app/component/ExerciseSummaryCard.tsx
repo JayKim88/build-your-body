@@ -6,7 +6,7 @@ import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { Chip } from "../my-programs/ProgramList";
 import { SpinLoader } from "./SpinLoader";
 
-type ExerciseSummaryCardProps = {
+export type ExerciseSummaryCardProps = {
   data: CartProps;
   onClick: (v: string) => void;
   isClicked?: boolean;

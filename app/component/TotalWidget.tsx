@@ -1,3 +1,4 @@
+import React from "react";
 import { SpinLoader } from "./SpinLoader";
 
 type TotalWidgetProps = {

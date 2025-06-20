@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-type ModalWrapperProps = {
+export type ModalWrapperProps = {
   isOpen: boolean;
   onClose: () => void;
   Title?: ReactNode;
@@ -46,6 +46,7 @@ export const ModalWrapper = ({
   return (
     <div
       ref={modalWrapperRef}
+      data-testid="modal-overlay"
       className={`${
         open
           ? "flex fixed inset-0 items-center justify-end z-20 pr-4"

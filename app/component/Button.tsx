@@ -1,3 +1,4 @@
+import React from "react";
 import { SpinLoader } from "./SpinLoader";
 
 type ButtonProps = {
@@ -30,7 +31,7 @@ export const Button = ({
       width-[110px] transition-all duration-300 ease-in-out relative
          ${className}
         `}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
       {loading && <SpinLoader />}
       <span
