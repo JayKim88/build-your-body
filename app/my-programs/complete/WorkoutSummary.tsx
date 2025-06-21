@@ -72,7 +72,7 @@ const SatisfiedStatusList = ({
   onSetStatus,
 }: SatisfiedStatusListProps) => {
   return (
-    <span className="flex items-center gap-x-1 sm:gap-x-4 [&>svg]:cursor-pointer">
+    <span className="flex items-center gap-x-2 md:gap-x-4 [&>svg]:cursor-pointer">
       <Terrible
         className={`${status === "terrible" ? "fill-yellow" : "fill-gray6"}`}
         onClick={() => onSetStatus("terrible")}
@@ -388,7 +388,7 @@ export const WorkoutSummary = () => {
         </section>
         <section className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-4">
-            <span className="text-2xl sm:text-[40px] text-softGreen">
+            <span className="text-[20px] sm:text-2xl md:text-[40px] text-softGreen">
               Upload Photo
             </span>
             <div
@@ -453,8 +453,8 @@ export const WorkoutSummary = () => {
             </div>
           </div>
           <div className={`${defaultRowStyles} items-start md:items-center`}>
-            <div className="text-[20px] sm:text-10">Public</div>
-            <label className="switch">
+            <span>Public</span>
+            <label className="switch scale-75 md:scale-80 sm:scale-100 origin-left">
               <input
                 type="checkbox"
                 onChange={(e) => setIsPublic(e.target.checked)}
