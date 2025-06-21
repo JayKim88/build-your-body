@@ -50,7 +50,7 @@ export const ModalWrapper = ({
       role="dialog"
       className={`${
         open
-          ? "flex fixed inset-0 items-center justify-end z-20 pr-4"
+          ? "flex fixed inset-0 items-center justify-end z-20 px-4"
           : "hidden"
       } ${visible && "bg-black bg-opacity-50"} delay-${
         MODAL_VISIBLE_DELAY + 500

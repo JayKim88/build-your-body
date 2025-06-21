@@ -36,7 +36,7 @@ export default function RootLayout({
         <body className={`${inter.className} relative`}>
           <AuthContext>
             <Menu />
-            <main className="pl-[60px] pr-[50px] pt-[30px] pb-[50px] h-full">
+            <main className="pl-6 pr-6 md:pl-[60px] md:pr-[50px] pt-[30px] pb-[50px] h-full w-full">
               {children}
             </main>
           </AuthContext>

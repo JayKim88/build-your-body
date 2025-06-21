@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { capitalizeFirstLetter } from "../utils";
+import { useSession } from "next-auth/react";
 
 export type ExerciseType =
   | "all"
@@ -17,6 +18,13 @@ type ChipProps = {
   selectedBgColor: string;
   onSelect: (v: ExerciseType) => void;
   selected?: ExerciseType;
+};
+
+type FilterProps = {
+  onFilter: (v: ExerciseType) => void;
+  selectedType: ExerciseType;
+  onSetShowMyData?: (v: boolean) => void;
+  showMyData?: boolean;
 };
 
 export const exerciseTypes: Omit<ChipProps, "onSelect" | "selected">[] = [
@@ -80,23 +88,48 @@ const Chip = ({
 export const Filter = ({
   onFilter,
   selectedType,
-}: {
-  onFilter: (v: ExerciseType) => void;
-  selectedType: ExerciseType;
-}) => (
-  <section
-    className="w-[1100px] flex overflow-auto gap-4 bg-black fixed h-[120px] 
-  top-[130px] z-10 w-[calc(100vw-110px)] items-end pb-4"
-  >
-    {exerciseTypes.map((v) => (
-      <Chip
-        key={v.type}
-        type={v.type}
-        src={v.src}
-        selectedBgColor={v.selectedBgColor}
-        onSelect={onFilter}
-        selected={selectedType}
-      />
-    ))}
-  </section>
-);
+  onSetShowMyData,
+  showMyData,
+}: FilterProps) => {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
+
+  return (
+    <section
+      className="fixed top-[130px] z-10 flex flex-col md:flex-row justify-between 
+    bg-black w-[calc(100%-24px)] md:w-[calc(100%-110px)]"
+    >
+      <section
+        className="flex overflow-auto gap-4 h-[80px] sm:h-[120px] items-end 
+      pb-4 flex-wrap px-2 scale-90 sm:scale-100 origin-left"
+      >
+        {exerciseTypes.map((v) => (
+          <Chip
+            key={v.type}
+            type={v.type}
+            src={v.src}
+            selectedBgColor={v.selectedBgColor}
+            onSelect={onFilter}
+            selected={selectedType}
+          />
+        ))}
+      </section>
+      {!!onSetShowMyData && isLoggedIn && (
+        <div
+          className={`flex gap-x-[20px] w-fit text-[40px] justify-between items-center 
+            sm:items-end right-[100px] p-4`}
+        >
+          <div className="text-2xl sm:text-4xl">Show my list</div>
+          <label className="switch scale-75 sm:scale-100 origin-left">
+            <input
+              type="checkbox"
+              onChange={(e) => onSetShowMyData(e.target.checked)}
+              checked={showMyData}
+            />
+            <span className="slider round"></span>
+          </label>
+        </div>
+      )}
+    </section>
+  );
+};

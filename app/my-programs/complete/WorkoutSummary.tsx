@@ -25,6 +25,7 @@ import Summary from "@/public/workout-complete-icon/summary.svg";
 import { ProgramHistoryDetailModal } from "@/app/component/ProgramHistoryDetailModal";
 import { MyStat } from "@/app/api/types";
 import Loading from "@/app/loading";
+import { useIsMobile } from "@/app/hook/useWindowSize";
 
 export type SatisfiedStatus =
   | "terrible"
@@ -37,6 +38,11 @@ type PngIconProps = {
   name: string;
   width?: number;
   height?: number;
+};
+
+type SatisfiedStatusListProps = {
+  status: SatisfiedStatus;
+  onSetStatus: (v: SatisfiedStatus) => void;
 };
 
 const validImageTypes = ["jpeg", "png", "jpg"];
@@ -64,12 +70,9 @@ export const PngIcon = ({ name, width, height }: PngIconProps) => (
 const SatisfiedStatusList = ({
   status,
   onSetStatus,
-}: {
-  status: SatisfiedStatus;
-  onSetStatus: (v: SatisfiedStatus) => void;
-}) => {
+}: SatisfiedStatusListProps) => {
   return (
-    <span className="flex items-center gap-x-4 w-[400px] justify-between [&>svg]:cursor-pointer">
+    <span className="flex items-center gap-x-1 sm:gap-x-4 [&>svg]:cursor-pointer">
       <Terrible
         className={`${status === "terrible" ? "fill-yellow" : "fill-gray6"}`}
         onClick={() => onSetStatus("terrible")}
@@ -97,6 +100,7 @@ const SatisfiedStatusList = ({
 };
 
 export const WorkoutSummary = () => {
+  const isMobile = useIsMobile();
   const { data: session } = useSession();
   const router = useRouter();
   const { bodySnackbar } = useBodySnackbar();
@@ -309,9 +313,13 @@ export const WorkoutSummary = () => {
         isLoaded ? "opacity-100" : "opacity-0"
       }`}
     >
-      <h1 className="text-[80px] tracking-[8px]">WORKOUT COMPLETE!</h1>
-      <div className={`${defaultPageStyles} mt-20 gap-x-[140px]`}>
-        <section className="flex flex-col gap-y-[100px]">
+      <h1 className="text-[30px] sm:text-[40px] md:text-[80px] tracking-[8px]">
+        WORKOUT COMPLETE!
+      </h1>
+      <div
+        className={`${defaultPageStyles} mt-20 gap-x-[140px] flex-col md:flex-row`}
+      >
+        <section className="flex flex-col gap-y-10 md:gap-y-[100px] w-full">
           <section className="flex flex-col gap-y-10">
             <div className={defaultRowStyles}>
               <span>Completed At</span>
@@ -326,8 +334,8 @@ export const WorkoutSummary = () => {
                 </span>
               </div>
             </div>
-            <div className="flex gap-x-[108px] text-[40px] justify-start">
-              <span>Summary</span>
+            <div className="flex flex-col md:flex-row gap-x-[108px] text-1xl sm:text-2xl md:text-[40px] justify-start">
+              <span className="text-[20px] md:text-[40px]">Summary</span>
               <div className="flex gap-x-8">
                 <span className="flex gap-x-2 items-center">
                   <PngIcon name="duration" />
@@ -335,7 +343,7 @@ export const WorkoutSummary = () => {
                 </span>
                 <span className="flex gap-x-2 items-center">
                   <Summary
-                    className="fill-gray6 cursor-pointer hover:fill-yellow"
+                    className="fill-gray6 cursor-pointer hover:fill-yellow scale-75 md:scale-100"
                     onClick={() => setIsOpen(true)}
                   />
                 </span>
@@ -350,7 +358,9 @@ export const WorkoutSummary = () => {
                 onSetStatus={(v) => setSatisfiedStatus(v)}
               />
             </div>
-            <div className={`${defaultRowStyles} items-center`}>
+          </section>
+          <section className="flex flex-col gap-y-10">
+            <div className={`${defaultRowStyles} md:items-center`}>
               <span>Title</span>
               <input
                 className={`${defaultInputStyles} h-[72px] pl-4 pr-4`}
@@ -362,7 +372,7 @@ export const WorkoutSummary = () => {
                 maxLength={30}
               />
             </div>
-            <div className={`${defaultRowStyles} items-start`}>
+            <div className={`${defaultRowStyles} items-start mb-10 md:mb-0`}>
               <span>Note</span>
               <textarea
                 className={`${defaultInputStyles} p-4`}
@@ -378,10 +388,12 @@ export const WorkoutSummary = () => {
         </section>
         <section className="flex flex-col justify-between">
           <div className="flex flex-col gap-y-4">
-            <span className="text-[40px] text-softGreen">Upload Photo</span>
+            <span className="text-2xl sm:text-[40px] text-softGreen">
+              Upload Photo
+            </span>
             <div
               className={`${
-                croppedImg ? "w-[400px]" : "max-w-[400px] max-h-[400px]"
+                croppedImg ? "w-[400px]" : "w-full max-w-[400px] max-h-[400px]"
               } 
               border-2 border-softGreen rounded-2xl overflow-hidden`}
             >
@@ -407,7 +419,7 @@ export const WorkoutSummary = () => {
                 />
               ) : (
                 <div
-                  className="w-[400px] h-[400px] border-2 border-softGreen 
+                  className="w-full h-[200px] md:w-[400px] md:h-[400px] border-2 border-softGreen 
                   rounded-2xl flex items-center justify-center cursor-pointer"
                   {...getRootProps()}
                 >
@@ -440,8 +452,8 @@ export const WorkoutSummary = () => {
               )}
             </div>
           </div>
-          <div className={`${defaultRowStyles} items-center`}>
-            <div className="text-10">Public</div>
+          <div className={`${defaultRowStyles} items-start md:items-center`}>
+            <div className="text-[20px] sm:text-10">Public</div>
             <label className="switch">
               <input
                 type="checkbox"
@@ -453,12 +465,12 @@ export const WorkoutSummary = () => {
           </div>
         </section>
       </div>
-      <div className={`${defaultPageStyles} mt-10 mb-6`}>
+      <div className={`${defaultPageStyles} mt-10 mb-[100px] sm:mb-6`}>
         <Button
           title="Exit"
           onClick={() => setOpenConfirm("exit")}
-          className="text-gray1 bg-red hover:bg-red hover:text-gray1 w-[200px]"
-          fontSize={40}
+          className="text-gray1 bg-red hover:bg-red hover:text-gray1 w-fit md:w-[200px]"
+          fontSize={isMobile ? 24 : 40}
         />
         <Button
           title="SAVE"
@@ -479,8 +491,8 @@ export const WorkoutSummary = () => {
 
             setOpenConfirm("save");
           }}
-          className="text-gray1 bg-softGreen hover:bg-softGreen hover:text-gray1 w-[400px]"
-          fontSize={40}
+          className="text-gray1 bg-softGreen hover:bg-softGreen hover:text-gray1 w-fit md:w-[400px]"
+          fontSize={isMobile ? 24 : 40}
         />
       </div>
       <ConfirmModal
@@ -507,9 +519,10 @@ export const WorkoutSummary = () => {
 };
 
 const defaultInputStyles =
-  "border-2 border-gray2 w-[400px] rounded-2xl outline-none bg-gray6 text-black text-3xl";
-const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
-const defaultPageStyles = "flex justify-between min-w-[1000px]";
+  "border-2 border-gray2 w-full md:w-[400px] rounded-2xl outline-none bg-gray6 text-black text-2xl md:text-3xl";
+const defaultRowStyles =
+  "flex flex-col md:flex-row gap-y-2 md:gap-y-0 md:gap-x-[50px] [&>span]:text-[20px] text-1xl sm:text-2xl md:text-[40px] md:[&>span]:text-[40px] justify-between [&>span]:flex [&>span]:items-center";
+const defaultPageStyles = "flex justify-between md:min-w-[1000px]";
 
 const MAX_IMAGE_FILE_MB_SIZE = 5;
 const IMAGE_FILE_SIZE_CALC_FORMULA = 1024;

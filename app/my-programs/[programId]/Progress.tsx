@@ -15,6 +15,7 @@ import { CartProps, useProgressStore } from "@/app/store";
 import { capitalizeFirstLetter, handleNumberKeyDown } from "@/app/utils";
 import ProgressTimerButton from "./ProgressTimer";
 import { BreakTimeModal } from "./BreakTimeModal";
+import { useIsMobile } from "@/app/hook/useWindowSize";
 
 type ProgressProps = {
   data: RegisteredProgram | undefined;
@@ -91,7 +92,7 @@ const ExerciseInput = ({
             : isChecked
             ? "bg-gray0 pointer-events-none"
             : "bg-gray0 border-2"
-        } w-[72px] h-[34px] rounded-lg outline-none text-2xl pl-2 pr-2 text-end mr-1`}
+        } w-[48px] sm:w-[72px] h-[34px] rounded-lg outline-none text-[20px] sm:text-2xl pl-2 pr-2 text-end mr-1`}
         value={value ?? ""}
         onChange={(e) => {
           const value = e.target.value;
@@ -173,7 +174,7 @@ const ExerciseSetRow = ({
       className={`flex justify-around items-center rounded-[32px] h-[50px] px-1
         ${progressStyles} ${isNextSet ? "pr-[58px]" : ""}`}
     >
-      <span className="w-fit">{order} set</span>
+      <span className="w-fit min-w-fit">{order} set</span>
       <ExerciseInput
         title="Weight"
         onChange={updateExerciseSetValue}
@@ -264,7 +265,8 @@ const ExerciseProgressCard = ({
         </div>
       )}
       <div
-        className={`w-[400px] min-w-[400px] h-fit rounded-[32px] p-5 bg-gray1 flex flex-col gap-y-5 
+        className={`w-[320px] sm:w-[400px] sm:min-w-[400px] h-fit rounded-[32px] 
+          p-4 sm:p-5 bg-gray1 flex flex-col gap-y-5 
           ${isUnclickable && "pointer-events-none opacity-25"}
         `}
       >
@@ -332,6 +334,7 @@ const ExerciseProgressCard = ({
 };
 
 export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
+  const isMobile = useIsMobile();
   const swiperRef = useRef<SwiperClass | null>(null);
   const router = useRouter();
   const resetWorkoutTime = useProgressStore((state) => state.resetWorkoutTime);
@@ -537,7 +540,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
   const MemoizedExerciseProgressCards = useMemo(() => {
     return (
       <div
-        className={`flex gap-x-10 transition-opacity duration-300 ${
+        className={`flex gap-x-10 transition-opacity duration-300 mb-[100px] ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -618,9 +621,9 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
 
   return (
     <section className="flex flex-col gap-y-[48px]">
-      <div className="flex justify-between h-16">
-        <div className="flex items-center gap-x-12">
-          <h1 className="text-5xl">{data?.programName}</h1>
+      <div className="flex justify-between items-end sm:items-start h-16 sm:flex-row flex-col">
+        <div className="flex items-center sm:items-start gap-x-12 mb-2 sm:mb-0 w-full sm:w-fit justify-between">
+          <h1 className="text-2xl sm:text-5xl">{data?.programName}</h1>
           <ProgressTimerButton
             data={data}
             isRunning={isRunning}
@@ -633,8 +636,9 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
             setIsRunning(false);
             setOpenConfirm(true);
           }}
-          fontSize={32}
-          className="text-red bg-red/50 hover:text-red hover:bg-red/50 px-[40px] h-16"
+          fontSize={isMobile ? 20 : 32}
+          className="text-red bg-red/50 hover:text-red 
+          hover:bg-red/50 px-[16px] sm:px-[40px] h-16 ml-4"
         />
       </div>
       {MemoizedExerciseProgressCards}

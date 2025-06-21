@@ -110,7 +110,7 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
   };
 
   return (
-    <section className="flex gap-x-5">
+    <section className="flex gap-x-5 sm:flex-row flex-col sm:gap-y-0 gap-y-5 scale-90 sm:scale-100 origin-left">
       <div className="flex flex-col gap-y-5">
         <TotalWidget
           title="Total Lift"
@@ -123,7 +123,10 @@ export const TotalSummarySection = ({ data }: TotalSummarySectionProps) => {
           unit="Times"
         />
       </div>
-      <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 relative">
+      <div
+        className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px]
+       p-5 bg-gray0 relative"
+      >
         <h1 className="text-2xl">Total Portion Ratio</h1>
         {!memoizedTotalLift && (
           <div className="absolute top-1/2 right-1/2 translate-x-1/2 text-2xl">

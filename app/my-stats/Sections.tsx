@@ -8,6 +8,7 @@ import { RegisteredProgram, TotalWorkoutSummary } from "../api/types";
 import { HistoryByDateSection } from "./HistoryByDateSection";
 import { HistoryByWeekSection } from "./HistoryByWeekSection";
 import { TotalSummarySection } from "./TotalSummarySection";
+import { useIsMobile } from "../hook/useWindowSize";
 
 type StatSectionsProps = {
   totalSummary: TotalWorkoutSummary;
@@ -15,6 +16,7 @@ type StatSectionsProps = {
 };
 
 export const StatSections = ({ totalSummary, programs }: StatSectionsProps) => {
+  const isMobile = useIsMobile();
   const ref = useRef<HTMLElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [moveBtn, setMoveBtn] = useState(false);
@@ -45,7 +47,8 @@ export const StatSections = ({ totalSummary, programs }: StatSectionsProps) => {
   return (
     <main
       ref={ref}
-      className={`flex gap-x-5 gap-y-5 overflow-auto max-w-[calc(100vw-110px)]
+      className={`flex gap-x-5 gap-y-5 overflow-auto sm:max-w-[calc(100vw-110px)]
+        lg:flex-row flex-col mb-[100px] sm:mb-0
     transition-opacity duration-300 ${isLoaded ? "opacity-100" : "opacity-0"}`}
     >
       <section className="flex flex-col gap-y-5">
@@ -53,7 +56,7 @@ export const StatSections = ({ totalSummary, programs }: StatSectionsProps) => {
         <HistoryByWeekSection data={programs} />
       </section>
       <HistoryByDateSection />
-      {moveBtn && (
+      {!isMobile && moveBtn && (
         <div
           className="flex flex-col items-center justify-center fixed right-2 
         top-1/2 -translate-y-1/2"

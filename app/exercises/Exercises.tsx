@@ -110,10 +110,10 @@ const ExerciseCard = (
   return (
     <div
       key={_id}
-      className={`${bgColor} w-[384px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
+      className={`${bgColor} w-full sm:max-w-xs sm:w-[384px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col cursor-pointer`}
       onClick={() => onClick(_id)}
     >
-      <div className="relative w-full h-72 rounded-2xl overflow-hidden">
+      <div className="relative w-full h-48 sm:h-60 md:h-72 rounded-2xl overflow-hidden">
         <Image
           src={thumbnail_img_url}
           alt="name"
@@ -123,8 +123,12 @@ const ExerciseCard = (
           priority
         />
       </div>
-      <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
-      <div className="text-lg min-h-[84px] text-black">{summary}</div>
+      <div className="text-xl sm:text-2xl md:text-3xl">
+        {capitalizeFirstLetter(name)}
+      </div>
+      <div className="text-base sm:text-lg min-h-[84px] text-black">
+        {summary}
+      </div>
       {isLoggedIn && (
         <div className="flex w-full justify-evenly">
           <CartIcon
@@ -174,7 +178,7 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
 
   return (
     <>
-      <section className="flex gap-6 flex-wrap mt-20">
+      <section className="flex gap-6 flex-wrap mt-20 mb-[100px]">
         {exercisesData.length ? (
           exercisesData.map(({ ref, ...rest }) => (
             <ExerciseCard

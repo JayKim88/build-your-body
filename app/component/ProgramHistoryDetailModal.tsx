@@ -43,13 +43,16 @@ export const ProgramHistoryDetailModal = ({
         onClose={onClose}
         Title={
           isSaved ? (
-            <div className="text-4xl flex justify-between items-center leading-none gap-x-2 w-full pr-1">
-              <div className="flex gap-x-2">
+            <div
+              className="text-4xl flex justify-between items-start sm:items-center 
+              leading-none gap-x-2 w-full pr-1 flex-col sm:flex-row"
+            >
+              <div className="flex gap-x-2 text-2xl sm:text-3xl">
                 <span>{format(data.completedAt!, "MM/dd")}</span>
                 <span>{data.savedProgramName}</span>
               </div>
               {!isCommunitiesPage && (
-                <div className="flex gap-x-2 items-center">
+                <div className="flex gap-x-2 items-center scale-75 sm:scale-100 origin-left">
                   {isPublic ? (
                     <Public className="fill-lightGreen" />
                   ) : (
@@ -66,25 +69,34 @@ export const ProgramHistoryDetailModal = ({
               )}
             </div>
           ) : (
-            <span className="text-4xl">Performed Workouts</span>
+            <span className="flex items-center text-2xl sm:text-4xl">
+              Performed Workouts
+            </span>
           )
         }
         customClassName="w-fit overflow-auto"
       >
         <main className="flex gap-x-6 gap-y-6 flex-col">
           {isSaved && (
-            <section className={`flex gap-x-6 ${cardsSectionWidth}`}>
+            <section
+              className={`flex gap-x-6 flex-col md:flex-row ${cardsSectionWidth}`}
+            >
               <div className="flex flex-col items-start justify-start gap-y-6 flex-1">
                 <div className="flex items-center">
-                  <h1 className="text-[32px]">
+                  <h1 className="text-2xl sm:text-3xl">
                     {capitalizeFirstLetter(data?.title ?? "")}
                   </h1>
-                  <SatisfictionIcon status={data?.satisfiedStatus} />
+                  <SatisfictionIcon
+                    status={data?.satisfiedStatus}
+                    className="scale-50"
+                  />
                 </div>
-                <div className="text-2xl">{data?.note ?? ""}</div>
+                <div className="text-[20px] sm:text-2xl">
+                  {data?.note ?? ""}
+                </div>
               </div>
               {data?.imageUrl && (
-                <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden">
+                <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden mt-4 sm:mt-0">
                   <Image
                     src={data?.imageUrl}
                     alt="name"

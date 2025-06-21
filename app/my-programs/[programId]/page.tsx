@@ -20,7 +20,7 @@ export default async function Page({
   })) as HistoryChartData;
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper !pt-[120px] sm:pt-[160px]">
       <Header />
       <Progress data={fetchedData} lastWorkoutData={lastWorkoutData} />
     </div>

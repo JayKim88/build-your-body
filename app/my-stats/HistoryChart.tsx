@@ -225,7 +225,7 @@ export const HistoryChart = ({
   const noHistory = !history?.length;
 
   return (
-    <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0">
+    <div className="w-[540px] h-[340px] flex flex-col gap-y-6 rounded-[32px] p-5 bg-gray0 scale-90 sm:scale-100 origin-left">
       <h1 className="text-2xl">{`History by Week - ${programName}`}</h1>
       <div className="flex justify-center items-center h-full">
         <div className="flex justify-center items-center h-full relative w-[460px] max-w-[460px]">

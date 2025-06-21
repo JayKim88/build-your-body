@@ -20,6 +20,7 @@ import { registerProgram } from "../api/programs/register";
 import { useBodySnackbar } from "../hook/useSnackbar";
 import { deleteProgram } from "../api/programs/delete";
 import { editProgram } from "../api/programs/edit";
+import { useIsMobile } from "../hook/useWindowSize";
 
 type ConfirmTypes = "deleteAll" | "register" | "editConfirm" | "deleteProgram";
 
@@ -42,26 +43,30 @@ export type ExerciseSet = {
   set?: number;
 };
 
+type ExerciseInputProps = {
+  title: string;
+  value?: number;
+  onChange: (title: string, value?: number) => void;
+};
+
+type ExerciseInputsProps = {
+  id: string;
+  onSettings: (v: ExerciseSettings) => void;
+  exerciseSettings: ExerciseSet | undefined;
+};
+
 const Title = ({ isEdit }: { isEdit?: boolean }) => {
   return (
-    <div className="flex gap-6 items-center">
-      <Cart className="fill-gray6" />
-      <h1 className="text-5xl">
+    <div className="flex gap-4 sm:gap-6 items-center">
+      <Cart className="fill-gray6 w-10 sm:w-16" />
+      <h1 className="text-2xl sm:text-5xl">
         {isEdit ? "Change your program" : "Make your new program"}
       </h1>
     </div>
   );
 };
 
-const ExerciseInput = ({
-  title,
-  value,
-  onChange,
-}: {
-  title: string;
-  value?: number;
-  onChange: (title: string, value?: number) => void;
-}) => {
+const ExerciseInput = ({ title, value, onChange }: ExerciseInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const decimalAvailable = title === "Weight";
 
@@ -78,10 +83,11 @@ const ExerciseInput = ({
 
   return (
     <div className="flex relative items-center w-full">
-      <span className="absolute top-[-24px]">{title}</span>
+      <span className="absolute top-[-24px] pb-2">{title}</span>
       <input
         ref={inputRef}
-        className="w-full h-[48px] rounded-[32px] outline-none bg-gray6 text-black text-2xl pl-4 pr-4 text-end"
+        className="w-full h-[48px] rounded-[32px] outline-none bg-gray6 
+        text-black text-[20px] sm:text-2xl pl-4 pr-4 text-end"
         value={value ?? ""}
         onChange={(e) => {
           const value = e.target.value;
@@ -110,11 +116,7 @@ const ExerciseInputs = ({
   id,
   onSettings,
   exerciseSettings,
-}: {
-  id: string;
-  onSettings: (v: ExerciseSettings) => void;
-  exerciseSettings: ExerciseSet | undefined;
-}) => {
+}: ExerciseInputsProps) => {
   const handleExerciseSettings = (title: string, value?: number) => {
     onSettings({
       id: id,
@@ -170,9 +172,11 @@ const ExerciseSetting = (
   return (
     <div
       key={v.id}
-      className={`${bgColor} w-full h-[240px] rounded-3xl p-5 flex gap-6 cursor-pointer`}
+      className={`${bgColor} w-full ${
+        isEdit ? "h-[180px]" : "h-[240px]"
+      } rounded-3xl p-4 sm:p-5 flex gap-6 cursor-pointer`}
     >
-      <div className="relative min-w-[200px] h-[200px] rounded-2xl overflow-hidden">
+      <div className="relative hidden sm:block min-w-[200px] h-[200px] rounded-2xl overflow-hidden">
         <Image
           src={img_url}
           alt="name"
@@ -182,8 +186,10 @@ const ExerciseSetting = (
           priority
         />
       </div>
-      <div className="flex flex-col justify-around">
-        <div className="text-4xl leading-10">{capitalizeFirstLetter(name)}</div>
+      <div className="flex flex-col justify-between">
+        <div className="text-2xl sm:text-4xl leading-10">
+          {capitalizeFirstLetter(name)}
+        </div>
         <ExerciseInputs
           id={id}
           onSettings={onSettings}
@@ -213,6 +219,7 @@ export const CreateEditProgramModal = ({
   onClose,
   data,
 }: CreateEditProgramModalProps) => {
+  const isMobile = useIsMobile();
   const { bodySnackbar } = useBodySnackbar();
   const cartItems = useCartStore((state) => state.stored);
   const removeFromCart = useCartStore((state) => state.remove);
@@ -369,17 +376,17 @@ export const CreateEditProgramModal = ({
     >
       <main className="flex flex-col gap-y-12 mt-2 overflow-auto">
         <div
-          className={`flex relative items-center w-[480px] ${
+          className={`flex relative items-center max-w-[480px] ${
             isEdit ? "gap-x-4" : "gap-x-6"
           }`}
         >
-          <span className="text-4xl">Name:</span>
+          <span className="text-2xl sm:text-4xl">Name:</span>
           {isEdit ? (
-            <span className="text-4xl">{programName}</span>
+            <span className="text-2xl sm:text-4xl">{programName}</span>
           ) : (
             <input
-              className="w-[480px] h-[64px] rounded-[32px] outline-none bg-gray6 text-black text-4xl pl-6 pr-6
- pb-0.5"
+              className="w-[200px] sm:w-[480px] h-[48px] sm:h-[64px] rounded-[32px] 
+              outline-none bg-gray6 text-black text-2xl sm:text-4xl pl-6 pr-6 pb-0.5"
               value={programName}
               onChange={(e) => setProgramName(e.target.value)}
               placeholder="Program name"
@@ -389,8 +396,8 @@ export const CreateEditProgramModal = ({
         </div>
         {!isEdit && (
           <div className="flex gap-6 items-start">
-            <span className="text-4xl">How to do ?</span>
-            <ol className="list-decimal list-inside gap-y-3 text-3xl [&>li:not(:first-of-type)]:mt-2">
+            <span className="text-2xl sm:text-4xl">How to do ?</span>
+            <ol className="list-decimal list-inside gap-y-3 text-1xl sm:text-3xl [&>li:not(:first-of-type)]:mt-2">
               <li>Order your exercises!</li>
               <li>Set up initial settings!</li>
               <li>Confirm!</li>
@@ -424,8 +431,8 @@ export const CreateEditProgramModal = ({
         <Button
           title={isEdit ? "Delete" : "Delete All"}
           onClick={() => setOpenConfirm(isEdit ? "deleteProgram" : "deleteAll")}
-          className={"w-[220px] h-[60px] bg-red"}
-          fontSize={32}
+          className={"w-fit sm:w-[220px] h-[60px] bg-red"}
+          fontSize={isMobile ? 20 : 32}
           disabled={loading}
           loading={loading}
         />
@@ -470,8 +477,8 @@ export const CreateEditProgramModal = ({
 
             setOpenConfirm(isEdit ? "editConfirm" : "register");
           }}
-          className={"w-[220px] h-[60px] bg-lightGreen"}
-          fontSize={32}
+          className={"w-fit sm:w-[220px] h-[60px] bg-lightGreen"}
+          fontSize={isMobile ? 20 : 32}
         />
       </footer>
       <ConfirmModal isOpen={!!openConfirm} onClick={handleConfirm} />

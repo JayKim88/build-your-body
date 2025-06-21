@@ -19,10 +19,10 @@ html {
 body {
   height: 100%;
   background: #000000;
-  color: #F2F2F2;
- }
+  color: #f2f2f2;
+}
 
- /* styles.css */
+/* styles.css */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   @apply appearance-none;
@@ -43,7 +43,7 @@ input[type="number"] {
 @layer components {
   .btn-basic {
     @apply w-fit rounded-[32px] px-10 py-5 text-[32px] font-normal;
-  }  
+  }
 }
 
 /* below for image cropper */
@@ -59,16 +59,28 @@ input[type="number"] {
   border-radius: 10px;
 }
 
-.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-e,
-.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-n,
-.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-w,
-.custom-cropper-styles .cropper-container .cropper-crop-box .cropper-point.point-s {
+.custom-cropper-styles
+  .cropper-container
+  .cropper-crop-box
+  .cropper-point.point-e,
+.custom-cropper-styles
+  .cropper-container
+  .cropper-crop-box
+  .cropper-point.point-n,
+.custom-cropper-styles
+  .cropper-container
+  .cropper-crop-box
+  .cropper-point.point-w,
+.custom-cropper-styles
+  .cropper-container
+  .cropper-crop-box
+  .cropper-point.point-s {
   display: none;
 }
 
 .custom-cropper-styles .cropper-container .cropper-modal {
   opacity: 0.7;
-} 
+}
 
 /* below for switch */
 .switch {
@@ -91,9 +103,9 @@ input[type="number"] {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #BDBDBD;
-  -webkit-transition: .4s;
-  transition: .4s;
+  background-color: #bdbdbd;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -104,8 +116,8 @@ input[type="number"] {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  -webkit-transition: .25s;
-  transition: .25s;
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
 }
 
 .switch input:checked + .slider {
@@ -140,8 +152,6 @@ input[type="number"] {
   padding-top: 160px;
 }
 
-
-
 /* small switch */
 .switch-small {
   position: relative;
@@ -163,8 +173,8 @@ input[type="number"] {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #BDBDBD;
-  transition: .4s;
+  background-color: #bdbdbd;
+  transition: 0.4s;
 }
 
 .slider-small:before {
@@ -175,7 +185,7 @@ input[type="number"] {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  transition: .25s;
+  transition: 0.25s;
 }
 
 .switch-small input:checked + .slider-small {
@@ -191,7 +201,7 @@ input[type="number"] {
 }
 
 .slider-small.round {
-  border-radius: 15px; 
+  border-radius: 15px;
 }
 
 .slider-small.round:before {

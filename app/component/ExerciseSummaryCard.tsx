@@ -29,7 +29,8 @@ export const ExerciseSummaryCard = ({
   return (
     <div
       key={id}
-      className={`${bgColor} w-[300px] min-w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col 
+      className={`${bgColor} w-fit h-fit sm:w-[300px] sm:min-w-[300px] rounded-3xl p-5 
+      gap-y-6 flex flex-col 
       cursor-pointer relative`}
       onClick={() => {
         setLoading(true);
@@ -47,8 +48,10 @@ export const ExerciseSummaryCard = ({
           priority
         />
       </div>
-      <div className="text-[30px]">{capitalizeFirstLetter(name)}</div>
-      <div className="flex gap-x-2">
+      <div className="text-[20px] sm:text-[30px]">
+        {capitalizeFirstLetter(name)}
+      </div>
+      <div className="flex gap-x-2 text-[16px] min-w-[200px]">
         <Chip text={`${weight} kg`} />
         <Chip text={`${repeat} times`} />
         <Chip text={`${set} sets`} />

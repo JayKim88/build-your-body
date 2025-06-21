@@ -7,7 +7,7 @@ export default async function Page() {
   const fetchedData = (await getPrograms()) as RegisteredProgram[] | undefined;
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper !pt-[100px] sm:pt-[160px]">
       <Header />
       <ProgramList data={fetchedData} />
     </div>

@@ -23,6 +23,7 @@ import LottiePlayer from "../component/LottiePlayer";
 import Loading from "../loading";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
 import { SpinLoader } from "../component/SpinLoader";
+import { useIsMobile } from "../hook/useWindowSize";
 
 type ProgramItemsProps = {
   data: RegisteredProgram[];
@@ -36,7 +37,10 @@ type GetLastHistoryProps = {
 
 export const Chip = ({ text }: { text: string }) => {
   return (
-    <span className="rounded-[32px] bg-black text-gray6 h-9 w-fit flex justify-center items-center p-2">
+    <span
+      className="rounded-[32px] bg-black text-gray6 h-fit w-fit flex 
+    justify-center items-center p-2"
+    >
       {text}
     </span>
   );
@@ -52,6 +56,7 @@ const ProgramItem = (
     isEditing: boolean;
   }
 ) => {
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(false);
   const savedProgramId = useProgressStore((state) => state.programId);
   const router = useRouter();
@@ -72,6 +77,7 @@ const ProgramItem = (
 
   const isInprogress = !!savedProgramId;
   const isProgramInprogress = isInprogress && savedProgramId === _id;
+  const isInprogressNotTarget = isInprogress && savedProgramId !== _id;
 
   const enterProgram = () => {
     onEnterClick(true);
@@ -92,7 +98,7 @@ const ProgramItem = (
         {lastCompletedAt && (
           <span
             className="flex justify-start items-center gap-x-1 border-2 w-fit p-2
-            rounded-[32px] cursor-pointer relative"
+            rounded-[32px] cursor-pointer relative mb-2"
             onClick={() => {
               setLoading(true);
               onGetLastHistory({
@@ -106,20 +112,25 @@ const ProgramItem = (
             {loading && <SpinLoader />}
           </span>
         )}
-        <div className="flex justify-between h-20">
+        <div
+          className={`flex justify-between h-fit gap-y-2 sm:gap-y-0 sm:flex-row ${
+            isInprogressNotTarget ? "flex-row" : "flex-col"
+          }`}
+        >
           <div
-            className={`flex items-center gap-x-8 ${
+            className={`flex items-center gap-x-8 justify-between sm:justify-normal ${
               isProgramInprogress ? "justify-between w-full" : ""
             }`}
           >
-            <h1 className="text-4xl">{programName}</h1>
+            <h1 className="text-2xl sm:text-4xl">{programName}</h1>
             {isInprogress ? (
               isProgramInprogress ? (
                 <Button
                   title="Continue"
                   onClick={enterProgram}
-                  className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
-                  fontSize={40}
+                  className="min-w-[40px] sm:min-w-[120px] text-black
+                   bg-gray6 hover:bg-realGreen hover:text-gray6 h-12 sm:h-16"
+                  fontSize={isMobile ? 20 : 40}
                 />
               ) : (
                 <></>
@@ -128,8 +139,9 @@ const ProgramItem = (
               <Button
                 title="Enter"
                 onClick={enterProgram}
-                className="min-w-[120px] text-black bg-gray6 hover:bg-realGreen hover:text-gray6 h-16"
-                fontSize={40}
+                className="min-w-[40px] sm:min-w-[120px] text-black bg-gray6 
+                hover:bg-realGreen hover:text-gray6 h-10 sm:h-16"
+                fontSize={isMobile ? 20 : 40}
               />
             )}
           </div>
@@ -137,12 +149,12 @@ const ProgramItem = (
             <div
               className={`${
                 isEditing ? "pointer-events-none" : ""
-              } flex items-center gap-x-4 [&>img]:cursor-pointer w-[112px]`}
+              } flex justify-end items-center gap-x-4 [&>img]:cursor-pointer w-full sm:w-[112px]`}
             >
               <Image
                 src="/edit.png"
                 alt="edit"
-                width={48}
+                width={isMobile ? 32 : 48}
                 height={48}
                 onClick={() =>
                   onSetEditProgram({
@@ -157,7 +169,7 @@ const ProgramItem = (
               <Image
                 src="/delete_bin.png"
                 alt="delete"
-                width={48}
+                width={isMobile ? 32 : 48}
                 height={48}
                 onClick={() => onSetDeleteTargetId(_id)}
               />
@@ -348,8 +360,8 @@ const ProgramList = ({ data }: { data?: RegisteredProgram[] }) => {
     <Loading />
   ) : (
     <div
-      className={`flex flex-col gap-y-8 overflow-y-auto max-w-[calc(100vw-110px)] 
-    transition-opacity duration-300
+      className={`flex flex-col gap-y-8 overflow-y-auto max-w-full sm:max-w-[calc(100vw-110px)] 
+    transition-opacity duration-300 mb-[100px]
     ${isLoaded ? "opacity-100" : "opacity-0"} 
     ${programRequired ? "items-center justify-center h-full" : ""}`}
     >

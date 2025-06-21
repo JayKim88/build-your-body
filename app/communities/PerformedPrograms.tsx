@@ -81,7 +81,7 @@ const PerformedProgramCard = (
   return (
     <div
       key={_id}
-      className={`bg-gray1 w-[384px] rounded-3xl p-5 gap-y-5 flex 
+      className={`bg-gray1 w-full sm:w-[384px] rounded-3xl p-5 gap-y-5 flex 
         flex-col cursor-pointer justify-between`}
       onClick={() => onClick(_id)}
     >
@@ -178,8 +178,8 @@ const PerformedPrograms = ({ data, userId }: PerformedProgramsProps) => {
 
   return (
     <>
-      <section className="flex gap-6 flex-wrap relative">
-        <section className="flex gap-6 flex-wrap mt-20">
+      <section className="flex gap-6 flex-wrap relative w-full">
+        <section className="flex gap-6 flex-wrap mt-[120px] md:mt-20 mb-[100px] w-full">
           {data?.length ? (
             data.map((program) => (
               <PerformedProgramCard

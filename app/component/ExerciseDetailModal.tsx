@@ -105,32 +105,44 @@ export const ExerciseDetailModal = ({
   const isDataReady = data ?? exerciseData;
 
   return (
-    <ModalWrapper isOpen={isOpen && !!isDataReady} onClose={onClose}>
+    <ModalWrapper
+      isOpen={isOpen && !!isDataReady}
+      Title={
+        <div className="text-2xl sm:text-3xl flex items-center">
+          {capitalizeFirstLetter(name ?? "")}
+        </div>
+      }
+      onClose={onClose}
+    >
       <main className="flex flex-col gap-y-5">
-        <iframe
-          title="Exercise video player"
-          src={video_url}
-          width="760"
-          height="430"
-        />
+        <div className="w-full aspect-video">
+          <iframe
+            title="Exercise video player"
+            src={video_url}
+            className="w-full h-full"
+          />
+        </div>
         <section className="flex flex-col gap-y-6">
-          <div className="text-3xl">{capitalizeFirstLetter(name ?? "")}</div>
-          <div>{description}</div>
-          <div className="flex gap-x-2 justify-start">
-            <div className="min-w-[160px] text-2xl font-medium">운동 방법</div>
+          <div className="text-[14px] sm:text-1xl">{description}</div>
+          <div className="flex flex-col sm:flex-row gap-x-2 justify-start">
+            <div className="min-w-[160px] text-[20px] sm:text-2xl font-medium pb-2 sm:pb-0">
+              운동 방법
+            </div>
             <ol className="list-decimal list-inside gap-1">
               {guide?.map((v, index) => (
-                <li key={index} className="mb-2">
+                <li key={index} className="mb-2 text-[14px] sm:text-1xl">
                   {v}
                 </li>
               ))}
             </ol>
           </div>
-          <div className="flex gap-x-2 justify-start">
-            <div className="min-w-[160px] text-2xl font-medium">참고 링크</div>
+          <div className="flex flex-col sm:flex-row gap-x-2 justify-start mb-[16px]">
+            <div className="min-w-[160px] text-[20px] sm:text-2xl font-medium pb-2 sm:pb-0">
+              참고 링크
+            </div>
             <ul className="list-disc list-inside">
               {ref?.map((v, index) => (
-                <li key={index}>
+                <li key={index} className="text-[14px] sm:text-1xl">
                   <Link
                     href={v.url}
                     rel="noopener noreferrer"

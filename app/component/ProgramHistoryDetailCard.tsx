@@ -27,7 +27,7 @@ export const ProgramHistoryDetailCard = ({
   return (
     <div
       key={id}
-      className={`${bgColor} w-[300px] min-w-[300px] h-fit rounded-3xl p-5 gap-y-6 flex flex-col 
+      className={`${bgColor} w-fit h-fit sm:w-[300px] sm:min-w-[300px] rounded-3xl p-5 gap-y-6 flex flex-col 
       cursor-pointer relative`}
       onClick={() => {
         setLoading(true);
@@ -56,7 +56,7 @@ export const ProgramHistoryDetailCard = ({
             <div
               key={v.order}
               className="flex justify-around items-center rounded-[32px] 
-              h-[50px] px-1 bg-black text-[18px]"
+              h-[50px] px-1 bg-black text-[18px] min-w-[200px]"
             >
               <span className="w-fit">{order} set</span>
               <span className="w-fit">{weight?.toLocaleString()} kg</span>

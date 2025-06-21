@@ -126,8 +126,8 @@ export const HistoryByDateSection = () => {
   return (
     <section className="flex flex-col gap-y-5">
       <section className="flex flex-col gap-y-5">
-        <div className="flex gap-x-5">
-          <div className="w-[360px] h-[340px] rounded-3xl bg-gray0 relative">
+        <div className="flex gap-x-5 sm:flex-row flex-col gap-y-5 sm:gap-y-0 scale-90 sm:scale-100 origin-left">
+          <div className="min-w-[360px] w-[360px] h-[340px] rounded-3xl bg-gray0 relative">
             <DayPicker
               required={false}
               mode="single"

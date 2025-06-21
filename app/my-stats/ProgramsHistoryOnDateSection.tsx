@@ -6,6 +6,7 @@ import { formattedTime } from "../utils";
 import { PngIcon } from "../my-programs/complete/WorkoutSummary";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
 import { SpinLoader } from "../component/SpinLoader";
+import { useIsMobile } from "../hook/useWindowSize";
 
 type ProgramsHistoryOnDateSectionProps = {
   data: MyStat[] | null;
@@ -24,6 +25,7 @@ type ProgramsHistoryOnDateProps = {
 type ProgramSummaryProps = {
   data: MyStat | null;
   loading: boolean;
+  onOpenModal: () => void;
 };
 
 const ProgramsHistoryOnDate = ({
@@ -92,9 +94,12 @@ const ProgramsHistoryOnDate = ({
   );
 };
 
-const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
+const ProgramHistorySummary = ({
+  data,
+  loading,
+  onOpenModal,
+}: ProgramSummaryProps) => {
   const [lastData, setLastData] = useState<MyStat | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const formattedData = data?.savedExercisesStatus.map((v) => {
     const exerciseName = v.name;
     const lift = v.exerciseSetValues.reduce((acc, cur) => {
@@ -119,9 +124,7 @@ const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
         className={`w-[360px] h-[340px] flex flex-col gap-y-4 rounded-[32px] p-5 
           bg-gray0 relative ${isDataAvailable ? "cursor-pointer" : ""}`}
         {...(isDataAvailable && {
-          onClick: () => {
-            setIsOpen(true);
-          },
+          onClick: onOpenModal,
         })}
       >
         {loading && <SpinLoader />}
@@ -164,11 +167,6 @@ const ProgramHistorySummary = ({ data, loading }: ProgramSummaryProps) => {
           </div>
         )}
       </div>
-      <ProgramHistoryDetailModal
-        isOpen={isOpen}
-        data={data}
-        onClose={() => setIsOpen(false)}
-      />
     </>
   );
 };
@@ -178,7 +176,9 @@ export const ProgramsHistoryOnDateSection = ({
   date,
   loading,
 }: ProgramsHistoryOnDateSectionProps) => {
+  const isMobile = useIsMobile();
   const [selectedProgramId, setSelectedWorkoutId] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const selectedProgram = useMemo(
     () => data?.find((v) => v._id === selectedProgramId) ?? null,
@@ -195,15 +195,30 @@ export const ProgramsHistoryOnDateSection = ({
   }, [data]);
 
   return (
-    <section className="flex gap-x-5">
-      <ProgramsHistoryOnDate
-        data={data}
-        date={date}
-        selectedProgramId={selectedProgramId}
-        onSelectProgramId={(v) => setSelectedWorkoutId(v)}
-        loading={loading}
+    <>
+      <section
+        className={`flex gap-x-5 sm:flex-row flex-col gap-y-5 sm:gap-y-0 ${
+          isMobile && "scale-90 sm:scale-100 origin-left"
+        }`}
+      >
+        <ProgramsHistoryOnDate
+          data={data}
+          date={date}
+          selectedProgramId={selectedProgramId}
+          onSelectProgramId={(v) => setSelectedWorkoutId(v)}
+          loading={loading}
+        />
+        <ProgramHistorySummary
+          data={selectedProgram}
+          loading={loading}
+          onOpenModal={() => setIsOpen(true)}
+        />
+      </section>
+      <ProgramHistoryDetailModal
+        isOpen={isOpen}
+        data={selectedProgram}
+        onClose={() => setIsOpen(false)}
       />
-      <ProgramHistorySummary data={selectedProgram} loading={loading} />
-    </section>
+    </>
   );
 };

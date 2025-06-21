@@ -5,6 +5,7 @@ import { RegisteredProgram } from "@/app/api/types";
 import { Button } from "@/app/component/Button";
 import { useProgressStore } from "@/app/store";
 import { formattedTime } from "@/app/utils";
+import { useIsMobile } from "@/app/hook/useWindowSize";
 
 type ProgressTimerButtonProps = {
   data?: RegisteredProgram;
@@ -17,6 +18,7 @@ const ProgressTimerButton = ({
   isRunning,
   onSetRunning,
 }: ProgressTimerButtonProps) => {
+  const isMobile = useIsMobile();
   const savedWorkoutTime = useProgressStore((state) => state.workoutTime);
   const saveWorkoutTime = useProgressStore((state) => state.saveWorkoutTime);
   const saveProgramInfo = useProgressStore((state) => state.saveProgramInfo);
@@ -63,10 +65,12 @@ const ProgressTimerButton = ({
   if (!data) return <></>;
 
   return time ? (
-    <div className="rounded-3xl flex gap-x-4 items-center border-2 px-[20px] h-16">
-      <div className="text-[32px] min-w-28">{formattedTime(time, true)}</div>
+    <div className="rounded-3xl flex gap-x-4 items-center border-2 px-[20px] h-12 sm:h-16">
+      <div className="text-2xl min-w-fit sm:text-[32px] sm:min-w-28">
+        {formattedTime(time, true)}
+      </div>
       {isRunning ? (
-        <div className="relative w-8 h-8">
+        <div className="relative w-6 sm:w-8 h-8">
           <Image
             className="object-contain cursor-pointer"
             src="/pause.png"
@@ -77,7 +81,7 @@ const ProgressTimerButton = ({
           />
         </div>
       ) : (
-        <div className="relative w-8 h-8">
+        <div className="relative w-6 sm:w-8 h-8">
           <Image
             className="object-contain cursor-pointer"
             src="/resume.png"
@@ -95,8 +99,8 @@ const ProgressTimerButton = ({
       onClick={() => {
         handleStart();
       }}
-      className="border-2 px-[40px] h-16"
-      fontSize={32}
+      className="border-2 px-[40px] h-12 sm:h-16 w-[130px] sm:w-fit"
+      fontSize={isMobile ? 20 : 32}
     />
   );
 };

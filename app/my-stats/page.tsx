@@ -13,7 +13,7 @@ export default async function Page() {
   ]);
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper !pt-[80px] sm:pt-[160px]">
       <Header />
       <StatSections
         totalSummary={totalSummary as TotalWorkoutSummary}

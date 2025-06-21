@@ -8,8 +8,8 @@ const MANUAL_URL =
 
 export const ManualButton = () => (
   <span
-    className="absolute top-[44px] right-10 transition-all flex flex-col 
-    justify-center items-center ease-in-out duration-300 
+    className="absolute top-[44px] right-5 sm:right-10 transition-all flex flex-col 
+    justify-center items-center ease-in-out duration-300 scale-75 sm:scale-100
     hover:text-yellow hover:cursor-pointer"
     onClick={() => window.open(MANUAL_URL, "_blank")}
   >

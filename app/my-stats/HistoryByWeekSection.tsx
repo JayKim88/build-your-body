@@ -8,6 +8,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
 import { HistoryChart } from "./HistoryChart";
 import { ProgramSummaryModal } from "../component/ProgramSummaryModal";
+import { useIsMobile } from "../hook/useWindowSize";
 
 type HistoryByWeekSectionProps = {
   data: RegisteredProgram[];
@@ -97,6 +98,7 @@ const Programs = ({
 };
 
 export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
+  const isMobile = useIsMobile();
   const [selectedProgramId, setSelectedProgramId] = useState(
     data?.[0]?._id ?? ""
   );
@@ -114,23 +116,29 @@ export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
     data?.find((v) => v._id === selectedProgramId)?.programName ?? "";
 
   return (
-    <section className="flex gap-x-5">
-      <Programs
-        data={data}
-        selectedProgramId={selectedProgramId}
-        onSetIsOpen={(v) => setIsOpen(v)}
-        onClickDetailProgramId={(v) => setClickedDetailProgramId(v)}
-        onSelectProgramId={(v) => {
-          setLoading(true);
-          setSelectedProgramId(v);
-        }}
-        loading={loading}
-      />
-      <HistoryChart
-        programId={selectedProgramId}
-        programName={programName}
-        onSetLoading={handleLoading}
-      />
+    <>
+      <section
+        className={`flex gap-x-5 sm:flex-row flex-col gap-y-5 sm:gap-y-0 ${
+          isMobile && "scale-90 sm:scale-100 origin-left"
+        }`}
+      >
+        <Programs
+          data={data}
+          selectedProgramId={selectedProgramId}
+          onSetIsOpen={(v) => setIsOpen(v)}
+          onClickDetailProgramId={(v) => setClickedDetailProgramId(v)}
+          onSelectProgramId={(v) => {
+            setLoading(true);
+            setSelectedProgramId(v);
+          }}
+          loading={loading}
+        />
+        <HistoryChart
+          programId={selectedProgramId}
+          programName={programName}
+          onSetLoading={handleLoading}
+        />
+      </section>
       <ProgramSummaryModal
         isOpen={isOpen}
         data={clickedProgramDetail}
@@ -141,7 +149,7 @@ export const HistoryByWeekSection = ({ data }: HistoryByWeekSectionProps) => {
           }, OVERLAY_OPEN_DELAY);
         }}
       />
-    </section>
+    </>
   );
 };
 

@@ -8,9 +8,13 @@ import Lol from "@/public/workout-complete-icon/lol.svg";
 
 export type SatisfactionIconProps = {
   status?: SatisfiedStatus;
+  className?: string;
 };
 
-export const SatisfictionIcon = ({ status }: SatisfactionIconProps) => {
+export const SatisfictionIcon = ({
+  status,
+  className,
+}: SatisfactionIconProps) => {
   let result;
   switch (status) {
     case "terrible":
@@ -30,5 +34,9 @@ export const SatisfictionIcon = ({ status }: SatisfactionIconProps) => {
       break;
   }
 
-  return <span className="[&>svg]:fill-yellow scale-75">{result}</span>;
+  return (
+    <span className={`[&>svg]:fill-yellow scale-75 ${className}`}>
+      {result}
+    </span>
+  );
 };

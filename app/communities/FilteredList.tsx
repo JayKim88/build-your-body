@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 
 import { MyStat as PerformedProgramsData } from "../api/types";
 import { Filter, ExerciseType } from "../component/Filter";
@@ -13,7 +12,6 @@ type FilteredListProps = {
 };
 
 const FilteredList = ({ data, userId }: FilteredListProps) => {
-  const { data: session } = useSession();
   const [selectedType, setSelectedType] = useState<ExerciseType>("all");
   const [showMyData, setShowMyData] = useState(false);
   const [performedProgramsData, setPerformedProgramsData] = useState<
@@ -22,8 +20,6 @@ const FilteredList = ({ data, userId }: FilteredListProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleFilter = (v: ExerciseType) => setSelectedType(v);
-
-  const isLoggedIn = !!session;
 
   useEffect(() => {
     if (!data?.length) return;
@@ -54,28 +50,15 @@ const FilteredList = ({ data, userId }: FilteredListProps) => {
         isLoaded ? "opacity-100" : "opacity-0"
       }`}
     >
-      <Filter onFilter={handleFilter} selectedType={selectedType} />
-      {isLoggedIn && (
-        <div
-          className={`${defaultRowStyles} fixed w-fit 
-            top-[190px] z-10 right-[50px] items-end`}
-        >
-          <div className="text-4xl">Show my list</div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              onChange={(e) => setShowMyData(e.target.checked)}
-              checked={showMyData}
-            />
-            <span className="slider round"></span>
-          </label>
-        </div>
-      )}
+      <Filter
+        onFilter={handleFilter}
+        selectedType={selectedType}
+        onSetShowMyData={(v) => setShowMyData(v)}
+        showMyData={showMyData}
+      />
       <PerformedPrograms data={performedProgramsData} userId={userId} />
     </div>
   );
 };
 
 export { FilteredList };
-
-const defaultRowStyles = "flex gap-x-[50px] text-[40px] justify-between";
