@@ -21,6 +21,7 @@ const PerformedProgramCard = (
     onClick: (v: string) => void;
     memberUserId?: string;
     isLoggedIn: boolean;
+    index: number;
   }
 ) => {
   const {
@@ -36,6 +37,7 @@ const PerformedProgramCard = (
     memberUserId,
     likedUserIds,
     isLoggedIn,
+    index,
   } = props;
 
   const [liked, setLiked] = useState(false);
@@ -98,11 +100,11 @@ const PerformedProgramCard = (
         {imageUrl ? (
           <Image
             src={imageUrl}
-            alt="name"
+            alt={`${title || savedProgramName} workout photo`}
             fill
             style={{ objectFit: "cover" }}
-            sizes="(max-width: 1200px) 100vw 100vh"
-            priority
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+            priority={index < 2}
           />
         ) : (
           <span className="text-[48px]">No Image</span>
@@ -181,10 +183,11 @@ const PerformedPrograms = ({ data, userId }: PerformedProgramsProps) => {
       <section className="flex gap-6 flex-wrap relative w-full">
         <section className="flex gap-6 flex-wrap mt-[120px] md:mt-20 mb-[100px] w-full">
           {data?.length ? (
-            data.map((program) => (
+            data.map((program, index) => (
               <PerformedProgramCard
                 key={program._id}
                 {...program}
+                index={index}
                 onClick={handleClickProgram}
                 memberUserId={userId}
                 isLoggedIn={isLoggedIn}

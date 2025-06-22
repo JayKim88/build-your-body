@@ -61,6 +61,7 @@ const CartIcon = ({ title, onClick, Icon, isAleadyInCart }: CartIconProps) => {
 const ExerciseCard = (
   props: Omit<Exercise, "ref"> & {
     onClick: (v: string) => void;
+    index: number;
   }
 ) => {
   const { bodySnackbar } = useBodySnackbar();
@@ -69,7 +70,7 @@ const ExerciseCard = (
   const addToCart = useCartStore((state) => state.add);
   const removeFromCart = useCartStore((state) => state.remove);
 
-  const { _id, type, thumbnail_img_url, name, summary, onClick, ...rest } =
+  const { _id, type, thumbnail_img_url, name, summary, onClick, index, ...rest } =
     props;
 
   const bgColor = getBgColor(type);
@@ -116,11 +117,11 @@ const ExerciseCard = (
       <div className="relative w-full h-48 sm:h-60 md:h-72 rounded-2xl overflow-hidden">
         <Image
           src={thumbnail_img_url}
-          alt="name"
+          alt={`${name} exercise demonstration`}
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 1200px) 100vw"
-          priority
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+          priority={index < 2}
         />
       </div>
       <div className="text-xl sm:text-2xl md:text-3xl">
@@ -180,10 +181,11 @@ const Exercises = ({ data, selectedType }: ExercisesProps) => {
     <>
       <section className="flex gap-6 flex-wrap mt-20 mb-[100px]">
         {exercisesData.length ? (
-          exercisesData.map(({ ref, ...rest }) => (
+          exercisesData.map(({ ref, ...rest }, index) => (
             <ExerciseCard
               key={rest._id}
               {...rest}
+              index={index}
               onClick={handleClickExercise}
             />
           ))

@@ -12,7 +12,7 @@ export default function Page() {
         muted
         loop
         playsInline
-        poster="/landing.jpg"
+        poster="/landing.webp"
       >
         <source
           src={`${process.env.VIDEO_BUCKET_URL}/dwayne-johnson-training.mp4`}

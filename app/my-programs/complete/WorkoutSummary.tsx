@@ -96,7 +96,7 @@ const formattedDuration = (value: number) => {
 export const PngIcon = ({ name, width, height }: PngIconProps) => (
   <Image
     className="object-contain"
-    src={`/workout-complete-icon/${name}.png`}
+    src={`/workout-complete-icon/${name}.webp`}
     alt={name}
     width={width ?? 48}
     height={height ?? 48}
@@ -436,7 +436,7 @@ export const WorkoutSummary = () => {
               {croppedImg ? (
                 <Image
                   src={croppedImg}
-                  alt="cropped image"
+                  alt="Workout completion photo"
                   width={400}
                   height={400}
                 />
@@ -452,8 +452,8 @@ export const WorkoutSummary = () => {
                   {...getRootProps()}
                 >
                   <Image
-                    src="/workout-complete-icon/add.png"
-                    alt="add photo"
+                    src="/workout-complete-icon/add.webp"
+                    alt="Upload workout photo"
                     width={48}
                     height={48}
                   />

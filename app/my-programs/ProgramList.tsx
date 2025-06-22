@@ -178,10 +178,11 @@ const ProgramItem = (
         </div>
       </header>
       <main className="flex gap-x-6 overflow-x-auto">
-        {initialExercises?.map((exercise) => (
+        {initialExercises?.map((exercise, index) => (
           <ExerciseSummaryCard
             key={exercise.id}
             data={exercise}
+            index={index}
             onClick={(v) => onSetClickedId(v)}
           />
         ))}

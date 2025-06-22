@@ -38,12 +38,12 @@ export const ConfirmModal = ({
       >
         <div className="relative w-[172px] h-[172px]">
           <Image
-            src="/confirm.png"
-            alt="confirm"
+            src="/confirm.webp"
+            alt="Confirmation dialog icon"
             fill
             sizes="172px"
             style={{ objectFit: "contain" }}
-            priority
+            loading="lazy"
           />
         </div>
         <div

@@ -58,10 +58,11 @@ export const Menu = () => {
           <div className="relative w-[18px] h-[30px]">
             <Image
               src="/arrow-right.svg"
-              alt="arrow right"
+              alt="Expand navigation menu"
               fill
               style={{ objectFit: "contain" }}
-              priority
+              sizes="18px"
+              loading="lazy"
             />
           </div>
         </div>

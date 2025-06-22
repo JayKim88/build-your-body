@@ -69,16 +69,16 @@ const Title = ({ isEdit }: { isEdit?: boolean }) => {
 const ExerciseInput = ({ title, value, onChange }: ExerciseInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const decimalAvailable = title === "Weight";
-  
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const isEmpty = value === "";
 
-    onChange(
-      title,
-      isEmpty ? undefined : Number(Number(value).toFixed(2))
-    );
-  }, [title, onChange]);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const isEmpty = value === "";
+
+      onChange(title, isEmpty ? undefined : Number(Number(value).toFixed(2)));
+    },
+    [title, onChange]
+  );
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -157,6 +157,7 @@ const ExerciseSetting = (
     isEdit?: boolean;
   }
 ) => {
+  const isMobile = useIsMobile();
   const {
     id,
     img_url,
@@ -169,15 +170,18 @@ const ExerciseSetting = (
     weight,
     isEdit,
   } = v;
+
   const bgColor = getBgColor(type);
-  
+
   const handleDelete = useCallback(() => onDelete(id), [onDelete, id]);
+
+  console.log("img_url", img_url);
 
   return (
     <div
       key={v.id}
       className={`${bgColor} w-full ${
-        isEdit ? "h-[180px]" : "h-[240px]"
+        isEdit && isMobile ? "h-[180px]" : "h-[240px]"
       } rounded-3xl p-4 sm:p-5 flex gap-6 cursor-pointer`}
     >
       <div className="relative hidden sm:block min-w-[200px] h-[200px] rounded-2xl overflow-hidden">
@@ -237,7 +241,7 @@ export const CreateEditProgramModal = ({
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [programName, setProgramName] = useState("");
   const [exerciseSettings, setExerciseSettings] = useState<CartProps[]>([]);
-  
+
   const isEdit = !!data;
 
   const handleExerciseSettings = useCallback((settings: ExerciseSettings) => {
@@ -254,11 +258,14 @@ export const CreateEditProgramModal = ({
     });
   }, []);
 
-  const handleDelete = useCallback((id: string) => {
-    removeFromCart(id);
-    setExerciseSettings((prev) => prev.filter((v) => v.id !== id));
-    exerciseSettings.length === 1 && storeProgramName("");
-  }, [removeFromCart, exerciseSettings.length, storeProgramName]);
+  const handleDelete = useCallback(
+    (id: string) => {
+      removeFromCart(id);
+      setExerciseSettings((prev) => prev.filter((v) => v.id !== id));
+      exerciseSettings.length === 1 && storeProgramName("");
+    },
+    [removeFromCart, exerciseSettings.length, storeProgramName]
+  );
 
   const handleCleanUpCart = useCallback(() => {
     removeAllFromCart();
@@ -279,7 +286,14 @@ export const CreateEditProgramModal = ({
     }, OVERLAY_OPEN_DELAY);
 
     onClose();
-  }, [isEdit, exerciseSettings, programName, addSettingsToCart, storeProgramName, onClose]);
+  }, [
+    isEdit,
+    exerciseSettings,
+    programName,
+    addSettingsToCart,
+    storeProgramName,
+    onClose,
+  ]);
 
   const handleCreateEdit = async () => {
     setLoading(true);

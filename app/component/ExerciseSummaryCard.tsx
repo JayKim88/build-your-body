@@ -10,11 +10,13 @@ export type ExerciseSummaryCardProps = {
   data: CartProps;
   onClick: (v: string) => void;
   isClicked?: boolean;
+  index?: number;
 };
 
 export const ExerciseSummaryCard = ({
   data,
   onClick,
+  index = 0,
 }: ExerciseSummaryCardProps) => {
   const [loading, setLoading] = useState(false);
   const { id, type, img_url, name, repeat, set, weight } = data ?? {};
@@ -41,11 +43,11 @@ export const ExerciseSummaryCard = ({
       <div className="relative w-full h-[260px] rounded-2xl overflow-hidden">
         <Image
           src={img_url}
-          alt="name"
+          alt={`${name} exercise summary`}
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 1200px) 100vw"
-          priority
+          sizes="(max-width: 640px) 100vw, 240px"
+          priority={index < 3}
         />
       </div>
       <div className="text-[20px] sm:text-[30px]">

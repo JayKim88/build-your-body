@@ -34,27 +34,27 @@ export const exerciseTypes: Omit<ChipProps, "onSelect" | "selected">[] = [
   },
   {
     type: "chest",
-    src: "/filter-icon/chest.png",
+    src: "/filter-icon/chest.webp",
     selectedBgColor: "bg-lightRed",
   },
   {
     type: "back",
-    src: "/filter-icon/back.png",
+    src: "/filter-icon/back.webp",
     selectedBgColor: "bg-yellow",
   },
   {
     type: "leg",
-    src: "/filter-icon/leg.png",
+    src: "/filter-icon/leg.webp",
     selectedBgColor: "bg-blue",
   },
   {
     type: "shoulder",
-    src: "/filter-icon/shoulder.png",
+    src: "/filter-icon/shoulder.webp",
     selectedBgColor: "bg-green",
   },
   {
     type: "arm",
-    src: "/filter-icon/arm.png",
+    src: "/filter-icon/arm.webp",
     selectedBgColor: "bg-purple",
   },
 ];
