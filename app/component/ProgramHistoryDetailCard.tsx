@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { ExercisesStatus } from "../my-programs/[programId]/Progress";
 import { SpinLoader } from "./SpinLoader";
+import { exerciseImageBlurDataURL } from "../utils/imageBlur";
 
 export type ProgramHistoryDetailCardProps = {
   data: ExercisesStatus[0];
@@ -39,11 +40,13 @@ export const ProgramHistoryDetailCard = ({
       <div className="relative w-full h-[260px] rounded-2xl overflow-hidden">
         <Image
           src={img_url}
-          alt="name"
+          alt={`${name} exercise`}
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 1200px) 100vw"
+          sizes="(max-width: 640px) 100vw, 300px"
           priority
+          placeholder="blur"
+          blurDataURL={exerciseImageBlurDataURL}
         />
       </div>
       <div className="flex flex-col gap-y-2">

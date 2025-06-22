@@ -16,6 +16,7 @@ import { capitalizeFirstLetter, handleNumberKeyDown } from "@/app/utils";
 import ProgressTimerButton from "./ProgressTimer";
 import { BreakTimeModal } from "./BreakTimeModal";
 import { useIsMobile } from "@/app/hook/useWindowSize";
+import { exerciseImageBlurDataURL } from "@/app/utils/imageBlur";
 
 type ProgressProps = {
   data: RegisteredProgram | undefined;
@@ -307,11 +308,13 @@ const ExerciseProgressCard = memo(function ExerciseProgressCard({
         <div className="relative w-full h-[360px] rounded-2xl overflow-hidden">
           <Image
             src={data.img_url}
-            alt="name"
+            alt={`${data.name} exercise`}
             fill
             style={{ objectFit: "cover" }}
-            sizes="(max-width: 1200px) 100vw"
+            sizes="(max-width: 640px) 320px, 400px"
             priority
+            placeholder="blur"
+            blurDataURL={exerciseImageBlurDataURL}
           />
         </div>
         <div className="flex flex-col gap-y-2">

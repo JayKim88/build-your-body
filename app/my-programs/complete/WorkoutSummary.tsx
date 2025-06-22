@@ -39,6 +39,7 @@ import Summary from "@/public/workout-complete-icon/summary.svg";
 import { MyStat } from "@/app/api/types";
 import Loading from "@/app/loading";
 import { useIsMobile } from "@/app/hook/useWindowSize";
+import { userPhotoBlurDataURL } from "@/app/utils/imageBlur";
 
 // Lazy load modal components
 const LazyConfirmModal = dynamic(
@@ -439,6 +440,8 @@ export const WorkoutSummary = () => {
                   alt="Workout completion photo"
                   width={400}
                   height={400}
+                  placeholder="blur"
+                  blurDataURL={userPhotoBlurDataURL}
                 />
               ) : previewUrl ? (
                 <LazyImageCropper

@@ -28,7 +28,7 @@ export const CartTitleButton = ({
         ${isAleadyInCart && "text-black pointer-events-none"} ${className}
         `}
     >
-      <Cart width={32} height={32} alt="cart" className="fill-gray1" />
+      <Cart width={32} height={32} alt="Shopping cart" className="fill-gray1" />
       <span className={`text-[${fontSize ?? 20}px]`}>{title}</span>
     </button>
   );

@@ -5,6 +5,7 @@ import { CartProps } from "../store";
 import { capitalizeFirstLetter, getBgColor } from "../utils";
 import { Chip } from "../my-programs/ProgramList";
 import Skeleton from "./Skeleton";
+import { exerciseImageBlurDataURL } from "../utils/imageBlur";
 
 export type ExerciseSummaryCardProps = {
   data: CartProps;
@@ -38,8 +39,10 @@ export const ExerciseSummaryCard = ({
           alt={`${name} exercise summary`}
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 640px) 100vw, 240px"
+          sizes="(max-width: 640px) 100vw, 300px"
           priority={index < 3}
+          placeholder="blur"
+          blurDataURL={exerciseImageBlurDataURL}
           onLoadingComplete={() => setIsImageLoaded(true)}
           className={`
               transition-opacity duration-300

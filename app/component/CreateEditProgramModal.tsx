@@ -21,6 +21,7 @@ import { useBodySnackbar } from "../hook/useSnackbar";
 import { deleteProgram } from "../api/programs/delete";
 import { editProgram } from "../api/programs/edit";
 import { useIsMobile } from "../hook/useWindowSize";
+import { exerciseImageBlurDataURL } from "../utils/imageBlur";
 
 type ConfirmTypes = "deleteAll" | "register" | "editConfirm" | "deleteProgram";
 
@@ -187,11 +188,13 @@ const ExerciseSetting = (
       <div className="relative hidden sm:block min-w-[200px] h-[200px] rounded-2xl overflow-hidden">
         <Image
           src={img_url}
-          alt="name"
+          alt={`${name} exercise`}
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 1200px) 100vw"
+          sizes="(max-width: 640px) 0px, 200px"
           priority
+          placeholder="blur"
+          blurDataURL={exerciseImageBlurDataURL}
         />
       </div>
       <div className="flex flex-col justify-between">

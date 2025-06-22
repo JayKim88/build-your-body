@@ -82,7 +82,7 @@ export const ModalWrapper = ({
                 alt="close button"
                 fill
                 style={{ objectFit: "contain" }}
-                sizes="(max-width: 1200px) 100vw"
+                sizes="48px"
               />
             </div>
           </button>

@@ -8,7 +8,7 @@ export const Header = () => {
   return (
     <div
       className="flex justify-end sm:justify-between items-center w-full 
-      sm:w-[calc(100%-110px)] top-0 
+      md:w-[calc(100%-110px)] top-0 
     fixed bg-black z-20 h-[130px]"
     >
       <Link href="/" scroll={false} className="hidden sm:block">

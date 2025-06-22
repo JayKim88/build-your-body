@@ -153,9 +153,10 @@ const ProgramItem = (
             >
               <Image
                 src="/edit.png"
-                alt="edit"
+                alt="Edit program"
                 width={isMobile ? 32 : 48}
                 height={48}
+                sizes="(max-width: 640px) 32px, 48px"
                 onClick={() =>
                   onSetEditProgram({
                     _id,
@@ -168,9 +169,10 @@ const ProgramItem = (
               />
               <Image
                 src="/delete_bin.png"
-                alt="delete"
+                alt="Delete program"
                 width={isMobile ? 32 : 48}
                 height={48}
+                sizes="(max-width: 640px) 32px, 48px"
                 onClick={() => onSetDeleteTargetId(_id)}
               />
             </div>

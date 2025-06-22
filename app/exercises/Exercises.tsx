@@ -13,6 +13,7 @@ import { ExerciseType } from "../component/Filter";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
 import Skeleton from "../component/Skeleton";
+import { exerciseImageBlurDataURL } from "../utils/imageBlur";
 
 type ExercisesProps = {
   data?: Exercise[];
@@ -132,6 +133,8 @@ const ExerciseCard = (
           style={{ objectFit: "cover" }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
           priority={index < 2}
+          placeholder="blur"
+          blurDataURL={exerciseImageBlurDataURL}
           onLoadingComplete={() => setIsImageLoaded(true)}
           className={`
               transition-opacity duration-300

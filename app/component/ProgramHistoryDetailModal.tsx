@@ -10,6 +10,7 @@ import { capitalizeFirstLetter } from "../utils";
 import Public from "@/public/public.svg";
 import Private from "@/public/private.svg";
 import { SatisfictionIcon } from "./SatisfactionIcon";
+import { userPhotoBlurDataURL } from "../utils/imageBlur";
 
 type ProgramHistoryDetailModalProps = {
   isOpen: boolean;
@@ -99,11 +100,13 @@ export const ProgramHistoryDetailModal = ({
                 <div className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden mt-4 sm:mt-0">
                   <Image
                     src={data?.imageUrl}
-                    alt="name"
+                    alt="Workout completion photo"
                     fill
                     style={{ objectFit: "cover" }}
-                    sizes="(max-width: 1200px) 100vw"
+                    sizes="300px"
                     priority
+                    placeholder="blur"
+                    blurDataURL={userPhotoBlurDataURL}
                   />
                 </div>
               )}

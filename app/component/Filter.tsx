@@ -79,7 +79,7 @@ const Chip = ({
        ${isSelected ? "" : "hover:bg-gray6 hover:text-black"}  
       `}
     >
-      {src && <Image src={src} width={24} height={24} alt={type} />}
+      {src && <Image src={src} width={24} height={24} alt={type} sizes="24px" />}
       <span>{capitalizeFirstLetter(type)}</span>
     </button>
   );

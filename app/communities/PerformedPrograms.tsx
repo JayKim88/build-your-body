@@ -11,6 +11,7 @@ import Like from "@/public/like.svg";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
 import { editCommunitiesList } from "../api/communities/editData";
 import Skeleton from "../component/Skeleton";
+import { userPhotoBlurDataURL } from "../utils/imageBlur";
 
 type PerformedProgramsProps = {
   data?: PerformedData[];
@@ -108,6 +109,8 @@ const PerformedProgramCard = (
               style={{ objectFit: "cover" }}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
               priority={index < 2}
+              placeholder="blur"
+              blurDataURL={userPhotoBlurDataURL}
               onLoadingComplete={() => setIsImageLoaded(true)}
               className={`
                 transition-opacity duration-300
