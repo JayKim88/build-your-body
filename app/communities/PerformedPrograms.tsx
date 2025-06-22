@@ -193,7 +193,11 @@ const PerformedPrograms = ({ data, userId }: PerformedProgramsProps) => {
   return (
     <>
       <section className="flex gap-6 flex-wrap relative w-full">
-        <section className="flex gap-6 flex-wrap mt-[120px] md:mt-20 mb-[100px] w-full">
+        <section
+          className={`flex gap-6 flex-wrap ${
+            isLoggedIn ? "mt-[100px] sm:mt-[120px]" : "mt-10 sm:mt-[120px]"
+          } md:mt-20 mb-[100px] w-full`}
+        >
           {data?.length ? (
             data.map((program, index) => (
               <PerformedProgramCard

@@ -100,8 +100,8 @@ export const Filter = ({
     bg-black w-[calc(100%-24px)] md:w-[calc(100%-110px)]"
     >
       <section
-        className="flex overflow-auto gap-4 h-[80px] sm:h-[120px] items-end 
-      pb-4 flex-wrap px-2 scale-90 sm:scale-100 origin-left"
+        className="flex overflow-x-auto gap-4 h-[80px] sm:h-[120px] items-end 
+      pb-4 px-2 scale-90 sm:scale-100 origin-left"
       >
         {exerciseTypes.map((v) => (
           <Chip
