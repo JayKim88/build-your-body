@@ -48,7 +48,7 @@ export const StatSections = ({ totalSummary, programs }: StatSectionsProps) => {
     <main
       ref={ref}
       className={`flex gap-x-5 gap-y-5 overflow-auto sm:max-w-[calc(100vw-110px)]
-        lg:flex-row flex-col mb-[100px] sm:mb-0
+        lg:flex-row flex-col mb-[100px] sm:mb-0 mt-0 sm:mt-20
     transition-opacity duration-300 ${isLoaded ? "opacity-100" : "opacity-0"}`}
     >
       <section className="flex flex-col gap-y-5">

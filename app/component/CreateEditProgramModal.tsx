@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { RegisteredProgram } from "../api/types";
 import { CartProps, useCartStore } from "../store";
@@ -69,6 +69,16 @@ const Title = ({ isEdit }: { isEdit?: boolean }) => {
 const ExerciseInput = ({ title, value, onChange }: ExerciseInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const decimalAvailable = title === "Weight";
+  
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const isEmpty = value === "";
+
+    onChange(
+      title,
+      isEmpty ? undefined : Number(Number(value).toFixed(2))
+    );
+  }, [title, onChange]);
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -89,15 +99,7 @@ const ExerciseInput = ({ title, value, onChange }: ExerciseInputProps) => {
         className="w-full h-[48px] rounded-[32px] outline-none bg-gray6 
         text-black text-[20px] sm:text-2xl pl-4 pr-4 text-end"
         value={value ?? ""}
-        onChange={(e) => {
-          const value = e.target.value;
-          const isEmpty = value === "";
-
-          onChange(
-            title,
-            isEmpty ? undefined : Number(Number(value).toFixed(2))
-          );
-        }}
+        onChange={handleInputChange}
         {...(decimalAvailable && {
           placeholder: "kg",
         })}
@@ -168,6 +170,8 @@ const ExerciseSetting = (
     isEdit,
   } = v;
   const bgColor = getBgColor(type);
+  
+  const handleDelete = useCallback(() => onDelete(id), [onDelete, id]);
 
   return (
     <div
@@ -204,7 +208,7 @@ const ExerciseSetting = (
           <div className="flex justify-end items-center w-full">
             <CartTitleButton
               title="Delete"
-              onClick={() => onDelete(id)}
+              onClick={handleDelete}
               className={"h-[44px]"}
             />
           </div>
@@ -233,8 +237,10 @@ export const CreateEditProgramModal = ({
   const [openConfirm, setOpenConfirm] = useState<ConfirmTypes>();
   const [programName, setProgramName] = useState("");
   const [exerciseSettings, setExerciseSettings] = useState<CartProps[]>([]);
+  
+  const isEdit = !!data;
 
-  const handleExerciseSettings = (settings: ExerciseSettings) => {
+  const handleExerciseSettings = useCallback((settings: ExerciseSettings) => {
     setExerciseSettings((prev) => {
       return prev.map((v) => {
         if (v.id === settings.id) {
@@ -246,22 +252,22 @@ export const CreateEditProgramModal = ({
         return v;
       });
     });
-  };
+  }, []);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     removeFromCart(id);
     setExerciseSettings((prev) => prev.filter((v) => v.id !== id));
     exerciseSettings.length === 1 && storeProgramName("");
-  };
+  }, [removeFromCart, exerciseSettings.length, storeProgramName]);
 
-  const handleCleanUpCart = () => {
+  const handleCleanUpCart = useCallback(() => {
     removeAllFromCart();
     storeProgramName("");
     setExerciseSettings([]);
     setProgramName("");
-  };
+  }, [removeAllFromCart, storeProgramName]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setTimeout(() => {
       if (isEdit) {
         setProgramName("");
@@ -273,7 +279,7 @@ export const CreateEditProgramModal = ({
     }, OVERLAY_OPEN_DELAY);
 
     onClose();
-  };
+  }, [isEdit, exerciseSettings, programName, addSettingsToCart, storeProgramName, onClose]);
 
   const handleCreateEdit = async () => {
     setLoading(true);
@@ -347,8 +353,6 @@ export const CreateEditProgramModal = ({
 
     setOpenConfirm(undefined);
   };
-
-  const isEdit = !!data;
 
   /**
    * @description 모달이 열릴때 프로그램 이름과 운동들 세팅
@@ -459,7 +463,7 @@ export const CreateEditProgramModal = ({
             }
 
             if (isEdit) {
-              const { programName: initialProgramName, exercises } = data;
+              const { programName: initialProgramName, exercises } = data!;
 
               const identicalExercises =
                 JSON.stringify(exercises) === JSON.stringify(exerciseSettings);

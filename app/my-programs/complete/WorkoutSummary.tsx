@@ -6,9 +6,24 @@ import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Cropper } from "react-cropper";
+import dynamic from "next/dynamic";
 import { useDropzone } from "react-dropzone";
-import "cropperjs/dist/cropper.css";
+
+// Lazy load image cropper component
+const LazyImageCropper = dynamic(
+  () =>
+    import("@/app/component/LazyImageCropper").then((mod) => ({
+      default: mod.LazyImageCropper,
+    })),
+  {
+    loading: () => (
+      <div className="w-full h-[400px] border-2 border-softGreen rounded-2xl flex items-center justify-center">
+        <div className="text-softGreen">Loading image editor...</div>
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 import { useProgressStore } from "@/app/store";
 import Terrible from "@/public/workout-complete-icon/terrible.svg";
@@ -18,14 +33,35 @@ import Happy from "@/public/workout-complete-icon/happy.svg";
 import Lol from "@/public/workout-complete-icon/lol.svg";
 import { useBodySnackbar } from "@/app/hook/useSnackbar";
 import { Button } from "@/app/component/Button";
-import { ConfirmModal } from "@/app/component/ConfirmModal";
 import { savePerformance } from "@/app/api/program-complete/savePerformance";
 import { editProgram } from "@/app/api/programs/edit";
 import Summary from "@/public/workout-complete-icon/summary.svg";
-import { ProgramHistoryDetailModal } from "@/app/component/ProgramHistoryDetailModal";
 import { MyStat } from "@/app/api/types";
 import Loading from "@/app/loading";
 import { useIsMobile } from "@/app/hook/useWindowSize";
+
+// Lazy load modal components
+const LazyConfirmModal = dynamic(
+  () =>
+    import("@/app/component/ConfirmModal").then((mod) => ({
+      default: mod.ConfirmModal,
+    })),
+  {
+    loading: () => <div></div>,
+    ssr: false,
+  }
+);
+
+const LazyProgramHistoryDetailModal = dynamic(
+  () =>
+    import("@/app/component/ProgramHistoryDetailModal").then((mod) => ({
+      default: mod.ProgramHistoryDetailModal,
+    })),
+  {
+    loading: () => <div></div>,
+    ssr: false,
+  }
+);
 
 export type SatisfiedStatus =
   | "terrible"
@@ -405,17 +441,9 @@ export const WorkoutSummary = () => {
                   height={400}
                 />
               ) : previewUrl ? (
-                <Cropper
-                  className="custom-cropper-styles"
-                  preview=".img-preview"
+                <LazyImageCropper
                   src={previewUrl}
-                  viewMode={1}
-                  aspectRatio={1}
-                  minCropBoxHeight={100}
-                  minCropBoxWidth={100}
-                  background={false}
                   onInitialized={(instance) => setCropper(instance)}
-                  movable
                 />
               ) : (
                 <div
@@ -495,7 +523,7 @@ export const WorkoutSummary = () => {
           fontSize={isMobile ? 24 : 40}
         />
       </div>
-      <ConfirmModal
+      <LazyConfirmModal
         isOpen={!!openConfirm}
         onClick={handleConfirm}
         content={
@@ -505,7 +533,7 @@ export const WorkoutSummary = () => {
         }
         loading={loading}
       />
-      <ProgramHistoryDetailModal
+      <LazyProgramHistoryDetailModal
         isOpen={isOpen}
         data={
           {

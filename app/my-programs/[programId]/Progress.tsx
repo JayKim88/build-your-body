@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { HistoryChartData, RegisteredProgram } from "@/app/api/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -204,7 +204,7 @@ const ExerciseSetRow = ({
   );
 };
 
-const ExerciseProgressCard = ({
+const ExerciseProgressCard = memo(function ExerciseProgressCard({
   data,
   index,
   isRunning,
@@ -214,10 +214,41 @@ const ExerciseProgressCard = ({
   onUpdate,
   onAddDeleteSet,
   onProceedToNextExercise,
-}: ExerciseProgressCardProps) => {
+}: ExerciseProgressCardProps) {
   const [newSetLift, setNewSetLift] = useState(0);
-  const updateExerciseSetRow = (v: UpdateExerciseSetRowValues) => onUpdate(v);
-  const updateNewSetLift = (v: number) => setNewSetLift(v);
+  
+  const updateExerciseSetRow = useCallback(
+    (v: UpdateExerciseSetRowValues) => onUpdate(v),
+    [onUpdate]
+  );
+  
+  const updateNewSetLift = useCallback(
+    (v: number) => setNewSetLift(v),
+    []
+  );
+  
+  const handleAddSet = useCallback(
+    () => onAddDeleteSet(data.id, true),
+    [onAddDeleteSet, data.id]
+  );
+  
+  const handleRemoveSet = useCallback(
+    () => onAddDeleteSet(data.id, false),
+    [onAddDeleteSet, data.id]
+  );
+  
+  const handleNextExercise = useCallback(
+    () => onProceedToNextExercise(index + 1, data.id),
+    [onProceedToNextExercise, index, data.id]
+  );
+  
+  const handleUpdateExerciseSetRow = useCallback(
+    (v: UpdateExerciseSetRowValues) => updateExerciseSetRow({
+      ...v,
+      id: data.id,
+    }),
+    [updateExerciseSetRow, data.id]
+  );
 
   const isCompleted = data.isCompleted;
   const isUnclickable = !isRunning || !isInprogress;
@@ -292,29 +323,20 @@ const ExerciseProgressCard = ({
               exerciseSetValues={data.exerciseSetValues}
               exerciseName={data.name}
               onUpdateNewSetLift={updateNewSetLift}
-              onUpdateExerciseSetRow={(v) =>
-                updateExerciseSetRow({
-                  ...v,
-                  id: data.id,
-                })
-              }
+              onUpdateExerciseSetRow={handleUpdateExerciseSetRow}
             />
           ))}
         </div>
         <div className="flex justify-between px-8">
           <button
             className="text-2xl text-realGreen"
-            onClick={() => {
-              onAddDeleteSet(data.id, true);
-            }}
+            onClick={handleAddSet}
           >
             + Add Set
           </button>
           <button
             className="text-2xl text-red"
-            onClick={() => {
-              onAddDeleteSet(data.id, false);
-            }}
+            onClick={handleRemoveSet}
           >
             - Remove Set
           </button>
@@ -323,7 +345,7 @@ const ExerciseProgressCard = ({
           className={`text-2xl ${
             isNextButtonAvailable ? "text-yellow" : "text-gray2"
           }`}
-          onClick={() => onProceedToNextExercise(index + 1, data.id)}
+          onClick={handleNextExercise}
           disabled={!isNextButtonAvailable}
         >
           {isLastExercise ? "Complete Program" : "➔ Next Exercise"}
@@ -331,7 +353,7 @@ const ExerciseProgressCard = ({
       </div>
     </div>
   );
-};
+});
 
 export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
   const isMobile = useIsMobile();
@@ -470,15 +492,37 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
     [exercisesStatus, saveExercisesStatus]
   );
 
-  const closeBreakTimeModal = () => {
+  const closeBreakTimeModal = useCallback(() => {
     setOpenBreakTimeModal(false);
-  };
+  }, []);
+  
+  const handleTerminate = useCallback(() => {
+    setIsRunning(false);
+    setOpenConfirm(true);
+  }, []);
+  
+  const handleConfirmModal = useCallback((v: boolean) => {
+    if (v) {
+      router.replace("/my-programs");
+      resetProgramInfo();
+      resetWorkoutTime();
+      resetExercisesStatus();
+      return;
+    }
+    setOpenConfirm(false);
+  }, [router, resetProgramInfo, resetWorkoutTime, resetExercisesStatus]);
 
   const moveToCompletedPage = useCallback(() => {
     setProgramCompleted(true);
     saveCompletedAt(new Date());
     router.push("/my-programs/complete", { scroll: false });
   }, [router, saveCompletedAt]);
+  
+  const swiperStyle = useMemo(() => ({
+    paddingTop: 16,
+    paddingBottom: 16,
+    width: 1000,
+  }), []);
 
   useEffect(() => {
     if (!data) return;
@@ -537,6 +581,29 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
     setIsLoaded(true);
   }, []);
 
+  // Memoize expensive lift calculations at component level
+  const memoizedExerciseData = useMemo(() => {
+    return exercisesStatus?.map((exerciseStatus, index) => {
+      const lastLift = lastWorkoutData?.find(
+        (v) => v.name === exerciseStatus.name
+      )?.items[0].lift;
+      const currentLift = exerciseStatus.exerciseSetValues
+        .filter((v) => v.checked)
+        .reduce((acc, cur) => {
+          return acc + (cur.repeat ?? 0) * (cur.weight ?? 0);
+        }, 0);
+      const liftGap = currentLift - (lastLift ?? 0);
+      
+      return {
+        ...exerciseStatus,
+        index,
+        liftGap,
+        isInprogressExercise: index === nextProgressExerciseIndex,
+        isLastExercise: index === (exercisesStatus?.length ?? 0) - 1,
+      };
+    });
+  }, [exercisesStatus, lastWorkoutData, nextProgressExerciseIndex]);
+  
   const MemoizedExerciseProgressCards = useMemo(() => {
     return (
       <div
@@ -561,44 +628,28 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
           }}
           modules={[EffectCoverflow]}
           className="exercise-progress-cards-swiper"
-          style={{
-            paddingTop: 16,
-            paddingBottom: 16,
-            width: 1000,
-          }}
+          style={swiperStyle}
         >
-          {exercisesStatus?.map((exerciseStatus, index) => {
-            const isInprogressExercise = index === nextProgressExerciseIndex;
-            const isLastExercise = index === exercisesStatus.length - 1;
-
-            const lastLift = lastWorkoutData?.find(
-              (v) => v.name === exerciseStatus.name
-            )?.items[0].lift;
-            const currentLift = exerciseStatus.exerciseSetValues
-              .filter((v) => v.checked)
-              .reduce((acc, cur) => {
-                return acc + (cur.repeat ?? 0) * (cur.weight ?? 0);
-              }, 0);
-            const liftGap = currentLift - (lastLift ?? 0);
+          {memoizedExerciseData?.map((exerciseData) => {
 
             return (
               <SwiperSlide
-                key={exerciseStatus.id}
+                key={exerciseData.id}
                 style={{
                   width: "fit-content",
                 }}
               >
                 <ExerciseProgressCard
-                  key={exerciseStatus.id}
-                  index={index}
-                  data={exerciseStatus}
+                  key={exerciseData.id}
+                  index={exerciseData.index}
+                  data={exerciseData}
                   isRunning={isRunning}
-                  isInprogress={isInprogressExercise}
-                  isLastExercise={isLastExercise}
+                  isInprogress={exerciseData.isInprogressExercise}
+                  isLastExercise={exerciseData.isLastExercise}
                   onUpdate={updateProgressStatus}
                   onAddDeleteSet={addDeleteExerciseSet}
                   onProceedToNextExercise={proceedToNextExercise}
-                  liftGap={liftGap}
+                  liftGap={exerciseData.liftGap}
                 />
               </SwiperSlide>
             );
@@ -607,14 +658,13 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
       </div>
     );
   }, [
-    exercisesStatus,
+    memoizedExerciseData,
     isRunning,
     updateProgressStatus,
-    nextProgressExerciseIndex,
     addDeleteExerciseSet,
     proceedToNextExercise,
     isLoaded,
-    lastWorkoutData,
+    swiperStyle,
   ]);
 
   if (programCompleted) return <></>;
@@ -632,10 +682,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
         </div>
         <Button
           title="TERMINATE"
-          onClick={() => {
-            setIsRunning(false);
-            setOpenConfirm(true);
-          }}
+          onClick={handleTerminate}
           fontSize={isMobile ? 20 : 32}
           className="text-red bg-red/50 hover:text-red 
           hover:bg-red/50 px-[16px] sm:px-[40px] h-16 ml-4"
@@ -644,17 +691,7 @@ export const Progress = ({ data, lastWorkoutData }: ProgressProps) => {
       {MemoizedExerciseProgressCards}
       <ConfirmModal
         isOpen={!!openConfirm}
-        onClick={(v) => {
-          if (v) {
-            router.replace("/my-programs");
-            resetProgramInfo();
-            resetWorkoutTime();
-            resetExercisesStatus();
-
-            return;
-          }
-          setOpenConfirm(false);
-        }}
+        onClick={handleConfirmModal}
         content="운동을 종료하시겠어요?"
       />
       <BreakTimeModal
