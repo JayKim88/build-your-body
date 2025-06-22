@@ -10,6 +10,7 @@ import { SatisfictionIcon } from "../component/SatisfactionIcon";
 import Like from "@/public/like.svg";
 import { ProgramHistoryDetailModal } from "../component/ProgramHistoryDetailModal";
 import { editCommunitiesList } from "../api/communities/editData";
+import Skeleton from "../component/Skeleton";
 
 type PerformedProgramsProps = {
   data?: PerformedData[];
@@ -43,6 +44,7 @@ const PerformedProgramCard = (
   const [liked, setLiked] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const liftsByExercise = savedExercisesStatus.map((v) => {
     const lift = v.exerciseSetValues.reduce((acc, cur) => {
@@ -98,14 +100,24 @@ const PerformedProgramCard = (
           `}
       >
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={`${title || savedProgramName} workout photo`}
-            fill
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
-            priority={index < 2}
-          />
+          <>
+            <Image
+              src={imageUrl}
+              alt={`${title || savedProgramName} workout photo`}
+              fill
+              style={{ objectFit: "cover" }}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+              priority={index < 2}
+              onLoadingComplete={() => setIsImageLoaded(true)}
+              className={`
+                transition-opacity duration-300
+                ${isImageLoaded ? "opacity-100" : "opacity-0"}
+              `}
+            />
+            {!isImageLoaded && (
+              <Skeleton className="absolute inset-0 w-full h-full" />
+            )}
+          </>
         ) : (
           <span className="text-[48px]">No Image</span>
         )}

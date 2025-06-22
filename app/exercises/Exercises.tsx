@@ -12,6 +12,7 @@ import { useBodySnackbar } from "../hook/useSnackbar";
 import { ExerciseType } from "../component/Filter";
 import { OVERLAY_OPEN_DELAY } from "../component/ModalWrapper";
 import { ExerciseDetailModal } from "../component/ExerciseDetailModal";
+import Skeleton from "../component/Skeleton";
 
 type ExercisesProps = {
   data?: Exercise[];
@@ -69,9 +70,18 @@ const ExerciseCard = (
   const cartItems = useCartStore((state) => state.stored);
   const addToCart = useCartStore((state) => state.add);
   const removeFromCart = useCartStore((state) => state.remove);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  const { _id, type, thumbnail_img_url, name, summary, onClick, index, ...rest } =
-    props;
+  const {
+    _id,
+    type,
+    thumbnail_img_url,
+    name,
+    summary,
+    onClick,
+    index,
+    ...rest
+  } = props;
 
   const bgColor = getBgColor(type);
 
@@ -122,7 +132,15 @@ const ExerciseCard = (
           style={{ objectFit: "cover" }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
           priority={index < 2}
+          onLoadingComplete={() => setIsImageLoaded(true)}
+          className={`
+              transition-opacity duration-300
+              ${isImageLoaded ? "opacity-100" : "opacity-0"}
+            `}
         />
+        {!isImageLoaded && (
+          <Skeleton className="absolute inset-0 w-full h-full" />
+        )}
       </div>
       <div className="text-xl sm:text-2xl md:text-3xl">
         {capitalizeFirstLetter(name)}
