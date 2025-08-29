@@ -4,141 +4,163 @@
 
 Personal Home Training Service 🏠💪
 
-Create your own workout programs and just do it!
+A comprehensive workout management platform that enables users to create personalized exercise programs, track real-time progress, and share achievements with the community.
 
 <br/>
 
-## Tech Stack & Architecture
+## 🛠 Tech Stack & Architecture
 
 **Frontend**
 
 - **Next.js 14** with App Router for modern React architecture
-- **TypeScript** with strict mode for type safety
+- **TypeScript** with strict mode for type safety and better developer experience
 - **Zustand** for lightweight, performant state management
-- **TailwindCSS** for utility-first styling with custom design system
+- **TailwindCSS** for utility-first styling with responsive design
 
 **Backend & Infrastructure**
 
 - **Next.js API Routes** for serverless backend architecture
-- **NextAuth.js** for secure OAuth authentication
-- **MongoDB** with optimized queries and indexes
+- **NextAuth.js** for secure OAuth authentication with Google
+- **MongoDB** with optimized queries and aggregation pipelines
 - **Google Cloud Storage** for scalable image handling
-- **Vercel** for zero-config deployment
+- **Vercel** for zero-config deployment and edge optimization
 
 **Development & Testing**
 
 - **Jest** with comprehensive unit, integration, and e2e tests
-- **MSW (Mock Service Worker)** for API mocking
+- **MSW (Mock Service Worker)** for reliable API mocking
 - **ESLint** with Next.js configuration for code quality
 - **TypeScript** strict configuration for runtime safety
 
 <br/>
 
-## Key Technical Features
+## 🚀 Core Features
 
-### 1. Performance Optimizations
+**Program Creation**
 
-- **Image Optimization**: WebP format with blur placeholders for optimal loading
-- **Lazy Loading**: Component-level lazy loading with skeleton UI
-- **Code Splitting**: Dynamic imports and optimized bundle sizes
-- **Caching Strategy**: Strategic use of Next.js caching and SWR patterns
+- Exercise selection with drag-and-drop functionality
+- Custom workout program builder with set/weight/rep configuration
+- Exercise filtering by muscle groups (chest, back, legs, shoulders, arms)
 
-### 2. Type Safety & Code Quality
+**Workout Execution**
 
-- **Strict TypeScript**: Custom type definitions for API responses and state management
-- **Component Composition**: Reusable, composable components with proper prop interfaces
-- **Error Boundaries**: Comprehensive error handling with user-friendly fallbacks
-- **Testing Coverage**: Unit, integration, and e2e tests with 90%+ coverage
+- Real-time progress tracking with interactive UI
+- Set completion with performance metrics calculation
+- Break timer with customizable rest periods
 
-### 3. Architecture Highlights
+**Data Analytics**
 
-- **Modular Design**: Clean separation of concerns with custom hooks and utilities
-- **API Design**: RESTful API routes with proper validation and error handling
-- **State Management**: Zustand stores with TypeScript integration
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- Comprehensive workout history with Chart.js visualizations
+- Performance trends by exercise type and time period
+- Progress comparison with previous workouts
 
-<br/>
+**Social Platform**
 
-## Core Functionality
-
-- **Program Creation**: Select exercises and create personalized workout programs
-- **Workout Tracking**: Real-time progress tracking with set completion and performance metrics
-- **Data Persistence**: Comprehensive workout history with charts and analytics
-- **Social Features**: Community sharing with privacy controls and engagement metrics
-- **Performance Analytics**: Visual dashboard with Chart.js integration
+- Community workout sharing with privacy controls
+- Like system for user engagement
+- Public/private workout visibility settings
 
 <br/>
 
-## Key Implementation Highlights
+## 💡 Code Quality & Architecture Highlights
 
-### 1. Type-Safe State Management (`app/store.ts`)
+### 1. TypeScript Implementation - Precise Type Safety
 
-Zustand stores with comprehensive TypeScript interfaces for cart (workout program builder) and progress (workout execution) management, using persistent storage with session/local storage integration.
-
-### 2. Performance-First Image Handling (`app/utils/imageBlur.ts`)
-
-- Pre-generated base64 blur data URLs for different image types (exercise, user photos, icons)
-- Static blur placeholders to prevent layout shift during image loading
-- WebP format usage throughout the application for optimal loading
-
-### 3. Dynamic Component Loading (`app/component/LazyLottiePlayer.tsx`)
-
-- Dynamic imports for heavy libraries (Lottie animations)
-- On-demand animation loading with async imports to reduce initial bundle size
-- Skeleton loading states during component loading for better UX
-
-### 4. Comprehensive Testing Coverage (`tests/`)
-
-- Unit tests for all components with Jest and React Testing Library
-- Integration tests for key user flows
-- E2E tests with MSW for API mocking
-- Separate test configurations for different environments
-
-### 5. MongoDB Integration (`app/api/`)
-
-- Next.js 14 App Router API routes with proper error handling
-- MongoDB aggregation pipelines for complex data queries
-- Type-safe database operations with consistent response patterns
-
-<br/>
-
-## Code Quality Highlights
-
-### TypeScript Implementation
+#### Comprehensive Type Definitions (`app/api/types.ts`)
 
 ```typescript
-// app/api/types.ts - Comprehensive type definitions
-export type RegisteredProgram = {
+export interface RegisteredProgram {
   _id: string;
   userId: string;
   programName: string;
   exercises: CartProps[];
-  lastCompletedAt?: string;
+  lastCompletedAt?: Date;
   deleted?: boolean;
-};
+}
 
-// app/store.ts - Type-safe Zustand stores
+export interface MyStat extends UserOwnedEntity {
+  userId: string;
+  likedUserIds?: string[];
+  savedExercisesStatus: ExercisesStatus;
+  completedAt: Date;
+  satisfaction: number;
+  title: string;
+  note?: string;
+}
+```
+
+#### Type-Safe State Management (`app/store.ts`)
+
+```typescript
+// Separated interfaces for clear responsibility boundaries
 interface CartState {
   isUpdated: boolean;
   programName: string;
   stored: CartProps[];
-  add: (v: CartProps) => void;
-  remove: (v: string) => void;
+  add: (item: CartProps) => void;
+  remove: (itemId: string) => void;
   removeAll: () => void;
+  addSettings: (settings: ExerciseSet[]) => void;
 }
 
 interface ProgressState {
   programId: string;
-  programName: string;
   workoutTime: number;
   savedExercisesStatus: ExercisesStatus;
+  completedAt?: Date;
+  saveWorkoutTime: (time: number) => void;
+  resetWorkoutTime: () => void;
 }
 ```
 
-### Component Architecture
+### 2. Performance Optimization - User Experience First
+
+#### Image Loading Optimization (`app/utils/imageBlur.ts`)
 
 ```typescript
-// app/component/ModalWrapper.tsx - Reusable modal composition
+/**
+ * Static blur data URL for exercise images
+ * Optimized for typical exercise demonstration image aspect ratio
+ */
+export const exerciseImageBlurDataURL =
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/...";
+
+/**
+ * Static blur data URL for user-generated content (workout photos)
+ * Square aspect ratio for workout completion photos
+ */
+export const userPhotoBlurDataURL =
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/...";
+```
+
+#### Dynamic Component Loading (`app/component/LazyLottiePlayer.tsx`)
+
+```typescript
+// Lazy load heavy Lottie library to reduce initial bundle size
+const LazyLottie = dynamic(() => import("lottie-react"), {
+  loading: () => (
+    <div className="animate-pulse bg-gray-200 rounded w-full h-full" />
+  ),
+  ssr: false, // Client-side only for animation performance
+});
+
+// On-demand animation loading
+const loadAnimation = async (type: AnimationTypes) => {
+  switch (type) {
+    case "complete":
+      return (await import("@/public/lottie-animation/complete.json")).default;
+    case "loading":
+      return (await import("@/public/lottie-animation/loading.json")).default;
+    // ... other animation types
+  }
+};
+```
+
+### 3. Component Architecture - Reusable & Predictable
+
+#### Modal System (`app/component/ModalWrapper.tsx`)
+
+```typescript
 export type ModalWrapperProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -146,106 +168,157 @@ export type ModalWrapperProps = {
   children: ReactNode;
   customClassName?: string;
 };
+
+export const ModalWrapper = ({
+  isOpen,
+  onClose,
+  Title,
+  children,
+}: ModalWrapperProps) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setOpen(isOpen);
+      const timer = setTimeout(() => setVisible(true), MODAL_VISIBLE_DELAY);
+      return () => clearTimeout(timer);
+    } else {
+      // Graceful close animation
+      const timer = setTimeout(() => setVisible(false), MODAL_VISIBLE_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  // ... render logic with smooth transitions
+};
 ```
 
-### Performance Optimization
+### 4. API Design - Consistent & Maintainable
+
+#### RESTful API Patterns (`app/api/programs/route.ts`)
 
 ```typescript
-// app/component/LazyLottiePlayer.tsx - Dynamic import for heavy libraries
-const LazyLottie = dynamic(() => import("lottie-react"), {
-  loading: () => (
-    <div className="animate-pulse bg-gray-200 rounded w-full h-full" />
-  ),
-  ssr: false,
-});
-```
-
-### API Design Pattern
-
-```typescript
-// app/api/programs/route.ts - Consistent API structure
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const email = searchParams.get("email");
+  const includeDeleted = searchParams.get("includeDeleted") === "true";
 
   try {
     const result = await db
       ?.collection("programs")
-      .find({ userId: userId })
+      .find({
+        userId: userId,
+        ...(!includeDeleted && { deleted: { $ne: true } }),
+      })
       .sort({ lastCompletedAt: -1 })
       .toArray();
 
+    const data = result?.map((item) => ({
+      ...item,
+      _id: item._id.toString(),
+      userId: item.userId.toString(),
+    }));
+
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.log("fetch failed", error);
+    console.error("Programs fetch failed:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch programs" },
+      { status: 500 }
+    );
   }
 }
 ```
 
-### Testing Strategy
+### 5. Testing Strategy - Comprehensive Coverage
+
+#### Component Testing (`tests/unit/ModalWrapper.test.tsx`)
 
 ```typescript
-// tests/unit/ModalWrapper.test.tsx - Comprehensive component testing
 describe("ModalWrapper", () => {
-  it("should handle modal state correctly", () => {
-    // Test implementation with proper mocking
+  it("should handle modal open/close states correctly", async () => {
+    const mockOnClose = jest.fn();
+    const { rerender } = render(
+      <ModalWrapper isOpen={false} onClose={mockOnClose}>
+        <div>Test Content</div>
+      </ModalWrapper>
+    );
+
+    // Test closed state
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    // Test open state
+    rerender(
+      <ModalWrapper isOpen={true} onClose={mockOnClose}>
+        <div>Test Content</div>
+      </ModalWrapper>
+    );
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+});
+```
+
+#### API Testing with MSW (`tests/e2e/programs.e2e.test.ts`)
+
+```typescript
+describe("Programs API", () => {
+  beforeEach(() => {
+    server.use(
+      rest.get("/api/programs", (req, res, ctx) => {
+        return res(
+          ctx.json({
+            data: mockProgramsData,
+          })
+        );
+      })
+    );
+  });
+
+  it("should fetch user programs successfully", async () => {
+    const response = await request(app).get("/api/programs");
+    expect(response.status).toBe(200);
+    expect(response.body.data).toHaveLength(2);
   });
 });
 ```
 
 <br/>
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 app/
-├── api/              # Next.js API routes
-│   ├── auth/         # Authentication endpoints
-│   ├── programs/     # Program CRUD operations
-│   └── types.ts      # Shared API type definitions
-├── component/        # Reusable UI components
-├── hook/            # Custom React hooks
-├── utils/           # Utility functions and helpers
-└── store.ts         # Zustand state management
+├── api/                    # Next.js API routes
+│   ├── auth/              # NextAuth.js authentication
+│   ├── programs/          # Program CRUD operations
+│   ├── exercise/          # Exercise data management
+│   ├── my-stats/          # Analytics and statistics
+│   └── types.ts           # Shared API type definitions
+├── component/             # Reusable UI components
+│   ├── ModalWrapper.tsx   # Base modal system
+│   ├── LazyLottiePlayer.tsx # Performance-optimized animations
+│   └── ...               # Other UI components
+├── hook/                  # Custom React hooks
+│   ├── useSnackbar.tsx   # Toast notification system
+│   └── useWindowSize.tsx # Responsive design helper
+├── utils/                 # Utility functions
+│   ├── imageBlur.ts      # Image optimization utilities
+│   ├── index.ts          # Common helper functions
+│   └── mongoClient.ts    # Database connection
+└── store.ts              # Zustand state management
 
 tests/
-├── unit/            # Component unit tests
-├── integration/     # Feature integration tests
-├── e2e/            # End-to-end tests
-└── __mocks__/      # Test mocks and fixtures
+├── unit/                 # Component unit tests
+├── integration/          # Feature integration tests
+├── e2e/                 # End-to-end API tests
+├── __mocks__/           # Test mocks and fixtures
+└── setupTests.ts        # Test environment configuration
 ```
 
 <br/>
 
-## Pages and compositions
-
-- Landing
-  - Google Login/Logout
-- Exercises
-  - Items list by body parts
-  - Exercise program registration modal
-  - Exercise detail info modal
-- My Programs
-  - Enter-button to start a program
-  - Program Edit modal
-  - Last performed history modal
-  - Delete program function
-- Program process
-  - Track your progress by marking each completed set in the exercise modal
-  - Edit exercise settings such as weight, repetitions, and set count
-  - Break-time modal once a set completed
-- Complete summary
-  - Save performance history, title, note, photo, etc
-  - Performed history modal
-- My Stats
-  - Track my workout history by week and month in visualised charts
-  - Workout Date Selectable Calendar
-  - History detail modal
-- Communities - Share workout performance with others with like function
-
-<br/>
-
-## Overview UI and Manual
+## 🎨 Overview UI and Manual
 
 ### Index by pages
 
