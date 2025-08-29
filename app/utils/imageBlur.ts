@@ -1,27 +1,4 @@
 /**
- * Generates a simple blur data URL for image placeholders
- * Creates a low-quality base64 encoded image to prevent layout shift
- */
-export const generateBlurDataURL = (width: number = 10, height: number = 10): string => {
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return '';
-  
-  // Create a simple gradient for the blur effect
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, '#f3f4f6'); // gray-100
-  gradient.addColorStop(1, '#e5e7eb'); // gray-200
-  
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-  
-  return canvas.toDataURL('image/jpeg', 0.1);
-};
-
-/**
  * Static blur data URL for exercise images
  * Optimized for typical exercise demonstration image aspect ratio
  */
